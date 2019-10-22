@@ -10,4 +10,8 @@ router.post('/setValue', (req, res, next) => {
   api.setValue(req, res, next);
 });
 
+router.get('/getAllMedbyType', (req, res, next) => {
+  api.getAllMedbyType(req, res, next);
+});
+
 module.exports = router;

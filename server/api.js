@@ -35,5 +35,16 @@ module.exports = {
     })
   },
 
+  getAllMedbyType(req, res, next) {
+    var medtype = req.query.medtype;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.getAllMedbyType;
+      connection.query(sql, [medtype], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
   
 }

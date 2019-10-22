@@ -10,61 +10,26 @@
           <template v-slot:header>
             <div class="px-3">
               <div class="title font-weight-light mb-2">
-                处方
+                处   方
               </div>
             </div>
 						<v-spacer />   
 
-						<v-speed-dial
-							v-model="fab"
-							bottom
-							right
-							small
-							:direction="direction"
-							open-on-hover
-							:transition="transition"
-						>
-						<template v-slot:activator>
-							<v-btn
-								v-model="fab"
-								color="amber"
-								dark
-								fab
-							>
-								<v-icon v-if="fab">mdi-close</v-icon>
-								<v-icon v-else>mdi-account-circle</v-icon>
-							</v-btn>
-							</template>
-							<v-btn
-								fab
-								dark
-								small
-								color="green"
-							>
-								<v-icon>mdi-pencil</v-icon>
-							</v-btn>
-							<v-btn
-								fab
-								dark
-								small
-								color="indigo"
-								@click.stop="adddialog = true"
-							>
-								<v-icon>mdi-plus</v-icon>
-							</v-btn>
-							<v-btn
-								fab
-								dark
-								small
-								color="red"
-							>
-								<v-icon>mdi-delete</v-icon>
-							</v-btn>
-            </v-speed-dial>
+						<v-btn
+              absolute
+              dark
+              fab
+              top
+              right
+              color="amber"
+              @click="outDbEnable"
+            >
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
           </template>
           <v-data-table
             v-model="selected"
-            show-select
+            :show-select="selectEnabled"
             :headers="headers"
             :items="items"
             item-key="name"
@@ -90,6 +55,16 @@
               mdi-close
             </v-icon>
           </template>
+           <template v-if="selectEnabled" v-slot:body.append="{ headers }">
+            <tr>
+              <td :colspan="headers.length-2">
+                This is an appended row
+              </td>
+              <td :colspan="2">
+                This
+              </td>
+            </tr>
+          </template>
           </v-data-table>
         </material-card>
       </v-col>
@@ -105,8 +80,8 @@
       searchStr: '',
       medRadio: '免煎药',
       transition: 'slide-y-reverse-transition',
-      adddialog: false,
       selected: [],
+      selectEnabled: false,
       headers: [
         {
           sortable: false,
@@ -196,6 +171,13 @@
           search != null &&
           typeof value === 'string' &&
           value.toString().toLocaleUpperCase().indexOf(search) !== -1
+      },
+
+      outDbEnable: function(){
+        if(this.selectEnabled)
+          this.selectEnabled = false;
+        else
+          this.selectEnabled = true;
       }
     }
 

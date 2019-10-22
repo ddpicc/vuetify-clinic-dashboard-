@@ -6,13 +6,13 @@
   >
     <v-row justify="center">
       <v-col cols="12">
-        <material-card flat full-width color="green">
+        <material-card flat full-width :color=cardColor>
           <template v-slot:header>
             <div class="px-3">
               <div class="title font-weight-light mb-2">
-                <v-radio-group v-model="medRadio" :mandatory="false" row>
-                  <v-radio label="免煎药" value="免煎药" color="grey darken-1"></v-radio>
+                <v-radio-group v-model="medRadio" :mandatory="false" row @change="radioChanged">
                   <v-radio label="草药" value="草药" color="grey darken-1"></v-radio>
+                  <v-radio label="免煎" value="免煎" color="grey darken-1"></v-radio>
                   <v-radio label="西药" value="西药" color="grey darken-1"></v-radio>
                 </v-radio-group>
               </div>
@@ -20,52 +20,17 @@
 
             <v-spacer />   
 
-            <v-speed-dial
-              v-model="fab"
-              bottom
+            <v-btn
+              absolute
+              dark
+              fab
+              top
               right
-              small
-              :direction="direction"
-              open-on-hover
-              :transition="transition"
-            >
-            <template v-slot:activator>
-              <v-btn
-                v-model="fab"
-                color="amber"
-                dark
-                fab
-              >
-                <v-icon v-if="fab">mdi-close</v-icon>
-                <v-icon v-else>mdi-account-circle</v-icon>
-              </v-btn>
-            </template>
-            <v-btn
-              fab
-              dark
-              small
-              color="green"
-            >
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-            <v-btn
-              fab
-              dark
-              small
-              color="indigo"
-              @click.stop="adddialog = true"
+              color="amber"
+              @click="adddialog = true"
             >
               <v-icon>mdi-plus</v-icon>
             </v-btn>
-            <v-btn
-              fab
-              dark
-              small
-              color="red"
-            >
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </v-speed-dial>
           </template>
           <v-data-table
             :headers="headers"
@@ -73,7 +38,7 @@
             item-key="name"
             :items-per-page="5"
             :search="searchStr"
-            :custom-filter="filterOnlyCapsText"            
+            :custom-filter="filterText"            
           >
           <template v-slot:top>
             <v-text-field v-model="searchStr" label="搜索..." class="mx-4"></v-text-field>
@@ -162,14 +127,16 @@
       direction: 'bottom',
       fab: false,
       searchStr: '',
-      medRadio: '免煎药',
+      medRadio: '草药',
       transition: 'slide-y-reverse-transition',
       adddialog: false,
+      loading: false,
+      cardColor: 'green',
       headers: [
         {
           sortable: false,
           text: '药品名称',
-          value: 'name'
+          value: 'medname'
         },
         {
           sortable: false,
@@ -189,7 +156,7 @@
         {
           sortable: true,
           text: '数量',
-          value: 'count',
+          value: 'inventoryNm',
         },
         {
           sortable: false,
@@ -212,55 +179,52 @@
           value: 'action',
         },
       ],
-      items: [
-        {
-          name: 'Dakota Rice',
-          country: 'Niger',
-          city: 'Oud-Tunrhout',
-          salary: '$35,738'
-        },
-        {
-          name: 'Minerva Hooper',
-          country: 'Curaçao',
-          city: 'Sinaai-Waas',
-          salary: '$23,738'
-        }, {
-          name: 'Sage Rodriguez',
-          country: 'Netherlands',
-          city: 'Overland Park',
-          salary: '$56,142'
-        }, {
-          name: 'Philip Chanley',
-          country: 'Korea, South',
-          city: 'Gloucester',
-          salary: '$38,735'
-        }, {
-          name: 'Doris Greene',
-          country: 'Malawi',
-          city: 'Feldkirchen in Kārnten',
-          salary: '$63,542'
-        }, {
-          name: 'Mason Porter',
-          country: 'Chile',
-          city: 'Gloucester',
-          salary: '$78,615'
-        }
-      ]
+      items: []
     }),
 
     methods: {
-      filterOnlyCapsText (value, search, item) {
+      //搜索
+      filterText (value, search, item) {
         return value != null &&
           search != null &&
           typeof value === 'string' &&
-          value.toString().toLocaleUpperCase().indexOf(search) !== -1
+          value.toString().indexOf(search) !== -1
+      },
+
+      // 获取全部数据
+    	getAll: function() {
+        this.loading = true;
+        this.$http.get('/api/getAllMedbyType',{
+          params: {
+						medtype : this.medRadio
+					}
+        }).then( (res) => {
+          this.items = res.data;
+          this.loading = false;
+        })
+      },
+      
+      //当类型变化时改变颜色和重新读取数据
+      radioChanged: function(){
+        this.getAll();
+        if(this.medRadio == "西药"){
+          this.cardColor = 'blue lighten-2';
+				}else if(this.medRadio == "免煎"){
+          this.cardColor = 'lime darken-2';
+				}else{
+          this.cardColor = 'green';
+        }					
       },
 
       backTop() {
         document.body.scrollTop = 0
         document.documentElement.scrollTop = 0
-      },
-    }
+      }
+    },
+
+    mounted: function() {
+			this.getAll();
+		}
 
     
   }
