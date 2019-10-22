@@ -38,7 +38,8 @@
             item-key="name"
             :items-per-page="5"
             :search="searchStr"
-            :custom-filter="filterText"            
+            :custom-filter="filterText"
+            loading="loading"
           >
           <template v-slot:top>
             <v-text-field v-model="searchStr" label="搜索..." class="mx-4"></v-text-field>
@@ -124,11 +125,8 @@
 <script>
   export default {
     data: () => ({
-      direction: 'bottom',
-      fab: false,
       searchStr: '',
       medRadio: '草药',
-      transition: 'slide-y-reverse-transition',
       adddialog: false,
       loading: false,
       cardColor: 'green',

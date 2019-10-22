@@ -14,4 +14,8 @@ router.get('/getAllMedbyType', (req, res, next) => {
   api.getAllMedbyType(req, res, next);
 });
 
+router.get('/getAllOrd', (req, res, next) => {
+  api.getAllOrd(req, res, next);
+});
+
 module.exports = router;

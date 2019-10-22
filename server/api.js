@@ -46,5 +46,15 @@ module.exports = {
     })
   },
 
+  getAllOrd(req, res, next) {
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.getAllOrd;
+      connection.query(sql, [], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
   
 }

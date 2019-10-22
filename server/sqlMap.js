@@ -4,7 +4,8 @@ var sqlMap = {
     getAllMedbyType: 'SELECT * FROM myDbs_medlist WHERE medtype = ?',
     insertMed: 'INSERT INTO myDbs_medlist(Id,name,url,alexa,country) VALUES(0,?,?,?,?)',
     updateMed: 'UPDATE myDbs_medlist SET name = ?,url = ? WHERE Id = ?',
-    deleteMed: 'DELETE FROM myDbs_medlist where id=6'
+    deleteMed: 'DELETE FROM myDbs_medlist where id=6',
+    getAllOrd: 'SELECT * FROM myDbs_ordlist'
   }
   
   module.exports = sqlMap;

@@ -10,7 +10,7 @@
           <template v-slot:header>
             <div class="px-3">
               <div class="title font-weight-light mb-2">
-                处   方
+                &nbsp;&nbsp;&nbsp;&nbsp;处&nbsp;&nbsp;&nbsp;&nbsp;方
               </div>
             </div>
 						<v-spacer />   
@@ -35,7 +35,8 @@
             item-key="name"
             :items-per-page="5"
             :search="searchStr"
-            :custom-filter="filterOnlyCapsText"            
+            :custom-filter="filterText"
+            loading="loading"
           >
           <template v-slot:top>
             <v-text-field v-model="searchStr" label="搜索..." class="mx-4"></v-text-field>
@@ -65,6 +66,9 @@
               </td>
             </tr>
           </template>
+          <template v-slot:item.medtype="{ item }">
+            <v-chip :color="getColor(item.medtype)" dark>{{ item.medtype }}</v-chip>
+          </template>
           </v-data-table>
         </material-card>
       </v-col>
@@ -75,102 +79,61 @@
 <script>
   export default {
     data: () => ({
-      direction: 'bottom',
-      fab: false,
       searchStr: '',
-      medRadio: '免煎药',
-      transition: 'slide-y-reverse-transition',
       selected: [],
       selectEnabled: false,
+      loading: false,
       headers: [
         {
           sortable: false,
-          text: '药品名称',
-          value: 'name'
+          text: '名字',
+          value: 'patient'
         },
         {
           sortable: false,
-          text: '别名',
-          value: 'alias'
+          text: '类型',
+          value: 'medtype'
         },
         {
           sortable: false,
-          text: '规格',
-          value: 'spec'
+          text: '数量',
+          value: 'dose'
         },
         {
           sortable: false,
-          text: '袋/盒',
-          value: 'bagperbox',
+          text: '总价',
+          value: 'total',
         },
         {
           sortable: true,
-          text: '数量',
-          value: 'count',
-        },
-        {
-          sortable: false,
-          text: '进价',
-          value: 'baseprice',
-        },
-        {
-          sortable: false,
-          text: '零售价',
-          value: 'sellprice',
-        },
-        {
-          sortable: false,
-          text: '监测',
-          value: 'checked',
+          text: '日期',
+          value: 'date',
         },
         {
           sortable: false,
           text: '操作',
           value: 'action',
-        },
-      ],
-      items: [
-        {
-          name: 'Dakota Rice',
-          country: 'Niger',
-          city: 'Oud-Tunrhout',
-          salary: '$35,738'
-        },
-        {
-          name: 'Minerva Hooper',
-          country: 'Curaçao',
-          city: 'Sinaai-Waas',
-          salary: '$23,738'
-        }, {
-          name: 'Sage Rodriguez',
-          country: 'Netherlands',
-          city: 'Overland Park',
-          salary: '$56,142'
-        }, {
-          name: 'Philip Chanley',
-          country: 'Korea, South',
-          city: 'Gloucester',
-          salary: '$38,735'
-        }, {
-          name: 'Doris Greene',
-          country: 'Malawi',
-          city: 'Feldkirchen in Kārnten',
-          salary: '$63,542'
-        }, {
-          name: 'Mason Porter',
-          country: 'Chile',
-          city: 'Gloucester',
-          salary: '$78,615'
         }
-      ]
+      ],
+      items: []
     }),
 
     methods: {
-      filterOnlyCapsText (value, search, item) {
+      //搜索
+      filterText (value, search, item) {
         return value != null &&
           search != null &&
           typeof value === 'string' &&
-          value.toString().toLocaleUpperCase().indexOf(search) !== -1
+          value.toString().indexOf(search) !== -1
+      },
+
+      // 获取全部数据
+    	getAll: function() {
+        this.loading = true;
+        this.$http.get('/api/getAllOrd').then( (res) => {
+          this.items = res.data;
+          this.loading = false;
+        })
       },
 
       outDbEnable: function(){
@@ -178,8 +141,18 @@
           this.selectEnabled = false;
         else
           this.selectEnabled = true;
-      }
-    }
+      },
+
+      getColor (medtype) {
+        if (medtype == '免煎') return 'lime darken-2'
+        else if (medtype == '西药') return 'blue lighten-2'
+        else return 'green'
+      },
+    },
+
+    mounted: function() {
+			this.getAll();
+		}
 
     
   }
