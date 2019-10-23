@@ -62,13 +62,10 @@
               </td>
               <td :colspan="1" align="right">
                 <v-btn text small>确认</v-btn>
-                
               </td>
               <td :colspan="1" align="left">
                 <v-btn text small>取消</v-btn>
-                
               </td>
-              
             </tr>
           </template>
           <template v-slot:item.medtype="{ item }">

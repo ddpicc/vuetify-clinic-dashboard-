@@ -146,14 +146,16 @@
                   ref="mark1"
                   @keyup.enter.native="moveFocusToDose"
                   @update:search-input="test"
-                  item-text="alias"
+                  item-text="medname"
                   item-value="alias"
                 >
                 <template v-slot:item="data">
                   <template>
                     <v-list-item-content>
-                      <v-list-item-title v-html="data.item.medname"></v-list-item-title>
-                      <v-list-item-subtitle v-html="data.item.alias"></v-list-item-subtitle>
+                      <v-list-item-title>{{data.item.medname}}&nbsp;&nbsp;&nbsp;&nbsp;{{data.item.alias}}</v-list-item-title>
+                      <v-list-item-subtitle>
+                        价钱：{{data.item.sellprice}}&nbsp;&nbsp;&nbsp;&nbsp;库存：{{data.item.inventoryNm}}&nbsp;&nbsp;&nbsp;&nbsp;规格：{{data.item.spec}}
+                      </v-list-item-subtitle>
                     </v-list-item-content>
                   </template>
                 </template>
@@ -259,12 +261,16 @@
       },
 
       test: function(queryText){
+        if(!queryText)
+          return;
         //this.components = this.componentsAfter;
         if(queryText.length >= 2){
-          this.components = this.componentsAfter;
+          if(this.components.length == 0){
+            this.components = this.componentsAfter;
+          }
         }else{
           this.components = [];
-        }        
+        }
       },
 
       radioChanged: function(){
@@ -284,7 +290,7 @@
       },
 
       customFilter (item, queryText, itemText) {
-        const textOne = item.toLowerCase();
+        const textOne = item.alias;
         return textOne.indexOf(queryText) > -1;
       },
     }

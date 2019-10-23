@@ -38,7 +38,7 @@ CREATE TABLE `myDbs_ordlist` (
   `patient_id` smallint(5) unsigned,
   `medtype` varchar(20) NOT NULL,
   `dose` smallint(5) NOT NULL DEFAULT '0',
-  `medarray` varchar(100) NOT NULL,
+  `medarray` varchar(100) NOT NULL DEFAULT '',
   `total` float(10) NOT NULL DEFAULT '0',
   `date` date,
   PRIMARY KEY (`id`)
