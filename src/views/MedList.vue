@@ -189,8 +189,8 @@
           value.toString().indexOf(search) !== -1
       },
 
-      // 获取全部数据
-    	getAll: function() {
+      // 根据类型获取药品数据
+      getAll: function() {
         this.loading = true;
         this.$http.get('/api/getAllMedbyType',{
           params: {

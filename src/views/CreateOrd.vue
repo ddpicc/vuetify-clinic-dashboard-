@@ -20,8 +20,8 @@
                 <div class="px-3">
                   <div class="title font-weight-light mb-2">
                     <v-radio-group v-model="medRadio" :mandatory="false" row @change="radioChanged">
-                      <v-radio label="免煎" value="免煎" color="grey darken-1"></v-radio>
                       <v-radio label="草药" value="草药" color="grey darken-1"></v-radio>
+                      <v-radio label="免煎" value="免煎" color="grey darken-1"></v-radio>
                       <v-radio label="西药" value="西药" color="grey darken-1"></v-radio>
                     </v-radio-group>
                   </div>
@@ -127,7 +127,7 @@
             :items="items"
             item-key="name"
             :search="searchStr"
-            :custom-filter="filterOnlyCapsText"
+            :custom-filter="filterText"
             hide-default-footer
           >
           <template v-slot:top>
@@ -146,7 +146,17 @@
                   ref="mark1"
                   @keyup.enter.native="moveFocusToDose"
                   @update:search-input="test"
+                  item-text="alias"
+                  item-value="alias"
                 >
+                <template v-slot:item="data">
+                  <template>
+                    <v-list-item-content>
+                      <v-list-item-title v-html="data.item.medname"></v-list-item-title>
+                      <v-list-item-subtitle v-html="data.item.alias"></v-list-item-subtitle>
+                    </v-list-item-content>
+                  </template>
+                </template>
                 </v-autocomplete>
               </v-col>
               <v-col v-if="!howToUseOn" sm="6" md="6">
@@ -196,6 +206,13 @@
 </template>
 
 <script>
+
+  var staticHeader=[{text: '名称', value: 'name1'}, {text: '数量', value: 'count1'}, {text: '名称', value: 'name2'}, {text: '数量', value: 'count2'}, 
+                 {text: '名称', value: 'name3'}, {text: '数量', value: 'count3'}, {text: '名称', value: 'name4'}, {text: '数量', value: 'count4'}];
+
+  var xiyaoHeader=[{text: '名称', value: 'name1'}, {text: '数量', value: 'count1'}, {text: '用量', value: 'usage1'}, {text: '名称', value: 'name2'}, 
+                 {text: '数量', value: 'count2'}, {text: '用量', value: 'usage2'}];
+
   export default {
     data: () => ({
       direction: 'bottom',
@@ -205,96 +222,40 @@
       sexItems: ['男', '女'],
       howToUseOn: false,
       hotToUse: ['一天一次', '一天三次'],
-      medRadio: '免煎',
+      medRadio: '草药',
       cardColor: 'green',
-      componentsAfter: [
-          'Autocompletes', 'Comboboxes', 'Forms', 'Inputs', 'Overflow Buttons', 'Selects', 'Selection Controls', 'Sliders', 'Textareas', 'Text Fields',
-      ],
+      componentsAfter: [],
       components: [],
-      headers: [
-        {
-          sortable: false,
-          text: 'Name',
-          value: 'name'
-        },
-        {
-          sortable: false,
-          text: 'Country',
-          value: 'country'
-        },
-        {
-          sortable: false,
-          text: 'City',
-          value: 'city'
-        },
-        {
-          sortable: false,
-          text: 'Salary',
-          value: 'salary',
-          align: 'right'
-        }
-      ],
-      items: [
-        {
-          name: 'Dakota Rice',
-          country: 'Niger',
-          city: 'Oud-Tunrhout',
-          salary: '$35,738'
-        },
-        {
-          name: 'Minerva Hooper',
-          country: 'Curaçao',
-          city: 'Sinaai-Waas',
-          salary: '$23,738'
-        }, {
-          name: 'Sage Rodriguez',
-          country: 'Netherlands',
-          city: 'Overland Park',
-          salary: '$56,142'
-        }, {
-          name: 'Philip Chanley',
-          country: 'Korea, South',
-          city: 'Gloucester',
-          salary: '$38,735'
-        }, {
-          name: 'Doris Greene',
-          country: 'Malawi',
-          city: 'Feldkirchen in Kārnten',
-          salary: '$63,542'
-        }, {
-          name: 'Mason Porter',
-          country: 'Chile',
-          city: 'Gloucester',
-          salary: '$78,615'
-        },{
-          name: 'Minerva Hooper',
-          country: 'Curaçao',
-          city: 'Sinaai-Waas',
-          salary: '$23,738'
-        }, {
-          name: 'Sage Rodriguez',
-          country: 'Netherlands',
-          city: 'Overland Park',
-          salary: '$56,142'
-        }, {
-          name: 'Philip Chanley',
-          country: 'Korea, South',
-          city: 'Gloucester',
-          salary: '$38,735'
-        }
-      ]
+      headers: staticHeader,
+      items: [],
+      cacheMedData: []
     }),
 
     methods: {
-      filterOnlyCapsText (value, search, item) {
+      //搜索
+      filterText (value, search, item) {
         return value != null &&
           search != null &&
           typeof value === 'string' &&
-          value.toString().toLocaleUpperCase().indexOf(search) !== -1
+          value.toString().indexOf(search) !== -1
       },
 
       moveFocusToDose: function(){
         this.$refs.mark2.$el.querySelector('input').focus();
+      },
+
+      // 根据类型获取药品数据
+      getAll: function() {
+        this.loading = true;
+        this.$http.get('/api/getAllMedbyType',{
+          params: {
+						medtype : this.medRadio
+					}
+        }).then( (res) => {
+          this.cacheMedData = res.data;
+          this.componentsAfter = res.data;
+          this.loading = false;
+        })
       },
 
       test: function(queryText){
@@ -307,12 +268,18 @@
       },
 
       radioChanged: function(){
+        this.getAll();
         if(this.medRadio == "西药"){
           this.howToUseOn = true;
           this.cardColor = 'blue lighten-2';
+          this.headers = xiyaoHeader;
 				}else{
           this.howToUseOn = false;
-          this.cardColor = 'green';
+          this.headers = staticHeader;
+          if(this.medRadio == "免煎")
+            this.cardColor = 'lime darken-2';
+          else
+            this.cardColor = 'green';
 				}					
       },
 

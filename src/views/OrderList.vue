@@ -59,11 +59,16 @@
            <template v-if="selectEnabled" v-slot:body.append="{ headers }">
             <tr>
               <td :colspan="headers.length-2">
-                This is an appended row
               </td>
-              <td :colspan="2">
-                This
+              <td :colspan="1" align="right">
+                <v-btn text small>确认</v-btn>
+                
               </td>
+              <td :colspan="1" align="left">
+                <v-btn text small>取消</v-btn>
+                
+              </td>
+              
             </tr>
           </template>
           <template v-slot:item.medtype="{ item }">
@@ -128,7 +133,7 @@
       },
 
       // 获取全部数据
-    	getAll: function() {
+      getAll: function() {
         this.loading = true;
         this.$http.get('/api/getAllOrd').then( (res) => {
           this.items = res.data;
