@@ -56,7 +56,7 @@
               mdi-close
             </v-icon>
           </template>
-           <template v-if="selectEnabled" v-slot:body.append="{ headers }">
+          <template v-if="selectEnabled" v-slot:body.append="{ headers }">
             <tr>
               <td :colspan="headers.length-2">
               </td>

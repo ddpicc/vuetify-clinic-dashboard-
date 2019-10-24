@@ -13,7 +13,7 @@
               align="center"
             >
               <v-col 
-              sm="4" md="4"             
+              sm="4" md="3"             
               justify="center"
               align="center"
               >
@@ -39,19 +39,19 @@
                   align="left"
                   dense
                   >
-                    <v-col sm="3" md="3">
-                      <v-text-field
+                    <v-col sm="4" md="3">
+                      <v-text-field v-model="patientName"
                         label="姓名"
                       ></v-text-field>
                     </v-col>
-                    <v-col sm="3" md="3">
-                      <v-select
+                    <v-col sm="4" md="3">
+                      <v-select v-model="patientSex"
                         :items="sexItems"
                         label="性别"
                       ></v-select>
                     </v-col>
                     <v-col sm="3" md="3">
-                      <v-text-field
+                      <v-text-field v-model="patientAge"
                         label="年龄"
                       ></v-text-field>
                     </v-col>
@@ -110,8 +110,13 @@
                   align="left"
                   dense
                   >
-                    <v-col sm="9" md="9">
-                      <v-text-field
+                    <v-col sm="4" md="4">
+                      <v-text-field v-model="patientPhone"
+                        label="电话"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col sm="5" md="5">
+                      <v-text-field v-model="patientSymptom"
                         label="症状"
                       ></v-text-field>
                     </v-col>
@@ -187,20 +192,49 @@
             </v-row>
           </template>
           <template v-slot:item.name="props">
-        <v-edit-dialog
-          :return-value.sync="props.item.name"
-        > {{ props.item.name }}
-          <template v-slot:input>
-            <v-autocomplete
-              label="Components"
-              :items="components"
-              dense
-              clearable
-            ></v-autocomplete>
+            <v-edit-dialog
+              :return-value.sync="props.item.name"
+            > {{ props.item.name }}
+              <template v-slot:input>
+                <v-autocomplete
+                  label="Components"
+                  :items="components"
+                  dense
+                  clearable
+                ></v-autocomplete>
+              </template>
+            </v-edit-dialog>
           </template>
-        </v-edit-dialog>
-      </template>
+          <template v-slot:body.append="{ headers }">
+            <tr>
+              <td :colspan="headers.length-2">
+              </td>
+              <td :colspan="2" align="right">
+                每付价钱: {{perOrdTotal}}元
+              </td>
+            </tr>
+          </template>
           </v-data-table>
+          <div class="text-center pt-2">
+            <v-row>
+              <v-col sm="5" md="6"></v-col>
+              <v-col sm="5" md="4">
+                <v-text-field dense v-model="patientSymptom"
+                  label="处方备注" placeholder="备注"
+                ></v-text-field>
+              </v-col>
+              <v-col sm="1" md="1">
+                <v-text-field dense v-model="patientSymptom"
+                  label="几付" placeholder="几付"
+                ></v-text-field>
+              </v-col>
+              <v-col sm="1" md="1">
+                <v-text-field dense v-model="patientSymptom"
+                label="总价 ："
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </div>
         </material-card>
       </v-col>
     </v-row>
@@ -209,11 +243,11 @@
 
 <script>
 
-  var staticHeader=[{text: '名称', value: 'name1'}, {text: '数量', value: 'count1'}, {text: '名称', value: 'name2'}, {text: '数量', value: 'count2'}, 
-                 {text: '名称', value: 'name3'}, {text: '数量', value: 'count3'}, {text: '名称', value: 'name4'}, {text: '数量', value: 'count4'}];
+  var staticHeader=[{sortable: false, text: '名称', value: 'name1'}, {sortable: false,text: '数量', value: 'count1'}, {sortable: false,text: '名称', value: 'name2'}, {sortable: false,text: '数量', value: 'count2'}, 
+                 {sortable: false,text: '名称', value: 'name3'}, {sortable: false,text: '数量', value: 'count3'}, {sortable: false,text: '名称', value: 'name4'}, {sortable: false,text: '数量', value: 'count4'}];
 
-  var xiyaoHeader=[{text: '名称', value: 'name1'}, {text: '数量', value: 'count1'}, {text: '用量', value: 'usage1'}, {text: '名称', value: 'name2'}, 
-                 {text: '数量', value: 'count2'}, {text: '用量', value: 'usage2'}];
+  var xiyaoHeader=[{sortable: false,text: '名称', value: 'name1'}, {sortable: false,text: '数量', value: 'count1'}, {sortable: false,text: '用量', value: 'usage1'}, {sortable: false,text: '名称', value: 'name2'}, 
+                 {sortable: false,text: '数量', value: 'count2'}, {sortable: false,text: '用量', value: 'usage2'}];
 
   export default {
     data: () => ({
@@ -222,6 +256,12 @@
       searchStr: '',
       transition: 'slide-y-reverse-transition',
       sexItems: ['男', '女'],
+      patientName: '',
+			patientAge: '',
+      patientSex: '',
+      patientPhone: '',
+      patientSymptom: '',
+      perOrdTotal: 0,
       howToUseOn: false,
       hotToUse: ['一天一次', '一天三次'],
       medRadio: '草药',

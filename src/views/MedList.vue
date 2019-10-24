@@ -66,45 +66,38 @@
           <v-dialog v-model="adddialog" persistent max-width="600px">
             <v-card>
               <v-card-title>
-                <span class="headline">User Profile</span>
+                <span class="headline">新增药品</span>
               </v-card-title>
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field label="Legal first name*" required></v-text-field>
+                    <v-col cols="12" sm="4" md="6">
+                      <v-text-field label="名称*" required></v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field label="Legal middle name" hint="example of helper text only on focus"></v-text-field>
+                    <v-col cols="12" sm="4" md="6">
+                      <v-text-field label="别名*" hint="别名将会用在快速搜索"></v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field
-                        label="Legal last name*"
-                        hint="example of persistent helper text"
-                        persistent-hint
-                        required
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-text-field label="Email*" required></v-text-field>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-text-field label="Password*" type="password" required></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6">
+                    <v-col cols="12" sm="4" md="4">
                       <v-select
-                        :items="['0-17', '18-29', '30-54', '54+']"
-                        label="Age*"
-                        required
+                        :items="medTypeItems"
+                        label="类别"
                       ></v-select>
                     </v-col>
-                    <v-col cols="12" sm="6">
-                      <v-autocomplete
-                        :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
-                        label="Interests"
-                        multiple
-                      ></v-autocomplete>
+                    <v-col cols="12" sm="4" md="4">
+                      <v-text-field label="袋/盒"></v-text-field>
                     </v-col>
+                    <v-col cols="12" sm="4" md="4">
+                      <v-text-field label="数量"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="4" md="4">
+                      <v-text-field label="进价"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="4" md="4">
+                      <v-text-field label="零售价"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="4" md="4">
+                      <v-switch v-model="checked" color="blue" label="库存监测"></v-switch>
+                    </v-col>                    
                   </v-row>
                 </v-container>
                 <small>*indicates required field</small>
