@@ -286,6 +286,11 @@
         this.$refs.mark2.$el.querySelector('input').focus();
       },
 
+      //得到焦点的时候高亮文字
+      focus(event) {
+        event.currentTarget.select();
+			},
+
       // 根据类型获取药品数据
       getAll: function() {
         this.loading = true;

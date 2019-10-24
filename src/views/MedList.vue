@@ -72,40 +72,43 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" sm="4" md="6">
-                      <v-text-field label="名称*" required></v-text-field>
+                      <v-text-field label="名称*" v-model="dialogMedName" required></v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="4" md="6">
-                      <v-text-field label="别名*" hint="别名将会用在快速搜索"></v-text-field>
+                    <v-col cols="12" sm="4" md="3">
+                      <v-text-field label="别名*" v-model="dialogAlias" hint="别名将会用在快速搜索"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="4" md="3">
+                      <v-text-field label="规格" v-model="dialogSpec" ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="4" md="4">
-                      <v-select
+                      <v-select v-model="dialogMedRadio" 
                         :items="medTypeItems"
                         label="类别"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" sm="4" md="4">
-                      <v-text-field label="袋/盒"></v-text-field>
+                      <v-text-field label="袋/盒" v-model="dialogBagPerBox"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="4" md="4">
-                      <v-text-field label="数量"></v-text-field>
+                      <v-text-field label="数量" v-model="dialogInventoryNm"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="4" md="4">
-                      <v-text-field label="进价"></v-text-field>
+                      <v-text-field label="进价" v-model="dialogBaseprice"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="4" md="4">
-                      <v-text-field label="零售价"></v-text-field>
+                      <v-text-field label="零售价" v-model="dialogSellprice"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="4" md="4">
-                      <v-switch v-model="checked" color="blue" label="库存监测"></v-switch>
+                      <v-switch v-model="dialogChecked" color="blue" label="库存监测"></v-switch>
                     </v-col>                    
                   </v-row>
                 </v-container>
-                <small>*indicates required field</small>
+                <small>*表示选项是必填的</small>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="adddialog = false">Close</v-btn>
-                <v-btn color="blue darken-1" text @click="adddialog = false">Save</v-btn>
+                <v-btn color="blue darken-1" text @click="adddialog = false">取消</v-btn>
+                <v-btn color="blue darken-1" text @click="adddialog = false">保存</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -120,6 +123,7 @@
     data: () => ({
       searchStr: '',
       medRadio: '草药',
+      medTypeItems: ['草药','煎药','西药'],
       adddialog: false,
       loading: false,
       cardColor: 'green',
@@ -170,7 +174,16 @@
           value: 'action',
         },
       ],
-      items: []
+      items: [],
+      dialogMedName: "",
+      dialogAlias: "",
+      dialogSpec: "",
+      dialogMedRadio: "草药",
+      dialogBagPerBox: "",
+      dialogInventoryNm: "",
+      dialogBaseprice: "",
+      dialogSellprice: "",
+      dialogChecked: "",
     }),
 
     methods: {
