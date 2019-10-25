@@ -152,7 +152,8 @@
                   @keyup.enter.native="moveFocusToDose"
                   @update:search-input="test"
                   item-text="medname"
-                  item-value="alias"
+                  item-value="medname"
+                  v-model="inputMed"
                 >
                 <template v-slot:item="data">
                   <template>
@@ -266,11 +267,11 @@
       hotToUse: ['一天一次', '一天三次'],
       medRadio: '草药',
       cardColor: 'green',
-      componentsAfter: [],
       components: [],
       headers: staticHeader,
       items: [],
-      cacheMedData: []
+      cacheMedData: [],
+      inputMed: ''
     }),
 
     methods: {
@@ -283,6 +284,7 @@
       },
 
       moveFocusToDose: function(){
+        alert(this.inputMed);
         this.$refs.mark2.$el.querySelector('input').focus();
       },
 
@@ -300,18 +302,18 @@
 					}
         }).then( (res) => {
           this.cacheMedData = res.data;
-          this.componentsAfter = res.data;
           this.loading = false;
         })
       },
 
       test: function(queryText){
-        if(!queryText)
+        if(!queryText){
+          this.components = [];
           return;
-        //this.components = this.componentsAfter;
+        }
         if(queryText.length >= 2){
           if(this.components.length == 0){
-            this.components = this.componentsAfter;
+            this.components = this.cacheMedData;
           }
         }else{
           this.components = [];

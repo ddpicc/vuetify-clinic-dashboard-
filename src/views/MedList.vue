@@ -27,7 +27,7 @@
               top
               right
               color="amber"
-              @click="adddialog = true"
+              @click="addMedShow"
             >
               <v-icon>mdi-plus</v-icon>
             </v-btn>
@@ -48,13 +48,13 @@
             <v-icon
               small
               class="mr-2"
-              @click="editItem(item)"
+              @click="editItem(item.id)"
             >
               mdi-pencil
             </v-icon>
             <v-icon
               small
-              @click="deleteItem(item)"
+              @click="deleteItem(item.id)"
             >
               mdi-close
             </v-icon>
@@ -66,7 +66,7 @@
           <v-dialog v-model="adddialog" persistent max-width="600px">
             <v-card>
               <v-card-title>
-                <span class="headline">新增药品</span>
+                <span class="headline">{{dialogTitle}}</span>
               </v-card-title>
               <v-card-text>
                 <v-container>
@@ -127,6 +127,7 @@
       adddialog: false,
       loading: false,
       cardColor: 'green',
+      dialogTitle: '',
       headers: [
         {
           sortable: false,
@@ -223,6 +224,16 @@
       backTop() {
         document.body.scrollTop = 0
         document.documentElement.scrollTop = 0
+      },
+
+      addMedShow: function(){
+        this.adddialog = true;
+        this.dialogTitle = "新增药品";
+      },
+
+      editItem: function(item){
+        this.adddialog = true;
+        this.dialogTitle = "修改药品";
       }
     },
 
