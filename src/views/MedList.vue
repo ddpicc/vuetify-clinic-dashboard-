@@ -48,7 +48,7 @@
             <v-icon
               small
               class="mr-2"
-              @click="editItem(item.id)"
+              @click="editItem(item)"
             >
               mdi-pencil
             </v-icon>
@@ -107,8 +107,8 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="adddialog = false">取消</v-btn>
-                <v-btn color="blue darken-1" text @click="adddialog = false">保存</v-btn>
+                <v-btn color="blue darken-1" text @click="cancelDialog">取消</v-btn>
+                <v-btn color="blue darken-1" text @click="saveDialog">保存</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -123,7 +123,7 @@
     data: () => ({
       searchStr: '',
       medRadio: '草药',
-      medTypeItems: ['草药','煎药','西药'],
+      medTypeItems: ['草药','免煎','西药'],
       adddialog: false,
       loading: false,
       cardColor: 'green',
@@ -234,6 +234,37 @@
       editItem: function(item){
         this.adddialog = true;
         this.dialogTitle = "修改药品";
+        this.dialogMedName = item.medname;
+        this.dialogAlias = item.alias;
+        this.dialogSpec = item.spec;
+        this.dialogMedRadio = this.medRadio;
+        this.dialogBagPerBox = item.bagperbox;
+        this.dialogInventoryNm = item.inventoryNm;
+        this.dialogBaseprice = item.baseprice;
+        this.dialogSellprice = item.sellprice;
+        this.dialogChecked = item.checked;
+      },
+
+      clearVariable: function(){
+        this.dialogMedName = '';
+        this.dialogAlias = '';
+        this.dialogSpec = '';
+        this.dialogMedRadio = '草药';
+        this.dialogBagPerBox = '';
+        this.dialogInventoryNm = '';
+        this.dialogBaseprice = '';
+        this.dialogSellprice = '';
+        this.dialogChecked = '';
+      },
+
+      cancelDialog: function(){
+        this.clearVariable();
+        this.adddialog = false;
+      },
+
+      saveDialog: function(){
+        this.adddialog = false;
+        this.clearVariable();
       }
     },
 

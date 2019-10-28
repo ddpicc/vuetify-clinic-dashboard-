@@ -4,19 +4,12 @@
     fluid
     grid-list-xl
   >
-    <v-row justify="center">
+    <v-row align="center">
       <v-col cols="12" >
         <material-card flat full-width :color=cardColor>
           <template v-slot:header>
-            <v-row 
-              justify="center"
-              align="center"
-            >
-              <v-col 
-              sm="4" md="3"             
-              justify="center"
-              align="center"
-              >
+            <v-row align="center">
+              <v-col sm="4" md="3">
                 <div class="px-3">
                   <div class="title font-weight-light mb-2">
                     <v-radio-group v-model="medRadio" :mandatory="false" row @change="radioChanged">
@@ -34,11 +27,7 @@
               ></v-divider>
               <v-col>
                 <v-container>
-                  <v-row 
-                  justify="left"
-                  align="left"
-                  dense
-                  >
+                  <v-row dense>
                     <v-col sm="4" md="3">
                       <v-text-field v-model="patientName"
                         label="姓名"
@@ -106,8 +95,6 @@
                     </v-col>
                   </v-row>
                   <v-row 
-                  justify="left"
-                  align="left"
                   dense
                   >
                     <v-col sm="4" md="4">
@@ -123,9 +110,7 @@
                   </v-row>
                 </v-container>
               </v-col>
-            </v-row>
-          
-            
+            </v-row>           
           </template>
           <v-data-table
             :headers="headers"
@@ -137,8 +122,6 @@
           >
           <template v-slot:top>
             <v-row 
-            justify="left"
-            align="left"
             dense
             >
               <v-col sm="6" md="6">
@@ -154,6 +137,8 @@
                   item-text="medname"
                   item-value="medname"
                   v-model="inputMed"
+                  @focus="focus($event)"
+                  @blur="whenblur"
                 >
                 <template v-slot:item="data">
                   <template>
@@ -307,17 +292,23 @@
       },
 
       test: function(queryText){
-        if(!queryText){
-          this.components = [];
-          return;
+        if(queryText===null){
+          //alert(queryText);
+          //this.components = [];
+          //return;
         }
-        if(queryText.length >= 2){
+        else if(queryText.length >= 2){
+          alert(queryText);
           if(this.components.length == 0){
             this.components = this.cacheMedData;
           }
         }else{
           this.components = [];
         }
+      },
+
+      whenblur: function(){
+        alert('kkk');
       },
 
       radioChanged: function(){
@@ -340,7 +331,11 @@
         const textOne = item.alias;
         return textOne.indexOf(queryText) > -1;
       },
-    }
+    },
+
+    mounted: function() {
+			this.getAll();
+    },
 
     
   }
