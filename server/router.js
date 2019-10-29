@@ -18,4 +18,8 @@ router.get('/getAllOrd', (req, res, next) => {
   api.getAllOrd(req, res, next);
 });
 
+router.post('/updateMedbyId', (req, res, next) => {
+  api.updateMedbyId(req, res, next);
+});
+
 module.exports = router;

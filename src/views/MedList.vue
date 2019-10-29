@@ -185,6 +185,7 @@
       dialogBaseprice: "",
       dialogSellprice: "",
       dialogChecked: "",
+      dialogMedId: ""
     }),
 
     methods: {
@@ -243,6 +244,7 @@
         this.dialogBaseprice = item.baseprice;
         this.dialogSellprice = item.sellprice;
         this.dialogChecked = item.checked;
+        this.dialogMedId = item.id;
       },
 
       clearVariable: function(){
@@ -263,6 +265,26 @@
       },
 
       saveDialog: function(){
+        if(this.dialogTitle === "修改药品"){
+          this.$http.post('/api/updateMedbyId',{
+            data: {
+              medname : this.dialogMedName,
+              alias : this.dialogAlias,
+              spec : this.dialogSpec,
+              medtype : this.dialogMedRadio,
+              bagperbox : this.dialogBagPerBox,
+              inventoryNm : this.dialogInventoryNm,
+              baseprice : this.dialogBaseprice,
+              sellprice : this.dialogSellprice,
+              checked : this.dialogChecked,
+              id: this.dialogMedId
+            }
+          }).then( (res) => {
+            
+          })
+        }else if(this.dialogTitle === "新增药品"){
+          alert('xinzeng');
+        }
         this.adddialog = false;
         this.clearVariable();
       }

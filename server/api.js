@@ -46,6 +46,22 @@ module.exports = {
     })
   },
 
+  updateMedbyId(req, res, next) {
+    console.log(req.data);
+    var medname = req.data.medname,alias = req.body.alias;
+    var spec = req.body.spec, medtype = req.body.medtype;
+    var bagperbox = req.body.bagperbox, inventoryNm = req.body.inventoryNm;
+    var baseprice = req.body.baseprice, sellprice = req.body.sellprice;
+    var checked = req.body.checked, id = req.body.id;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.updateMedbyId;
+      connection.query(sql, [medname,alias,spec,medtype,bagperbox,inventoryNm,baseprice,sellprice,checked,id], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
   getAllOrd(req, res, next) {
     pool.getConnection((err, connection) => {
       var sql = sqlMap.getAllOrd;

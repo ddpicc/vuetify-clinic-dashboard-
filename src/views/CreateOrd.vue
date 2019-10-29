@@ -197,7 +197,7 @@
                   :items="components"
                   item-text="medname"
                   item-value="medname"
-                  clearable
+                  
                 ></v-autocomplete>
               </template>
             </v-edit-dialog>
@@ -269,7 +269,8 @@
       cacheMedData: [],
       orderMed1PerObj: [],
       inputMed: '',
-      medString: ''
+      medString: '',
+      inTableChanged: false
     }),
 
     methods: {
@@ -425,7 +426,7 @@
       },
 
       save: function(str){
-        alert(str);
+        this.inTableChanged = !this.inTableChanged;
       },
 
       checkAlert: function(){
@@ -440,6 +441,12 @@
       orderMed1PerObj: function(){
         //alert("changed");
       },
+
+      inTableChanged: function(){
+        alert('changed something');
+        alert(this.inputMed);
+        alert(JSON.stringify(this.items));
+      }
 
       //items: function(){
       //  alert("changed");
