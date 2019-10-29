@@ -71,6 +71,7 @@
                           fab
                           dark
                           small
+                          @click="checkAlert"
                           color="green"
                         >
                           <v-icon>mdi-pencil</v-icon>
@@ -126,19 +127,18 @@
             >
               <v-col sm="6" md="6">
                 <v-autocomplete
-                  label="Components"
+                  label="药品"
                   :items="components"
                   :filter="customFilter"
                   dense
                   clearable
                   ref="mark1"
                   @keyup.enter.native="moveFocusToDose"
-                  @update:search-input="test"
+                  @update:search-input="searchChanged"
                   item-text="medname"
                   item-value="medname"
                   v-model="inputMed"
                   @focus="focus($event)"
-                  @blur="whenblur"
                 >
                 <template v-slot:item="data">
                   <template>
@@ -154,13 +154,16 @@
               </v-col>
               <v-col v-if="!howToUseOn" sm="6" md="6">
                 <v-text-field
+                  v-model="inputDose"
                   label="剂量"
                   dense
                   ref="mark2"
+                  @keyup.enter.native="postToTb"
                 ></v-text-field>
               </v-col>
               <v-col v-if="howToUseOn" sm="3" md="3">
                 <v-text-field
+                  v-model="inputDose"
                   label="剂量"
                   dense
                   ref="mark2"
@@ -172,20 +175,28 @@
                   :items="hotToUse"
                   dense
                   clearable
+                  ref="mark3"
                   label="用法用量"
                 ></v-select>
               </v-col>
             </v-row>
           </template>
-          <template v-slot:item.name="props">
+          <template v-slot:item.name1="props">
             <v-edit-dialog
-              :return-value.sync="props.item.name"
-            > {{ props.item.name }}
+              :return-value.sync="props.item.name1"
+              large
+              persistent
+              @save="save(props.item.name1)"
+              @cancel="cancel"
+            >
+              <div>{{ props.item.name1 }}</div>
               <template v-slot:input>
                 <v-autocomplete
-                  label="Components"
+                  v-model="props.item.name1"
+                  label="药品"
                   :items="components"
-                  dense
+                  item-text="medname"
+                  item-value="medname"
                   clearable
                 ></v-autocomplete>
               </template>
@@ -256,7 +267,9 @@
       headers: staticHeader,
       items: [],
       cacheMedData: [],
-      inputMed: ''
+      orderMed1PerObj: [],
+      inputMed: '',
+      medString: ''
     }),
 
     methods: {
@@ -266,11 +279,6 @@
           search != null &&
           typeof value === 'string' &&
           value.toString().indexOf(search) !== -1
-      },
-
-      moveFocusToDose: function(){
-        alert(this.inputMed);
-        this.$refs.mark2.$el.querySelector('input').focus();
       },
 
       //得到焦点的时候高亮文字
@@ -291,26 +299,6 @@
         })
       },
 
-      test: function(queryText){
-        if(queryText===null){
-          //alert(queryText);
-          //this.components = [];
-          //return;
-        }
-        else if(queryText.length >= 2){
-          alert(queryText);
-          if(this.components.length == 0){
-            this.components = this.cacheMedData;
-          }
-        }else{
-          this.components = [];
-        }
-      },
-
-      whenblur: function(){
-        alert('kkk');
-      },
-
       radioChanged: function(){
         this.getAll();
         if(this.medRadio == "西药"){
@@ -327,10 +315,141 @@
 				}					
       },
 
-      customFilter (item, queryText, itemText) {
-        const textOne = item.alias;
-        return textOne.indexOf(queryText) > -1;
+      searchChanged: function(queryText){
+        if(!queryText){
+          //alert(queryText);
+          //this.components = [{"medname":"empty"}];
+          //return;
+        }
+        else if(queryText.length >= 2){
+          if(this.components.length == 0){
+            this.components = this.cacheMedData;
+          }
+        }else{
+          this.components = [];
+        }
       },
+
+      customFilter (item, queryText, itemText) {
+        const hasValue = val => val != null ? val : '';
+        //const text = hasValue(itemText);
+        const query = hasValue(queryText);
+
+        if(queryText.length < 2) return false;
+        const textOne = item.alias.toString().toLowerCase();
+        return textOne.indexOf(query.toString().toLowerCase()) > -1;
+      },
+
+      moveFocusToDose: function(){
+        let searchStr = this.inputMed;
+        if(searchStr === ""){
+          alert("不能为空");
+          return;
+        }
+        
+        //check if already exist in table
+        let existInTable = this.orderMed1PerObj.find(function(p){
+            return p.name === searchStr;
+        });
+        if(typeof(existInTable)!="undefined"){
+            alert("不能重复添加药品");
+            return;
+        }
+        
+				this.$refs.mark2.$el.querySelector('input').focus();
+      },
+
+      //medString = [{"name":"xx","count":"xx"},{"name":"xx","count":"xx"}....]
+      disPlayToTb: function(){
+        //this.orderMed1PerObj = JSON.parse(this.medString);
+        this.items = [];
+				var emptyStr = "{";
+				var carry = 4;
+				if(this.medRadio == "西药")
+					carry = 2;
+				for(var i=0; i < this.orderMed1PerObj.length; i++){
+					let tempStrName = "name" + (i%carry+1);
+					let tempStrNumber = 'count' + (i%carry+1);
+					let tempStrMedComment = 'medComment' + (i%carry+1);
+					if(this.medRadio == "草药")
+						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + parseInt(this.orderMed1PerObj[i].count) + '克",';
+					else if(this.medRadio == "免煎")
+						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + this.orderMed1PerObj[i].count + '",';
+					else if(this.medRadio == "西药")
+						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + parseInt(this.orderMed1PerObj[i].count) + '盒","' + tempStrMedComment + '":"' + this.orderMed1PerObj[i].medComment + '",';
+					if(i>0 && (i+1) % carry == 0){
+						emptyStr = emptyStr.substr(0,emptyStr.length-1);
+						emptyStr = emptyStr + '}';
+						let tempObj = JSON.parse(emptyStr);
+						this.items.push(tempObj);
+						emptyStr = "{";
+					}
+				}
+				if( i%carry != 0){
+					emptyStr = emptyStr.substr(0,emptyStr.length-1);
+					emptyStr = emptyStr + '}';
+					let tempObj = JSON.parse(emptyStr);
+					this.items.push(tempObj);
+				}
+      },
+
+      postToTb: function(){
+        let searchStr = this.inputMed;
+        if(searchStr === ""){
+          alert("不能为空");
+          this.$refs.mark1.$el.querySelector('input').focus();
+          return;
+				}
+				
+				if(this.inputDose === "" || this.inputDose === "0"){
+          alert("药品数量不能为空");
+          this.$refs.mark.$el.querySelector('input').focus();
+          return;
+        }
+        
+        //check if already exist in table
+        let existInTable = this.orderMed1PerObj.find(function(p){
+            return p.name === searchStr;
+        });
+        if(typeof(existInTable)!="undefined"){
+            alert("不能重复添加药品");
+            this.$refs.mark1.$el.querySelector('input').focus();
+            return;
+				}
+        this.orderMed1PerObj.push({
+						name: this.inputMed,
+						count: this.inputDose,
+          })
+        this.disPlayToTb();
+        this.$refs.mark1.$el.querySelector('input').focus();
+      },
+
+      save: function(str){
+        alert(str);
+      },
+
+      checkAlert: function(){
+        alert(JSON.stringify(this.items));
+      },
+      cancel: function(){
+
+      },
+    },
+
+    watch: {
+      orderMed1PerObj: function(){
+        //alert("changed");
+      },
+
+      //items: function(){
+      //  alert("changed");
+      //},
+    },
+
+    computed: {
+      items: function(){
+        alert('changedsfag');
+      }
     },
 
     mounted: function() {
