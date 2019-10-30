@@ -47,8 +47,8 @@ module.exports = {
   },
 
   updateMedbyId(req, res, next) {
-    console.log(req.data);
-    var medname = req.data.medname,alias = req.body.alias;
+    console.log(req.body);
+    var medname = req.body.medname,alias = req.body.alias;
     var spec = req.body.spec, medtype = req.body.medtype;
     var bagperbox = req.body.bagperbox, inventoryNm = req.body.inventoryNm;
     var baseprice = req.body.baseprice, sellprice = req.body.sellprice;

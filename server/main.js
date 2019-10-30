@@ -1,6 +1,10 @@
 const routerApi = require('./router');
 const express = require('express');
+const bodyParser = require("body-parser")
 const app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.all("*",(req,res,next) => {
     res.header("Access-Control-Allow-Credentials", "ture");

@@ -112,6 +112,29 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <v-snackbar
+            v-model="snackbar"
+            color="grey"
+            :timeout="3000"
+            top
+            dark
+          >
+            <v-icon
+              color="white"
+              class="mr-3"
+            >
+              mdi-bell-plus
+            </v-icon>
+            <div>Welcome to a beautiful freebie for every web developer.</div>
+            <v-btn
+              icon
+              @click="snackbar = false"
+            >
+              <v-icon>
+                mdi-close-circle
+              </v-icon>
+            </v-btn>
+          </v-snackbar>
         </material-card>
       </v-col>
     </v-row>
@@ -128,6 +151,7 @@
       loading: false,
       cardColor: 'green',
       dialogTitle: '',
+      snackbar: true,
       headers: [
         {
           sortable: false,
@@ -266,8 +290,7 @@
 
       saveDialog: function(){
         if(this.dialogTitle === "修改药品"){
-          this.$http.post('/api/updateMedbyId',{
-            data: {
+          this.$http.post('/api/updateMedbyId',{            
               medname : this.dialogMedName,
               alias : this.dialogAlias,
               spec : this.dialogSpec,
@@ -277,8 +300,7 @@
               baseprice : this.dialogBaseprice,
               sellprice : this.dialogSellprice,
               checked : this.dialogChecked,
-              id: this.dialogMedId
-            }
+              id: this.dialogMedId            
           }).then( (res) => {
             
           })
