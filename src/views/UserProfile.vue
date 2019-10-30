@@ -53,10 +53,9 @@
                 </v-col>
 
                 <v-col cols="12">
-                  <v-textarea
+                  <v-text-field
                     class="purple-input"
                     label="备  注"
-                    value="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                   />
                 </v-col>
 

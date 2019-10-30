@@ -181,24 +181,21 @@
               </v-col>
             </v-row>
           </template>
-          <template v-slot:item.name1="props">
+          <template v-slot:item.count1="props">
             <v-edit-dialog
-              :return-value.sync="props.item.name1"
+              :return-value.sync="props.item.count1"
               large
               persistent
-              @save="save(props.item.name1)"
+              @save="save(props.item.count1)"
               @cancel="cancel"
             >
-              <div>{{ props.item.name1 }}</div>
+              <div>{{ props.item.count1 }}</div>
               <template v-slot:input>
-                <v-autocomplete
-                  v-model="props.item.name1"
-                  label="药品"
-                  :items="components"
-                  item-text="medname"
-                  item-value="medname"
-                  
-                ></v-autocomplete>
+                <v-text-field
+                  v-model="props.item.count1"
+                  label="Edit"
+                  single-line
+                ></v-text-field>
               </template>
             </v-edit-dialog>
           </template>
@@ -211,22 +208,25 @@
               </td>
             </tr>
           </template>
+          <template v-slot:item.name1="{ item }">
+            <v-chip :color="getColor(item.count1)" dark>{{ item.name1 }}</v-chip>
+          </template>
           </v-data-table>
           <div class="text-center pt-2">
             <v-row>
               <v-col sm="5" md="6"></v-col>
               <v-col sm="5" md="4">
-                <v-text-field dense v-model="patientSymptom"
+                <v-text-field dense v-model="orderComment"
                   label="处方备注" placeholder="备注"
                 ></v-text-field>
               </v-col>
               <v-col sm="1" md="1">
-                <v-text-field dense v-model="patientSymptom"
+                <v-text-field dense v-model="orderCount"
                   label="几付" placeholder="几付"
                 ></v-text-field>
               </v-col>
               <v-col sm="1" md="1">
-                <v-text-field dense v-model="patientSymptom"
+                <v-text-field dense v-model="total"
                 label="总价 ："
                 ></v-text-field>
               </v-col>
@@ -259,6 +259,10 @@
       patientPhone: '',
       patientSymptom: '',
       perOrdTotal: 0,
+      perOrdBase: 0,
+      orderComment: '',
+      orderCount: 0,
+      total: '',
       howToUseOn: false,
       hotToUse: ['一天一次', '一天三次'],
       medRadio: '草药',
@@ -314,6 +318,10 @@
           else
             this.cardColor = 'green';
 				}					
+      },
+
+      getColor (count) {
+        if (count === '1') return 'lime darken-2';
       },
 
       searchChanged: function(queryText){
@@ -407,6 +415,10 @@
           this.$refs.mark.$el.querySelector('input').focus();
           return;
         }
+
+        let existInDb = this.cacheMedData.find(function(p){
+            return p.medname === searchStr;
+        });
         
         //check if already exist in table
         let existInTable = this.orderMed1PerObj.find(function(p){
@@ -419,13 +431,16 @@
 				}
         this.orderMed1PerObj.push({
 						name: this.inputMed,
-						count: this.inputDose,
+            count: this.inputDose,
+            baseprice: existInDb.baseprice,
+						sellprice: existInDb.sellprice
           })
         this.disPlayToTb();
         this.$refs.mark1.$el.querySelector('input').focus();
       },
 
       save: function(str){
+        alert(str);
         this.inTableChanged = !this.inTableChanged;
       },
 
@@ -439,24 +454,38 @@
 
     watch: {
       orderMed1PerObj: function(){
-        //alert("changed");
+        this.perOrdBase = 0;
+        this.perOrdTotal = 0;
+        for(let item of this.orderMed1PerObj) {
+          let basePriceOfMed = item.baseprice;
+          let sellPriceOfMed = item.sellprice;
+          let medDose = parseInt(item.count);
+          this.perOrdBase = parseFloat((this.perOrdBase + parseFloat((basePriceOfMed*medDose).toFixed(2))).toFixed(2));
+          this.perOrdTotal = parseFloat((this.perOrdTotal + parseFloat((sellPriceOfMed*medDose).toFixed(2))).toFixed(2));
+          let temp = (this.perOrdTotal * this.orderCount).toFixed(2);
+          temp += ' 元';
+          this.total = temp;
+        }
+      },
+
+      orderCount: function(val) {
+        if(val != ''){
+          this.orderCount = val;
+        }
+        let temp = (this.perOrdTotal * this.orderCount).toFixed(2);
+        temp += ' 元';
+        this.total = temp;
       },
 
       inTableChanged: function(){
-        alert('changed something');
-        alert(this.inputMed);
+        /* alert('changed something');
+        alert(this.inputMed); */
         alert(JSON.stringify(this.items));
       }
 
       //items: function(){
       //  alert("changed");
       //},
-    },
-
-    computed: {
-      items: function(){
-        alert('changedsfag');
-      }
     },
 
     mounted: function() {
