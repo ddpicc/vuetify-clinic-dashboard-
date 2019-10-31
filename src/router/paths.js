@@ -30,10 +30,6 @@ export default [
     view: 'CreateOrd'
   },
   {
-    path: '/icons',
-    view: 'Icons'
-  },
-  {
     path: '/notifications',
     view: 'Notifications'
   },
@@ -46,5 +42,10 @@ export default [
     path: '/settings',
     name: 'Setting',
     view: 'Setting'
+  },
+  {
+    path: '/patient-list',
+    name: '病人管理',
+    view: 'PatientList'
   },
 ]

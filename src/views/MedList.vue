@@ -114,7 +114,7 @@
           </v-dialog>
           <v-snackbar
             v-model="snackbar"
-            color="grey"
+            :color="snackbarColor"
             :timeout="3000"
             top
             dark
@@ -125,7 +125,7 @@
             >
               mdi-bell-plus
             </v-icon>
-            <div>Welcome to a beautiful freebie for every web developer.</div>
+            {{notification}}
             <v-btn
               icon
               @click="snackbar = false"
@@ -151,7 +151,9 @@
       loading: false,
       cardColor: 'green',
       dialogTitle: '',
-      snackbar: true,
+      snackbar: false,
+      snackbarColor: '',
+      notification: '',
       headers: [
         {
           sortable: false,
@@ -302,13 +304,31 @@
               checked : this.dialogChecked,
               id: this.dialogMedId            
           }).then( (res) => {
-            
+            this.snackbar = true;
+            this.notification = '修改成功';
+            this.snackbarColor = 'green';
+            this.getAll();
           })
         }else if(this.dialogTitle === "新增药品"){
-          alert('xinzeng');
+          this.$http.post('/api/updateMedbyId',{            
+              medname : this.dialogMedName,
+              alias : this.dialogAlias,
+              spec : this.dialogSpec,
+              medtype : this.dialogMedRadio,
+              bagperbox : this.dialogBagPerBox,
+              inventoryNm : this.dialogInventoryNm,
+              baseprice : this.dialogBaseprice,
+              sellprice : this.dialogSellprice,
+              checked : this.dialogChecked,           
+          }).then( (res) => {
+            this.snackbar = true;
+            this.notification = '增加成功';
+            this.snackbarColor = 'green';
+            this.getAll();
+          })
         }
         this.adddialog = false;
-        this.clearVariable();
+        this.clearVariable();        
       }
     },
 

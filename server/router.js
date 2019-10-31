@@ -2,14 +2,6 @@ const express = require('express');
 const router = express.Router();
 const api = require('./api');
 
-router.get('/getValue', (req, res, next) => {
-  api.getValue(req, res, next);
-});
-
-router.post('/setValue', (req, res, next) => {
-  api.setValue(req, res, next);
-});
-
 router.get('/getAllMedbyType', (req, res, next) => {
   api.getAllMedbyType(req, res, next);
 });
@@ -20,6 +12,10 @@ router.get('/getAllOrd', (req, res, next) => {
 
 router.post('/updateMedbyId', (req, res, next) => {
   api.updateMedbyId(req, res, next);
+});
+
+router.post('/insertMed', (req, res, next) => {
+  api.insertMed(req, res, next);
 });
 
 module.exports = router;

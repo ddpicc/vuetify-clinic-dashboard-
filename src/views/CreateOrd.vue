@@ -186,13 +186,14 @@
               :return-value.sync="props.item.count1"
               large
               persistent
-              @save="save(props.item.count1)"
+              @save="save"
               @cancel="cancel"
             >
               <div>{{ props.item.count1 }}</div>
               <template v-slot:input>
                 <v-text-field
                   v-model="props.item.count1"
+                  :rules="[notzero]"
                   label="Edit"
                   single-line
                 ></v-text-field>
@@ -209,7 +210,16 @@
             </tr>
           </template>
           <template v-slot:item.name1="{ item }">
-            <v-chip :color="getColor(item.count1)" dark>{{ item.name1 }}</v-chip>
+            <v-chip v-if="item.name1" :color="getColor(item.count1)" outlined close @click:close="deleteMed(item.name1)">{{ item.name1 }}</v-chip>
+          </template>
+          <template v-slot:item.name2="{ item }">
+            <v-chip v-if="item.name2" :color="getColor(item.count2)" close outlined @click:close="deleteMed(item.name2)">{{ item.name2 }}</v-chip>
+          </template>
+          <template v-slot:item.name3="{ item }">
+            <v-chip v-if="item.name3" :color="getColor(item.count3)" close outlined @click:close="deleteMed(item.name3)">{{ item.name3 }}</v-chip>
+          </template>
+          <template v-slot:item.name4="{ item }">
+            <v-chip v-if="item.name4" :color="getColor(item.count4)" close outlined @click:close="deleteMed(item.name4)">{{ item.name4 }}</v-chip>
           </template>
           </v-data-table>
           <div class="text-center pt-2">
@@ -240,8 +250,8 @@
 
 <script>
 
-  var staticHeader=[{sortable: false, text: '名称', value: 'name1'}, {sortable: false,text: '数量', value: 'count1'}, {sortable: false,text: '名称', value: 'name2'}, {sortable: false,text: '数量', value: 'count2'}, 
-                 {sortable: false,text: '名称', value: 'name3'}, {sortable: false,text: '数量', value: 'count3'}, {sortable: false,text: '名称', value: 'name4'}, {sortable: false,text: '数量', value: 'count4'}];
+  var staticHeader=[{sortable: false, text: '名称', value: 'name1', width: '15%'}, {sortable: false,text: '数量', value: 'count1', width: '10%'}, {sortable: false,text: '名称', value: 'name2', width: '15%'}, {sortable: false,text: '数量', value: 'count2', width: '10%'}, 
+                 {sortable: false,text: '名称', value: 'name3', width: '15%'}, {sortable: false,text: '数量', value: 'count3', width: '10%'}, {sortable: false,text: '名称', value: 'name4', width: '15%'}, {sortable: false,text: '数量', value: 'count4', width: '10%'}];
 
   var xiyaoHeader=[{sortable: false,text: '名称', value: 'name1'}, {sortable: false,text: '数量', value: 'count1'}, {sortable: false,text: '用量', value: 'usage1'}, {sortable: false,text: '名称', value: 'name2'}, 
                  {sortable: false,text: '数量', value: 'count2'}, {sortable: false,text: '用量', value: 'usage2'}];
@@ -274,7 +284,8 @@
       orderMed1PerObj: [],
       inputMed: '',
       medString: '',
-      inTableChanged: false
+      inTableChanged: false,
+      notzero: v=> v > 0 || '不能是0'
     }),
 
     methods: {
@@ -439,8 +450,7 @@
         this.$refs.mark1.$el.querySelector('input').focus();
       },
 
-      save: function(str){
-        alert(str);
+      save: function(){
         this.inTableChanged = !this.inTableChanged;
       },
 
@@ -449,6 +459,15 @@
       },
       cancel: function(){
 
+      },
+
+      deleteMed(deleteMed) {
+        let existInTable = this.orderMed1PerObj.find(function(p){
+            return p.name === deleteMed;
+        });
+        var index = this.orderMed1PerObj.indexOf(existInTable);
+        this.orderMed1PerObj.splice(index, 1);
+        this.disPlayToTb();
       },
     },
 

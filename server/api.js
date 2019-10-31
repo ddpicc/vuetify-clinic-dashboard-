@@ -12,29 +12,6 @@ const pool = mysql.createPool({
 });
 
 module.exports = {
-  getValue(req, res, next) {
-    var id = req.query.id;
-    pool.getConnection((err, connection) => {
-      var sql = sqlMap.getValue;
-      connection.query(sql, [id], (err, result) => {
-          res.json(result);
-          connection.release();
-      })
-    })
-  },
-
-  setValue(req, res, next) {
-    console.log(req.body);
-    var id = req.body.id, name = req.body.name;
-    pool.getConnection((err, connection) => {
-      var sql = sqlMap.setValue;
-      connection.query(sql, [name, id], (err, result) => {
-          res.json(result);
-          connection.release();
-      })
-    })
-  },
-
   getAllMedbyType(req, res, next) {
     var medtype = req.query.medtype;
     pool.getConnection((err, connection) => {
@@ -47,7 +24,6 @@ module.exports = {
   },
 
   updateMedbyId(req, res, next) {
-    console.log(req.body);
     var medname = req.body.medname,alias = req.body.alias;
     var spec = req.body.spec, medtype = req.body.medtype;
     var bagperbox = req.body.bagperbox, inventoryNm = req.body.inventoryNm;
@@ -56,6 +32,21 @@ module.exports = {
     pool.getConnection((err, connection) => {
       var sql = sqlMap.updateMedbyId;
       connection.query(sql, [medname,alias,spec,medtype,bagperbox,inventoryNm,baseprice,sellprice,checked,id], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
+  insertMed(req, res, next) {
+    var medname = req.body.medname,alias = req.body.alias;
+    var spec = req.body.spec, medtype = req.body.medtype;
+    var bagperbox = req.body.bagperbox, inventoryNm = req.body.inventoryNm;
+    var baseprice = req.body.baseprice, sellprice = req.body.sellprice;
+    var checked = req.body.checked;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.insertMed;
+      connection.query(sql, [medname,alias,spec,medtype,bagperbox,inventoryNm,baseprice,sellprice,checked], (err, result) => {
           res.json(result);
           connection.release();
       })

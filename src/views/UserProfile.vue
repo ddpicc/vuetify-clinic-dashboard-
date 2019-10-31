@@ -117,12 +117,7 @@
 
     methods: {
       onClick () {
-        console.log("test server");
-        this.$http.get('/api/getValue', {
-        params: {id: 1}
-        }).then( (res) => {
-        alert(res.data[0].name);
-        })
+        
       },
     }
   }

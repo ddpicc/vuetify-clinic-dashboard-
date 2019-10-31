@@ -51,7 +51,7 @@
       </v-list-item>
     </v-list>
 
-    <template v-slot:append>
+    <!--<template v-slot:append>
       <v-list nav>
         <v-list-item
           to="/upgrade"
@@ -65,7 +65,7 @@
           </v-list-item-title>
         </v-list-item>
       </v-list>
-    </template>
+    </template> -->
   </v-navigation-drawer>
 </template>
 
@@ -97,7 +97,7 @@
         },
         {
           to: '/med-list',
-          icon: 'mdi-clipboard-outline',
+          icon: 'mdi-pill',
           text: '药品管理'
         },
         {
@@ -111,19 +111,19 @@
           text: '生成处方'
         },
         {
-          to: '/icons',
-          icon: 'mdi-chart-bubble',
-          text: 'Icons'
-        },
-        {
           to: '/notifications',
           icon: 'mdi-bell',
           text: 'Notifications'
         },
         {
           to: '/settings',
-          icon: 'mdi-bell',
+          icon: 'mdi-settings',
           text: 'Setting'
+        },
+        {
+          to: '/patient-list',
+          icon: 'mdi-human-male-female',
+          text: '病人管理'
         }
       ]
     }),
