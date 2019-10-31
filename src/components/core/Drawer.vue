@@ -91,11 +91,6 @@
           text: 'Dashboard'
         },
         {
-          to: '/user-profile',
-          icon: 'mdi-account',
-          text: 'User Profile'
-        },
-        {
           to: '/med-list',
           icon: 'mdi-pill',
           text: '药品管理'

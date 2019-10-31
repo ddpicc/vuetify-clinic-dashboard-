@@ -63,5 +63,15 @@ module.exports = {
     })
   },
 
+  getAllPatient(req, res, next) {
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.getAllPatient;
+      connection.query(sql, [], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
   
 }

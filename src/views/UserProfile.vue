@@ -16,53 +16,49 @@
           <v-form>
             <v-container class="py-0">
               <v-row>
-                <v-col
-                  cols="12"
-                >
+                <v-col cols="12" md="4">
                   <v-text-field
                     class="purple-input"
-                    label="姓  名"
+                    label="姓名"
                   />
                 </v-col>
-
-                <v-col
-                  cols="12"
-                  md="6"
-                >
+                <v-col cols="12" md="4">
+                  <v-select v-model="patientSex"
+                    :items="sexItems"
+                    label="性别"
+                  ></v-select>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-text-field
+                    class="purple-input"
+                    label="年龄"
+                  />
+                </v-col>
+                <v-col cols="12" md="6">
                   <v-text-field
                     label="电  话"
                     class="purple-input"
                   />
                 </v-col>
-
-                <v-col
-                  cols="12"
-                  md="6"
-                >
+                <v-col cols="12" md="6">
                   <v-text-field
                     label="微  信"
                     class="purple-input"
                   />
                 </v-col>
-
                 <v-col cols="12">
                   <v-text-field
                     label="城  市"
                     class="purple-input"
                   />
                 </v-col>
-
                 <v-col cols="12">
                   <v-text-field
                     class="purple-input"
                     label="备  注"
                   />
                 </v-col>
-
-                <v-col
-                  cols="12"
-                  class="text-right"
-                >
+                <v-col cols="12" class="text-right">
                   <v-btn color="blue" @click.stop="onClick">
                     Update Profiled
                   </v-btn>
@@ -112,13 +108,17 @@
 <script>
   export default {
     data: () => ({
-
+      patientId: ''
     }),
 
     methods: {
       onClick () {
         
       },
+    },
+
+    created() {
+      this.patientId = this.$route.params.pt_id;
     }
   }
 </script>

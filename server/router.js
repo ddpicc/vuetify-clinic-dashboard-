@@ -18,4 +18,8 @@ router.post('/insertMed', (req, res, next) => {
   api.insertMed(req, res, next);
 });
 
+router.get('/getAllPatient', (req, res, next) => {
+  api.getAllPatient(req, res, next);
+});
+
 module.exports = router;

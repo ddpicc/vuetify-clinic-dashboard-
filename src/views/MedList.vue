@@ -256,6 +256,7 @@
       addMedShow: function(){
         this.adddialog = true;
         this.dialogTitle = "新增药品";
+        this.dialogMedRadio = this.medRadio;
       },
 
       editItem: function(item){

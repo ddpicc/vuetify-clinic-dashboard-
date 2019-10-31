@@ -25,7 +25,7 @@
             <v-text-field v-model="searchStr" label="搜索..." class="mx-4"></v-text-field>
           </template>
           <template v-slot:item.action="{ item }">
-            <v-btn @click.stop="jumpDetail" text color="green">
+            <v-btn @click.stop="jumpDetail(item.id)" text color="green">
       				<v-icon left>mdi-account-card-details</v-icon> 详情
     				</v-btn>
           </template>
@@ -43,26 +43,18 @@
   export default {
     data: () => ({
       searchStr: '',
-      medRadio: '草药',
-      medTypeItems: ['草药','免煎','西药'],
-      adddialog: false,
       loading: false,
-      cardColor: 'green',
-      dialogTitle: '',
-      snackbar: false,
-      snackbarColor: '',
-      notification: '',
       headers: [
         {
           sortable: false,
           text: '姓名',
-					value: 'medname',
+					value: 'name',
 					width: '25%'
         },
         {
           sortable: false,
           text: '年龄',
-					value: 'alias',
+					value: 'age',
 					width: '10%'
         },
         {
@@ -84,17 +76,7 @@
 					width: '20%'
         },
       ],
-      items: [],
-      dialogMedName: "",
-      dialogAlias: "",
-      dialogSpec: "",
-      dialogMedRadio: "草药",
-      dialogBagPerBox: "",
-      dialogInventoryNm: "",
-      dialogBaseprice: "",
-      dialogSellprice: "",
-      dialogChecked: "",
-      dialogMedId: ""
+      items: []
     }),
 
     methods: {
@@ -109,11 +91,7 @@
       // 根据类型获取药品数据
       getAll: function() {
         this.loading = true;
-        this.$http.get('/api/getAllMedbyType',{
-          params: {
-						medtype : this.medRadio
-					}
-        }).then( (res) => {
+        this.$http.get('/api/getAllPatient').then( (res) => {
           this.items = res.data;
           this.loading = false;
         })
@@ -124,8 +102,8 @@
         document.documentElement.scrollTop = 0
 			},
 			
-			jumpDetail: function(){
-				this.$router.push({ path: '/user-profile' });
+			jumpDetail: function(id){
+        this.$router.push({name: 'User Profile', params: {pt_id: id}});
 			}
     },
 
