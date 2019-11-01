@@ -61,7 +61,7 @@
           </template>
           </v-data-table>
           <div class="text-center pt-2">
-            <v-btn block color="green" dark class="mr-2" @click="backTop">回到顶部</v-btn>
+            <v-btn block :color=cardColor dark class="mr-2" @click="backTop">回到顶部</v-btn>
           </div>
           <v-dialog v-model="adddialog" persistent max-width="600px">
             <v-card>

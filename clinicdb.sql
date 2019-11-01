@@ -19,7 +19,7 @@ CREATE TABLE `myDbs_medlist` (
   `alias` varchar(20) NOT NULL,
   `medtype` varchar(20) NOT NULL,
   `spec` varchar(20),
-  `bagperbox` varchar(20),
+  `bagperbox` smallint(5) NOT NULL DEFAULT '0',
   `inventoryNm` smallint(5) NOT NULL DEFAULT '0',
   `baseprice` float(10) NOT NULL DEFAULT '0',
   `sellprice` float(10) NOT NULL DEFAULT '0',
@@ -55,6 +55,9 @@ CREATE TABLE `myDbs_patient` (
   `sex` smallint(5) NOT NULL DEFAULT '0',
   `age` smallint(5),
   `address` varchar(20),
+  `phone` int(10),
+  `wechat` varchar(20),
+  `lastVisit` date,
   `comment` varchar(255),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;

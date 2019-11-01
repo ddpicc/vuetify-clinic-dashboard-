@@ -47,52 +47,17 @@
                     <v-col cols="1.5"></v-col>
                     <v-col sm="1.5" md="1.5"
                     align="right">
-                      <v-speed-dial
-                          v-model="fab"
-                          bottom
-                          right
-                          small
-                          :direction="direction"
-                          open-on-hover
-                          :transition="transition"
-                        >
-                        <template v-slot:activator>
-                          <v-btn
-                            v-model="fab"
-                            color="amber"
-                            dark
-                            fab
-                          >
-                            <v-icon v-if="fab">mdi-close</v-icon>
-                            <v-icon v-else>mdi-account-circle</v-icon>
-                          </v-btn>
-                        </template>
-                        <v-btn
-                          fab
-                          dark
-                          small
-                          @click="checkAlert"
-                          color="green"
-                        >
-                          <v-icon>mdi-pencil</v-icon>
-                        </v-btn>
-                        <v-btn
-                          fab
-                          dark
-                          small
-                          color="indigo"
-                        >
-                          <v-icon>mdi-plus</v-icon>
-                        </v-btn>
-                        <v-btn
-                          fab
-                          dark
-                          small
-                          color="red"
-                        >
-                          <v-icon>mdi-delete</v-icon>
-                        </v-btn>
-                      </v-speed-dial>
+                      <v-btn
+                        absolute
+                        dark
+                        fab
+                        top
+                        right
+                        color="amber"
+                        @click="outToDB"
+                      >
+                        <v-icon>mdi-plus</v-icon>
+                      </v-btn>
                     </v-col>
                   </v-row>
                   <v-row 
@@ -271,7 +236,7 @@
       perOrdTotal: 0,
       perOrdBase: 0,
       orderComment: '',
-      orderCount: 0,
+      orderCount: '',
       total: '',
       howToUseOn: false,
       hotToUse: ['一天一次', '一天三次'],
@@ -283,6 +248,7 @@
       cacheMedData: [],
       orderMed1PerObj: [],
       inputMed: '',
+      inputDose: '',
       medString: '',
       inTableChanged: false,
       notzero: v=> v > 0 || '不能是0'
@@ -332,7 +298,7 @@
       },
 
       getColor (count) {
-        if (count === '1') return 'lime darken-2';
+        if (parseInt(count) === 1 && this.medRadio == "草药") return 'orange';
       },
 
       searchChanged: function(queryText){
@@ -352,7 +318,6 @@
 
       customFilter (item, queryText, itemText) {
         const hasValue = val => val != null ? val : '';
-        //const text = hasValue(itemText);
         const query = hasValue(queryText);
 
         if(queryText.length < 2) return false;
@@ -392,9 +357,9 @@
 					let tempStrNumber = 'count' + (i%carry+1);
 					let tempStrMedComment = 'medComment' + (i%carry+1);
 					if(this.medRadio == "草药")
-						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + parseInt(this.orderMed1PerObj[i].count) + '克",';
+						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + parseInt(this.orderMed1PerObj[i].count) + this.orderMed1PerObj[i].spec + '",';
 					else if(this.medRadio == "免煎")
-						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + this.orderMed1PerObj[i].count + '",';
+						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + this.orderMed1PerObj[i].count + this.orderMed1PerObj[i].spec + '",';
 					else if(this.medRadio == "西药")
 						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + parseInt(this.orderMed1PerObj[i].count) + '盒","' + tempStrMedComment + '":"' + this.orderMed1PerObj[i].medComment + '",';
 					if(i>0 && (i+1) % carry == 0){
@@ -443,10 +408,14 @@
         this.orderMed1PerObj.push({
 						name: this.inputMed,
             count: this.inputDose,
+            spec: existInDb.spec,
             baseprice: existInDb.baseprice,
 						sellprice: existInDb.sellprice
           })
         this.disPlayToTb();
+        if(this.orderCount === '')
+          this.orderCount = 1;
+        this.inputDose = 1;
         this.$refs.mark1.$el.querySelector('input').focus();
       },
 
@@ -475,6 +444,8 @@
       orderMed1PerObj: function(){
         this.perOrdBase = 0;
         this.perOrdTotal = 0;
+        if(this.orderMed1PerObj.length === 0)
+          this.orderCount = '';
         for(let item of this.orderMed1PerObj) {
           let basePriceOfMed = item.baseprice;
           let sellPriceOfMed = item.sellprice;

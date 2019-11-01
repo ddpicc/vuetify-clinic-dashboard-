@@ -72,6 +72,7 @@
                 <v-list-item-title v-text="notification" />
               </v-list-item>
             </v-list>
+            <v-btn block color="blue-grey" dark class="mb-3">全部删除</v-btn>
           </v-card>
         </v-menu>
 

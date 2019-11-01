@@ -20,7 +20,7 @@
 
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>名称 <v-icon small @click.stop="canEdit = !canEdit">mdi-pencil</v-icon> </v-list-item-title>                
+                <v-list-item-title>更改名称 <v-icon small @click.stop="canEdit = !canEdit">mdi-pencil</v-icon> </v-list-item-title>                
               </v-list-item-content>
               <v-list-item-action>
                 <v-text-field
@@ -33,7 +33,7 @@
 
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>密码 <v-icon small @click.stop="canEditPass = !canEditPass">mdi-pencil</v-icon> </v-list-item-title>
+                <v-list-item-title>更改密码<v-icon small @click.stop="canEditPass = !canEditPass">mdi-pencil</v-icon> </v-list-item-title>
               </v-list-item-content>
               <v-list-item-action>
                 <v-text-field
@@ -49,15 +49,14 @@
               </v-list-item-action>
             </v-list-item>
 
-            <v-list-item>
-              
+            <v-list-item>              
               <v-list-item-content>
-                    <v-list-item-title>Notifications</v-list-item-title>
-                    
-                  </v-list-item-content>
+                <v-list-item-title>更改图标</v-list-item-title>                    
+              </v-list-item-content>
               <v-list-item-action>
                 <v-file-input
                   :rules="[rules.fileSize]"
+                  dense
                   accept="image/png, image/jpeg, image/bmp"
                   placeholder="上传logo"
                   prepend-icon="mdi-camera"
