@@ -8,6 +8,7 @@ const pool = mysql.createPool({
   password: dbConfig.mysql.password,
   database: dbConfig.mysql.database,
   port: dbConfig.mysql.port,
+  dateStrings: true,   //强制日期类型(TIMESTAMP, DATETIME, DATE)以字符串返回，而不是一javascript Date对象返回.
   multipleStatements: true    // 多语句查询
 });
 
@@ -47,6 +48,17 @@ module.exports = {
     pool.getConnection((err, connection) => {
       var sql = sqlMap.insertMed;
       connection.query(sql, [medname,alias,spec,medtype,bagperbox,inventoryNm,baseprice,sellprice,checked], (err, result) => {
+        res.json(result);
+          connection.release();
+      })
+    })
+  },
+
+  deleteMedbyId(req, res, next) {
+    var id = req.query.id;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.deleteMedbyId;
+      connection.query(sql, [id], (err, result) => {
           res.json(result);
           connection.release();
       })
@@ -63,10 +75,52 @@ module.exports = {
     })
   },
 
+  insertOrd(req, res, next) {
+    var patient = req.body.patient,patient_id = req.body.patient_id;
+    var medtype = req.body.medtype, dose = req.body.dose;
+    var medarray = req.body.medarray, total = req.body.total;
+    var date = req.body.date;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.insertOrd;
+      connection.query(sql, [patient,patient_id,medtype,dose,medarray,total,date], (err, result) => {
+        console.log(err);  
+        res.json(result);
+          connection.release();
+      })
+    })
+  },
+
   getAllPatient(req, res, next) {
     pool.getConnection((err, connection) => {
       var sql = sqlMap.getAllPatient;
       connection.query(sql, [], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
+  insertPatientOrderPage(req, res, next) {
+    var name = req.body.name,sex = req.body.sex;
+    var age = req.body.age, phone = req.body.phone;
+    var lastVisit = req.body.lastVisit;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.insertPatientOrderPage;
+      connection.query(sql, [name,sex,age,phone,lastVisit], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
+  insertPatientDetailPage(req, res, next) {
+    var name = req.body.name,sex = req.body.sex;
+    var age = req.body.age, address = req.body.address;
+    var phone = req.body.phone, wechat = req.body.totwechatal;
+    var lastVisit = req.body.lastVisit, comment = req.body.comment;;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.insertPatientDetailPage;
+      connection.query(sql, [name,sex,age,address,phone,wechat,lastVisit,comment], (err, result) => {
           res.json(result);
           connection.release();
       })

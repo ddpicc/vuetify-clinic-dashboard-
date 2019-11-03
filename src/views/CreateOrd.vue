@@ -54,7 +54,7 @@
                         top
                         right
                         color="amber"
-                        @click="outToDB"
+                        @click="postOrdToDbSure"
                       >
                         <v-icon>mdi-plus</v-icon>
                       </v-btn>
@@ -417,6 +417,46 @@
           this.orderCount = 1;
         this.inputDose = 1;
         this.$refs.mark1.$el.querySelector('input').focus();
+      },
+
+      //获取当前时间，格式YYYY-MM-DD
+      getNowFormatDate() {
+				var date = new Date();
+				var seperator1 = "/";
+				var year = date.getFullYear();  //年
+				var month = date.getMonth() + 1;   //月
+				var strDate = date.getDate();   //日
+				if (month >= 1 && month <= 9) {
+					month = "0" + month;
+				}
+				if (strDate >= 0 && strDate <= 9) {
+					strDate = "0" + strDate;
+				}
+				var currentdate = year + seperator1 + month + seperator1 + strDate;
+				return currentdate;
+      },
+
+      postOrdToDbSure:function() {
+        if(this.items.length == 0){
+          alert('订单为空');
+          return;
+        }
+        if(this.patientName == ''){
+          alert('姓名不能为空');
+          return;
+        }
+        this.$http.post('/api/insertOrd',{            
+              patient : this.patientName,
+              patient_id : 888,
+              medtype : this.medRadio,
+              dose : this.orderCount,
+              medarray : JSON.stringify(this.items),
+              total : parseInt(this.total),
+              date : this.getNowFormatDate(),          
+          }).then( (res) => {
+            
+        })
+        
       },
 
       save: function(){

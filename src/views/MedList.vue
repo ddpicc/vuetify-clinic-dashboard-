@@ -36,7 +36,7 @@
             :headers="headers"
             :items="items"
             item-key="name"
-            :items-per-page="5"
+            :items-per-page="15"
             :search="searchStr"
             :custom-filter="filterText"
             loading="loading"
@@ -210,7 +210,7 @@
       dialogInventoryNm: "",
       dialogBaseprice: "",
       dialogSellprice: "",
-      dialogChecked: "",
+      dialogChecked: 0,
       dialogMedId: ""
     }),
 
@@ -311,7 +311,7 @@
             this.getAll();
           })
         }else if(this.dialogTitle === "新增药品"){
-          this.$http.post('/api/updateMedbyId',{            
+          this.$http.post('/api/insertMed',{            
               medname : this.dialogMedName,
               alias : this.dialogAlias,
               spec : this.dialogSpec,
@@ -322,6 +322,7 @@
               sellprice : this.dialogSellprice,
               checked : this.dialogChecked,           
           }).then( (res) => {
+            //alert(res.data.insertId);
             this.snackbar = true;
             this.notification = '增加成功';
             this.snackbarColor = 'green';
@@ -330,6 +331,19 @@
         }
         this.adddialog = false;
         this.clearVariable();        
+      },
+
+      deleteItem(medId){
+        this.$http.delete('/api/deleteMedbyId',{
+          params: {
+						id : medId
+					}
+        }).then( (res) => {
+          this.snackbar = true;
+          this.notification = '删除成功';
+          this.snackbarColor = 'green';
+          this.getAll();
+        })
       }
     },
 
