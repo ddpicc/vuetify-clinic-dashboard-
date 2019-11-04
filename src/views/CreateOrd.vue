@@ -151,7 +151,7 @@
               :return-value.sync="props.item.count1"
               large
               persistent
-              @save="save"
+              @save="save(props.item.count1)"
               @cancel="cancel"
             >
               <div>{{ props.item.count1 }}</div>
@@ -459,11 +459,13 @@
         
       },
 
-      save: function(){
+      save: function(str){
+        if(str === "")
+          alert(str);
         this.inTableChanged = !this.inTableChanged;
       },
 
-      checkAlert: function(){
+      checkTable: function(){
         alert(JSON.stringify(this.items));
       },
       cancel: function(){

@@ -24,7 +24,7 @@
               color="amber"
               @click="outDbEnable"
             >
-              <v-icon>mdi-plus</v-icon>
+              <v-icon>mdi-send</v-icon>
             </v-btn>
           </template>
           <v-data-table
@@ -33,7 +33,7 @@
             :headers="headers"
             :items="items"
             item-key="name"
-            :items-per-page="5"
+            :items-per-page="15"
             :search="searchStr"
             :custom-filter="filterText"
             loading="loading"
