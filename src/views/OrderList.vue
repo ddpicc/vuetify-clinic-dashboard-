@@ -27,12 +27,16 @@
               <v-icon>mdi-send</v-icon>
             </v-btn>
           </template>
+          <!--  need a key of id -->
           <v-data-table
             v-model="selected"
             :show-select="selectEnabled"
             :headers="headers"
             :items="items"
-            item-key="name"
+            item-key="id"
+            show-expand
+            single-expand
+            :expanded.sync="expanded"
             :items-per-page="15"
             :search="searchStr"
             :custom-filter="filterText"
@@ -71,6 +75,9 @@
           <template v-slot:item.medtype="{ item }">
             <v-chip :color="getColor(item.medtype)" dark>{{ item.medtype }}</v-chip>
           </template>
+          <template v-slot:expanded-item="{ headers }">
+            <td :colspan="headers.length">Peek-a-boo!</td>
+          </template>
           </v-data-table>
         </material-card>
       </v-col>
@@ -85,7 +92,10 @@
       selected: [],
       selectEnabled: false,
       loading: false,
+      expanded: [],
       headers: [
+        { text: '', value: 'data-table-expand' },
+        { text: '序号', value: 'id' },
         {
           sortable: false,
           text: '名字',
