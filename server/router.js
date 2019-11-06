@@ -34,8 +34,8 @@ router.post('/insertPatientOrderPage', (req, res, next) => {
   api.insertOrd(req, res, next);
 });
 
-router.post('/insertPatientOrderPage', (req, res, next) => {
-  api.insertOrd(req, res, next);
+router.post('/insertPatientDetailPage', (req, res, next) => {
+  api.insertPatientDetailPage(req, res, next);
 });
 
 module.exports = router;

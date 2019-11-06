@@ -86,6 +86,7 @@
 </template>
 
 <script>
+  var pinyin = require("pinyin");
   export default {
     data: () => ({
       searchStr: '',
@@ -133,10 +134,13 @@
     methods: {
       //搜索
       filterText (value, search, item) {
-        return value != null &&
-          search != null &&
-          typeof value === 'string' &&
-          value.toString().indexOf(search) !== -1
+        if(value !=null && search !=null && typeof value === 'string'){
+          if(value.toString().indexOf(search) !== -1 || pinyin(value.toString(),{style: pinyin.STYLE_FIRST_LETTER}).join("").indexOf(search) !== -1){
+            return true;
+          }
+        }else{
+          return false;
+        }
       },
 
       // 获取全部数据
