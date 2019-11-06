@@ -107,8 +107,10 @@ module.exports = {
     pool.getConnection((err, connection) => {
       var sql = sqlMap.insertPatientOrderPage;
       connection.query(sql, [name,sex,age,phone,lastVisit], (err, result) => {
-          res.json(result);
-          connection.release();
+        if(err)
+          console.log(err);
+        res.json(result);
+        connection.release();
       })
     })
   },
@@ -121,8 +123,10 @@ module.exports = {
     pool.getConnection((err, connection) => {
       var sql = sqlMap.insertPatientDetailPage;
       connection.query(sql, [name,sex,age,address,phone,wechat,lastVisit,comment], (err, result) => {
-          res.json(result);
-          connection.release();
+        if(err)
+          console.log(err);
+        res.json(result);
+        connection.release();
       })
     })
   },

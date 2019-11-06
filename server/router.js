@@ -31,7 +31,7 @@ router.get('/getAllPatient', (req, res, next) => {
 });
 
 router.post('/insertPatientOrderPage', (req, res, next) => {
-  api.insertOrd(req, res, next);
+  api.insertPatientOrderPage(req, res, next);
 });
 
 router.post('/insertPatientDetailPage', (req, res, next) => {

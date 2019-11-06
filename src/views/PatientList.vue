@@ -60,7 +60,7 @@
         {
           sortable: false,
           text: '电话',
-					value: 'spec',
+					value: 'phone',
 					width: '20%'
         },
         {

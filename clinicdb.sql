@@ -52,7 +52,7 @@ DROP TABLE IF EXISTS `myDbs_patient`;
 CREATE TABLE `myDbs_patient` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
-  `sex` smallint(5) NOT NULL DEFAULT '0',
+  `sex` varchar(5), NOT NULL DEFAULT '男',
   `age` smallint(5),
   `address` varchar(20),
   `phone` int(10),

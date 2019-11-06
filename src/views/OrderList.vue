@@ -75,8 +75,21 @@
           <template v-slot:item.medtype="{ item }">
             <v-chip :color="getColor(item.medtype)" dark>{{ item.medtype }}</v-chip>
           </template>
-          <template v-slot:expanded-item="{ headers }">
-            <td :colspan="headers.length">Peek-a-boo!</td>
+          <template v-slot:expanded-item="{ item }">
+            <td :colspan="8">
+              <table>
+                <tr>
+                  <td>xingming</td>
+                  <td>nianl</td>
+                </tr>
+                <tr>
+                  <td>xingbie</td>
+                </tr>
+              </table>
+                
+            </td>
+
+              
           </template>
           </v-data-table>
         </material-card>

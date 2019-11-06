@@ -445,17 +445,24 @@
           alert('姓名不能为空');
           return;
         }
-        this.$http.post('/api/insertOrd',{            
-              patient : this.patientName,
-              patient_id : 888,
-              medtype : this.medRadio,
-              dose : this.orderCount,
-              medarray : JSON.stringify(this.items),
-              total : parseInt(this.total),
-              date : this.getNowFormatDate(),          
+        this.$http.post('/api/insertPatientOrderPage',{            
+              name : this.patientName,
+              sex : this.patientSex,
+              age : this.patientAge,
+              phone : this.patientPhone,         
           }).then( (res) => {
-            
-        })
+            this.$http.post('/api/insertOrd',{            
+                  patient : this.patientName,
+                  patient_id : res.data.insertId,
+                  medtype : this.medRadio,
+                  dose : this.orderCount,
+                  medarray : JSON.stringify(this.items),
+                  total : parseInt(this.total),
+                  date : this.getNowFormatDate(),          
+              }).then( (resord) => {
+                
+            })
+          })
         
       },
 
