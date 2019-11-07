@@ -379,8 +379,7 @@
 					let tempObj = JSON.parse(emptyStr);
 					this.items.push(tempObj);
         }
-        this.medString = medStringTmepArray.join("|");
-        alert(this.medString);
+        this.medString = medStringTmepArray.join(";");
       },
 
       postToTb: function(){
@@ -451,6 +450,7 @@
           alert('姓名不能为空');
           return;
         }
+        alert(this.medString);
         this.$http.post('/api/insertPatientOrderPage',{            
               name : this.patientName,
               sex : this.patientSex,

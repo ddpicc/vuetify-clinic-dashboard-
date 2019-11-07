@@ -95,23 +95,41 @@
                   <v-col cols="3">
                     <p>姓名： {{item.patient}}</p>
                   </v-col>
-                  <v-col cols="12">
-                    <p>{{item.medarray}}</p>
-                  </v-col>
                 </v-row>
+                 <v-simple-table>
+                  <template v-slot:default>
+                    <tbody>
+                      <tr>
+                        <td :colspan="6" style="border-bottom:1px solid"><p>姓名： {{item.patient}}</p></td>
+                        <td><p>姓名： {{item.patient}}</p></td>
+                        <td><p>姓名： {{item.patient}}</p></td>
+                      </tr>
+                      <tr v-for="element in item.medarray" :key="element.name">
+                        <td>{{ JSON.parse(element).name1 }}</td>
+                        <td>{{ JSON.parse(element).count1 }}</td>
+                        <td>{{ JSON.parse(element).name2 }}</td>
+                        <td>{{ JSON.parse(element).count2 }}</td>
+                        <td>{{ JSON.parse(element).name3 }}</td>
+                        <td>{{ JSON.parse(element).count3 }}</td>
+                        <td>{{ JSON.parse(element).name4 }}</td>
+                        <td>{{ JSON.parse(element).count4 }}</td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
                 <!--
-                <v-row v-for="element in JSON.parse(item.med)" :key="element.id">
+                <v-row v-for="element in item.medarray" :key="element.id">
                   <v-col>
-                    <div>{{item.name1}}&nbsp;&nbsp;{{item.count1}}</div>
+                    <div>{{JSON.parse(element).name1}}&nbsp;&nbsp;{{JSON.parse(element).count1}}</div>
                   </v-col>
                   <v-col>
-                    <div>{{item.name2}}&nbsp;&nbsp;{{item.count2}}</div>
+                    <div>{{JSON.parse(element).name2}}&nbsp;&nbsp;{{JSON.parse(element).count2}}</div>
                   </v-col>
                   <v-col>
-                    <div>{{item.name3}}&nbsp;&nbsp;{{item.count3}}</div>
+                    <div>{{JSON.parse(element).name3}}&nbsp;&nbsp;{{JSON.parse(element).count3}}</div>
                   </v-col>
                   <v-col>
-                    <div>{{item.name4}}&nbsp;&nbsp;{{item.count4}}</div>
+                    <div>{{JSON.parse(element).name4}}&nbsp;&nbsp;{{item.count4}}</div>
                   </v-col>
                 </v-row>
                 -->
@@ -197,8 +215,7 @@
         this.$http.get('/api/getAllOrd').then( (res) => {
           this.items = res.data;
           for(let element of this.items) {
-            //element.medarray = element.medarray.split("|");
-            //alert(element.medarray);
+            element.medarray = element.medarray.split(";");
           }
           this.loading = false;
         })
