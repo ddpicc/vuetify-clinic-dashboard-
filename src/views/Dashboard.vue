@@ -398,12 +398,20 @@
           </v-tabs-items>
         </material-card>
       </v-col>
+      <v-col
+        cols="12"
+        lg="6"
+      >
+        <TimeLine/>
+      </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import TimeLine from './TimeLine'
   export default {
+    components: {TimeLine},
     data () {
       return {
         dailySalesChart: {

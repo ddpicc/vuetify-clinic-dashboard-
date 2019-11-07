@@ -26,8 +26,8 @@
           </template>
           <template v-slot:item.action="{ item }">
             <v-btn @click.stop="jumpDetail(item.id)" text color="green">
-      				<v-icon left>mdi-account-card-details</v-icon> 详情
-    				</v-btn>
+      		    <v-icon left>mdi-account-card-details</v-icon> 详情
+    			  </v-btn>
           </template>
           </v-data-table>
           <div class="text-center pt-2">

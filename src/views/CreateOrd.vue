@@ -197,12 +197,12 @@
               </v-col>
               <v-col sm="1" md="1">
                 <v-text-field dense v-model="orderCount"
-                  label="几付" placeholder="几付"
+                  label="几付" suffix="付" placeholder=" "
                 ></v-text-field>
               </v-col>
               <v-col sm="1" md="1">
-                <v-text-field dense v-model="total"
-                label="总价 ："
+                <v-text-field dense suffix="元" v-model="total"
+                label="总价" placeholder=" "
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -348,6 +348,7 @@
       disPlayToTb: function(){
         //this.orderMed1PerObj = JSON.parse(this.medString);
         this.items = [];
+        let medStringTmepArray = [];
 				var emptyStr = "{";
 				var carry = 4;
 				if(this.medRadio == "西药")
@@ -365,17 +366,21 @@
 					if(i>0 && (i+1) % carry == 0){
 						emptyStr = emptyStr.substr(0,emptyStr.length-1);
 						emptyStr = emptyStr + '}';
-						let tempObj = JSON.parse(emptyStr);
+            let tempObj = JSON.parse(emptyStr);
+            medStringTmepArray.push(emptyStr);
 						this.items.push(tempObj);
 						emptyStr = "{";
 					}
 				}
 				if( i%carry != 0){
 					emptyStr = emptyStr.substr(0,emptyStr.length-1);
-					emptyStr = emptyStr + '}';
+          emptyStr = emptyStr + '}';
+          medStringTmepArray.push(emptyStr);
 					let tempObj = JSON.parse(emptyStr);
 					this.items.push(tempObj);
-				}
+        }
+        this.medString = medStringTmepArray.join("|");
+        alert(this.medString);
       },
 
       postToTb: function(){
@@ -416,6 +421,7 @@
         if(this.orderCount === '')
           this.orderCount = 1;
         this.inputDose = 1;
+        this.inputMed = '';
         this.$refs.mark1.$el.querySelector('input').focus();
       },
 
@@ -456,7 +462,7 @@
                   patient_id : res.data.insertId,
                   medtype : this.medRadio,
                   dose : this.orderCount,
-                  medarray : JSON.stringify(this.items),
+                  medarray : this.medString,
                   total : parseInt(this.total),
                   date : this.getNowFormatDate(),          
               }).then( (resord) => {

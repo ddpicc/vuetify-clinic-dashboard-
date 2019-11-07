@@ -77,19 +77,54 @@
           </template>
           <template v-slot:expanded-item="{ item }">
             <td :colspan="8">
-              <table>
-                <tr>
-                  <td>xingming</td>
-                  <td>nianl</td>
-                </tr>
-                <tr>
-                  <td>xingbie</td>
-                </tr>
-              </table>
+              <v-btn text small>确认</v-btn>
+              <div>
+                <h4 style="text-align:center;">处  方</h4>
+                <br>
+                <hr style="height:1px;border:none;border-top:1px solid #555555;" />
+                <v-row justify="center">
+                  <v-col cols="3">
+                    <p>姓名： {{item.patient}}</p>
+                  </v-col>
+                  <v-col cols="3">
+                    <p>姓名： {{item.patient}}</p>
+                  </v-col>
+                  <v-col cols="3">
+                    <p>姓名： {{item.patient}}</p>
+                  </v-col>
+                  <v-col cols="3">
+                    <p>姓名： {{item.patient}}</p>
+                  </v-col>
+                  <v-col cols="12">
+                    <p>{{item.medarray}}</p>
+                  </v-col>
+                </v-row>
+                <!--
+                <v-row v-for="element in JSON.parse(item.med)" :key="element.id">
+                  <v-col>
+                    <div>{{item.name1}}&nbsp;&nbsp;{{item.count1}}</div>
+                  </v-col>
+                  <v-col>
+                    <div>{{item.name2}}&nbsp;&nbsp;{{item.count2}}</div>
+                  </v-col>
+                  <v-col>
+                    <div>{{item.name3}}&nbsp;&nbsp;{{item.count3}}</div>
+                  </v-col>
+                  <v-col>
+                    <div>{{item.name4}}&nbsp;&nbsp;{{item.count4}}</div>
+                  </v-col>
+                </v-row>
+                -->
                 
-            </td>
-
+                
               
+
+              </div>
+
+
+
+                
+            </td>              
           </template>
           </v-data-table>
         </material-card>
@@ -161,6 +196,10 @@
         this.loading = true;
         this.$http.get('/api/getAllOrd').then( (res) => {
           this.items = res.data;
+          for(let element of this.items) {
+            //element.medarray = element.medarray.split("|");
+            //alert(element.medarray);
+          }
           this.loading = false;
         })
       },

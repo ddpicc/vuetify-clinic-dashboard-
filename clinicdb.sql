@@ -19,11 +19,11 @@ CREATE TABLE `myDbs_medlist` (
   `alias` varchar(20) NOT NULL,
   `medtype` varchar(20) NOT NULL,
   `spec` varchar(20),
-  `bagperbox` smallint(5) NOT NULL DEFAULT '0',
-  `inventoryNm` smallint(5) NOT NULL DEFAULT '0',
-  `baseprice` float(10) NOT NULL DEFAULT '0',
-  `sellprice` float(10) NOT NULL DEFAULT '0',
-  `checked` smallint(5) NOT NULL DEFAULT '0',
+  `bagperbox` smallint(5) NOT NULL DEFAULT 0,
+  `inventoryNm` smallint(5) NOT NULL DEFAULT 0,
+  `baseprice` float(10) NOT NULL DEFAULT 0,
+  `sellprice` float(10) NOT NULL DEFAULT 0,
+  `checked` smallint(5) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
@@ -37,9 +37,9 @@ CREATE TABLE `myDbs_ordlist` (
   `patient` varchar(50) NOT NULL,
   `patient_id` smallint(5) unsigned,
   `medtype` varchar(20) NOT NULL,
-  `dose` smallint(5) NOT NULL DEFAULT '0',
+  `dose` smallint(5) NOT NULL DEFAULT 0,
   `medarray` varchar(100) NOT NULL DEFAULT '',
-  `total` float(10) NOT NULL DEFAULT '0',
+  `total` float(10) NOT NULL DEFAULT 0,
   `date` date,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
@@ -52,8 +52,8 @@ DROP TABLE IF EXISTS `myDbs_patient`;
 CREATE TABLE `myDbs_patient` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
-  `sex` varchar(5), NOT NULL DEFAULT '男',
-  `age` smallint(5),
+  `sex` varchar(5) NOT NULL DEFAULT '男',
+  `age` smallint(5) DEFAULT 0,
   `address` varchar(20),
   `phone` int(10),
   `wechat` varchar(20),
