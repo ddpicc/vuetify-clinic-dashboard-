@@ -409,7 +409,7 @@
 </template>
 
 <script>
-import TimeLine from './TimeLine'
+import TimeLine from '../components/helper/TimeLine'
   export default {
     components: {TimeLine},
     data () {

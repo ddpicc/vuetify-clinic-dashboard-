@@ -77,32 +77,23 @@
           </template>
           <template v-slot:expanded-item="{ item }">
             <td :colspan="8">
-              <v-btn text small>确认</v-btn>
+              <v-btn text small color="green">打印</v-btn>
               <div>
                 <h4 style="text-align:center;">处  方</h4>
                 <br>
                 <hr style="height:1px;border:none;border-top:1px solid #555555;" />
-                <v-row justify="center">
-                  <v-col cols="3">
-                    <p>姓名： {{item.patient}}</p>
-                  </v-col>
-                  <v-col cols="3">
-                    <p>姓名： {{item.patient}}</p>
-                  </v-col>
-                  <v-col cols="3">
-                    <p>姓名： {{item.patient}}</p>
-                  </v-col>
-                  <v-col cols="3">
-                    <p>姓名： {{item.patient}}</p>
-                  </v-col>
-                </v-row>
                  <v-simple-table>
                   <template v-slot:default>
                     <tbody>
                       <tr>
-                        <td :colspan="6" style="border-bottom:1px solid"><p>姓名： {{item.patient}}</p></td>
-                        <td><p>姓名： {{item.patient}}</p></td>
-                        <td><p>姓名： {{item.patient}}</p></td>
+                        <td :colspan="2"><p>姓名： {{item.patient}}</p></td>
+                        <td :colspan="2"><p>年龄： {{item.patient}}</p></td>
+                        <td :colspan="2"><p>性别： {{item.patient}}</p></td>
+                        <td :colspan="2"><p>电话:  {{item.patient}}</p></td>
+                      </tr>
+                      <tr>
+                        <td  :colspan="6" style="border-bottom:1px solid"><p>症状： {{item.patient}}</p></td>
+                        <td  :colspan="2" style="border-bottom:1px solid"><p>备注： {{item.patient}}</p></td>
                       </tr>
                       <tr v-for="element in item.medarray" :key="element.name">
                         <td>{{ JSON.parse(element).name1 }}</td>
@@ -114,34 +105,22 @@
                         <td>{{ JSON.parse(element).name4 }}</td>
                         <td>{{ JSON.parse(element).count4 }}</td>
                       </tr>
+                      <tr>
+                        <td :colspan="6"></td>
+                        <td :colspan="2"><p>{{item.dose}}付</p></td>
+                      </tr>
+                      <tr>
+                        <td :colspan="6" style="border-bottom:1px solid"></td>
+                        <td :colspan="2" style="border-bottom:1px solid"><p>价钱： {{item.total}}</p></td>
+                      </tr>
+                      <tr>
+                        <td :colspan="6"><p>处方医师：  崔云杰</p></td>
+                        <td :colspan="2"><p>日期： {{item.date}}</p></td>
+                      </tr>
                     </tbody>
                   </template>
                 </v-simple-table>
-                <!--
-                <v-row v-for="element in item.medarray" :key="element.id">
-                  <v-col>
-                    <div>{{JSON.parse(element).name1}}&nbsp;&nbsp;{{JSON.parse(element).count1}}</div>
-                  </v-col>
-                  <v-col>
-                    <div>{{JSON.parse(element).name2}}&nbsp;&nbsp;{{JSON.parse(element).count2}}</div>
-                  </v-col>
-                  <v-col>
-                    <div>{{JSON.parse(element).name3}}&nbsp;&nbsp;{{JSON.parse(element).count3}}</div>
-                  </v-col>
-                  <v-col>
-                    <div>{{JSON.parse(element).name4}}&nbsp;&nbsp;{{item.count4}}</div>
-                  </v-col>
-                </v-row>
-                -->
-                
-                
-              
-
               </div>
-
-
-
-                
             </td>              
           </template>
           </v-data-table>

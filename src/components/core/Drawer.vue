@@ -106,16 +106,6 @@
           text: '生成处方'
         },
         {
-          to: '/notifications',
-          icon: 'mdi-bell',
-          text: 'Notifications'
-        },
-        {
-          to: '/settings',
-          icon: 'mdi-settings',
-          text: 'Setting'
-        },
-        {
           to: '/patient-list',
           icon: 'mdi-human-male-female',
           text: '病人管理'

@@ -27,10 +27,10 @@
 
         <v-btn
           icon
-          to="/"
+          to="/settings"
         >
           <v-icon color="tertiary">
-            mdi-view-dashboard
+            mdi-settings
           </v-icon>
         </v-btn>
 

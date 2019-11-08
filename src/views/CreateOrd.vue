@@ -29,7 +29,7 @@
                 <v-container>
                   <v-row dense>
                     <v-col sm="4" md="3">
-                      <v-text-field v-model="patientName"
+                      <v-text-field v-model="patientName" @blur="nameLostFoucs"
                         label="姓名"
                       ></v-text-field>
                     </v-col>
@@ -457,9 +457,14 @@
               age : this.patientAge,
               phone : this.patientPhone,         
           }).then( (res) => {
-            this.$http.post('/api/insertOrd',{            
+            this.$http.post('/api/insertOrd',{
                   patient : this.patientName,
                   patient_id : res.data.insertId,
+                  patient_sex : this.patientSex,
+                  patient_age : this.patientAge,
+                  patient_phone : this.patientPhone,
+                  symptom : this.patientSymptom,
+                  order_comment : this.orderComment,
                   medtype : this.medRadio,
                   dose : this.orderCount,
                   medarray : this.medString,
@@ -493,6 +498,10 @@
         this.orderMed1PerObj.splice(index, 1);
         this.disPlayToTb();
       },
+
+      nameLostFoucs: function(){
+        alert(this.patientName);
+      }
     },
 
     watch: {
@@ -526,7 +535,7 @@
         /* alert('changed something');
         alert(this.inputMed); */
         alert(JSON.stringify(this.items));
-      }
+      },
 
       //items: function(){
       //  alert("changed");
