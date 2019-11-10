@@ -13,6 +13,7 @@ import Router from 'vue-router'
 import Meta from 'vue-meta'
 import Full from '@/Full'
 import Homepage from '../views/HomePage'
+import Login from '../components/core/Login'
 
 // Routes
 import paths from './paths'
@@ -34,6 +35,7 @@ const router = new Router({
   mode: 'history',
   routes: [
     { path: '', component: Homepage, hidden: true },
+    { path: '/login', component: Login, hidden: true },
     {
       path: '/dashboard',
       component: Full,

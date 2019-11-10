@@ -124,6 +124,7 @@
                   dense
                   ref="mark2"
                   @keyup.enter.native="postToTb"
+                  @focus="focus($event)"
                 ></v-text-field>
               </v-col>
               <v-col v-if="howToUseOn" sm="3" md="3">
@@ -132,6 +133,7 @@
                   label="剂量"
                   dense
                   ref="mark2"
+                  @focus="focus($event)"
                 ></v-text-field>
               </v-col>
               <v-col v-if="howToUseOn" sm="3" md="3">
@@ -450,7 +452,6 @@
           alert('姓名不能为空');
           return;
         }
-        alert(this.medString);
         this.$http.post('/api/insertPatientOrderPage',{            
               name : this.patientName,
               sex : this.patientSex,
@@ -500,7 +501,9 @@
       },
 
       nameLostFoucs: function(){
-        alert(this.patientName);
+        //alert(this.patientName);
+        //to do 
+        //check if the patient exist
       }
     },
 

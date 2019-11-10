@@ -10,7 +10,6 @@
         	flat
 					color="green"
           title="病人管理"
-          text="Complete your profile"
         >
           <v-data-table
             :headers="headers"

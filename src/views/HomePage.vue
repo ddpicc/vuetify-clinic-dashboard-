@@ -207,7 +207,7 @@
 
       methods: {
         loginClick: function(){
-          this.$router.push({ path: '/dashboard' });
+          this.$router.push({ path: '/login' });
         }
       }
     }
