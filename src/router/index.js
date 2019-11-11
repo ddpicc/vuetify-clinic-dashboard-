@@ -34,7 +34,7 @@ Vue.use(Router)
 const router = new Router({
   mode: 'history',
   routes: [
-    { path: '', component: Homepage, hidden: true },
+    { path: '', component: Homepage, hidden: true, meta : {requireAuth:true}},
     { path: '/login', component: Login, hidden: true },
     {
       path: '/dashboard',

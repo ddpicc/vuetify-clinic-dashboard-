@@ -77,7 +77,7 @@
         </v-menu>
 
         <v-btn
-          to="/user-profile"
+          to="/"
           icon
         >
           <v-icon color="tertiary">

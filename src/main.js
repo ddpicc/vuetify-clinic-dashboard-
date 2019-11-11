@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './plugins'
+import './login.js' ;
 import vuetify from './plugins/vuetify'
 import { sync } from 'vuex-router-sync'
 

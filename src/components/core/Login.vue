@@ -20,36 +20,9 @@
                 dark
                 flat
               >
-                <v-toolbar-title>{{this.$store.state.order.post_order}}</v-toolbar-title>
+                <v-toolbar-title>登录</v-toolbar-title>
                 <v-spacer />
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      :href="source"
-                      icon
-                      large
-                      target="_blank"
-                      v-on="on"
-                    >
-                      <v-icon>mdi-code-tags</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Source</span>
-                </v-tooltip>
-                <v-tooltip right>
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      icon
-                      large
-                      href="https://codepen.io/johnjleider/pen/pMvGQO"
-                      target="_blank"
-                      v-on="on"
-                    >
-                      <v-icon>mdi-codepen</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Codepen</span>
-                </v-tooltip>
+
               </v-toolbar>
               <v-card-text>
                 <v-form>
@@ -57,6 +30,7 @@
                     label="Login"
                     name="login"
                     type="text"
+                    v-model="loginName"
                   />
 
                   <v-text-field
@@ -64,12 +38,13 @@
                     label="Password"
                     name="password"
                     type="password"
+                    v-model="password"
                   />
                 </v-form>
               </v-card-text>
               <v-card-actions>
                 <v-spacer />
-                <v-btn color="green" @click.stop="loginClick">Login</v-btn>
+                <v-btn color="blue" @click.stop="loginClick">登录</v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -83,7 +58,8 @@
   export default {
       data () {
         return {
-
+          loginName: '',
+          password: ''
         }
       },
 
