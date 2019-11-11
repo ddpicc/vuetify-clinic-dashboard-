@@ -20,7 +20,7 @@
                 dark
                 flat
               >
-                <v-toolbar-title>Login form</v-toolbar-title>
+                <v-toolbar-title>{{this.$store.state.order.post_order}}</v-toolbar-title>
                 <v-spacer />
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
