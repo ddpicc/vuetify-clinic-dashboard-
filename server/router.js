@@ -38,4 +38,8 @@ router.post('/insertPatientDetailPage', (req, res, next) => {
   api.insertPatientDetailPage(req, res, next);
 });
 
+router.get('/getTokenFromLogin', (req, res, next) => {
+  api.getTokenFromLogin(req, res, next);
+});
+
 module.exports = router;

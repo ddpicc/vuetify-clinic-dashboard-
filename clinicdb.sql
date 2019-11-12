@@ -66,3 +66,16 @@ CREATE TABLE `myDbs_patient` (
   `comment` varchar(255),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/* 创建user表 */
+DROP TABLE IF EXISTS `myDbs_user`;
+
+CREATE TABLE `myDbs_user` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(50) NOT NULL,
+  `token` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+insert into `myDbs_user`(`username`,`password`,`token`) values ('qcui','8890','1c2b')

@@ -7,7 +7,8 @@ var sqlMap = {
     insertOrd: 'INSERT INTO myDbs_ordlist(patient,patient_id,medtype,dose,medarray,total,date) VALUES(?,?,?,?,?,?,?)',
     getAllPatient: 'SELECT * FROM myDbs_patient',
     insertPatientOrderPage: 'INSERT INTO myDbs_patient(name,sex,age,phone,lastVisit) VALUES(?,?,?,?,?)',
-    insertPatientDetailPage: 'INSERT INTO myDbs_patient(name,sex,age,address,phone,wechat,lastVisit,comment) VALUES(?,?,?,?,?,?,?,?)'
+    insertPatientDetailPage: 'INSERT INTO myDbs_patient(name,sex,age,address,phone,wechat,lastVisit,comment) VALUES(?,?,?,?,?,?,?,?)',
+    getTokenFromLogin: 'SELECT token FROM myDbs_user WHERE username = ? and password = ?',
   }
   
   module.exports = sqlMap;

@@ -119,10 +119,23 @@ module.exports = {
     var name = req.body.name,sex = req.body.sex;
     var age = req.body.age, address = req.body.address;
     var phone = req.body.phone, wechat = req.body.totwechatal;
-    var lastVisit = req.body.lastVisit, comment = req.body.comment;;
+    var lastVisit = req.body.lastVisit, comment = req.body.comment;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.insertPatientDetailPage;
       connection.query(sql, [name,sex,age,address,phone,wechat,lastVisit,comment], (err, result) => {
+        if(err)
+          console.log(err);
+        res.json(result);
+        connection.release();
+      })
+    })
+  },
+
+  getTokenFromLogin(req, res, next) {
+    var username = req.query.username,password = req.query.password;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.getTokenFromLogin;
+      connection.query(sql, [username,password], (err, result) => {
         if(err)
           console.log(err);
         res.json(result);

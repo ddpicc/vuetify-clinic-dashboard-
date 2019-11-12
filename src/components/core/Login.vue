@@ -65,8 +65,33 @@
 
       methods: {
         loginClick: function(){
-          this.$router.push({ path: '/dashboard' });
+          if (this.loginName === '' || this.password === '') {
+        alert('账号或密码不能为空');
+      } else {
+        this.$http.get('/api/getTokenFromLogin',{
+          params: {
+            username : this.loginName,
+            password : this.password,
+					}
+        }).then(res => {
+          console.log(res.data);
+          if(res.data.length === 0){
+            alert('用户名密码错误');
+          }else{
+            this.$router.push({ path: '/dashboard' });
+          }
+
+          //_this.userToken = 'Bearer ' + res.data.data.body.token;
+          // 将用户token保存到vuex中
+          //_this.changeLogin({ Authorization: _this.userToken });
+          
+        }).catch(error => {
+          alert('错误，请重试');
+          console.log(error);
+        });
+          
         }
       }
+    }
   }
 </script>
