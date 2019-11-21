@@ -68,7 +68,10 @@
           if (this.loginName === '' || this.password === '') {
         alert('账号或密码不能为空');
       } else {
-        this.$http.get('/api/getTokenFromLogin',{
+        var userInfo = {username: this.loginName, password: this.password};
+        this.$store.dispatch('user/LoginByEmail', userInfo);
+        alert(this.$store.state.user.token);
+/*         this.$http.get('/api/getTokenFromLogin',{
           params: {
             username : this.loginName,
             password : this.password,
@@ -88,7 +91,7 @@
         }).catch(error => {
           alert('错误，请重试');
           console.log(error);
-        });
+        }); */
           
         }
       }

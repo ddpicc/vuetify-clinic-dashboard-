@@ -133,6 +133,7 @@ module.exports = {
   },
 
   getTokenFromLogin(req, res, next) {
+    console.log('api - getTokenFromLogin');
     var username = req.query.username,password = req.query.password;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.getTokenFromLogin;
