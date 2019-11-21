@@ -1,5 +1,5 @@
 var sqlMap = {
-    getAllMedbyType: 'SELECT * FROM myDbs_medlist WHERE medtype = ?',
+    getAllMedbyType: 'SELECT * FROM ?? WHERE medtype = ?',
     insertMed: 'INSERT INTO myDbs_medlist(medname,alias,spec,medtype,bagperbox,inventoryNm,baseprice,sellprice,checked) VALUES(?,?,?,?,?,?,?,?,?)',
     updateMedbyId: 'UPDATE myDbs_medlist SET medname = ?,alias = ?,spec = ?,medtype = ?,bagperbox = ?,inventoryNm = ?,baseprice = ?,sellprice = ?,checked = ? WHERE Id = ?',
     deleteMedbyId: 'DELETE FROM myDbs_medlist where id=?',

@@ -34,11 +34,12 @@ Vue.use(Router)
 const router = new Router({
   mode: 'history',
   routes: [
-    { path: '', component: Homepage, hidden: true, meta : {requireAuth:true}},
+    { path: '', component: Homepage, hidden: true},
     { path: '/login', component: Login, hidden: true },
     {
       path: '/dashboard',
       component: Full,
+      meta : {requireAuth:true},
       children: paths.map(path => route(path.path, path.view, path.name)).concat([
         { path: '*', redirect: '/' }
       ]),

@@ -1,3 +1,3 @@
 export default {
-    post_order: 1
-  }
+  post_order: 1
+}

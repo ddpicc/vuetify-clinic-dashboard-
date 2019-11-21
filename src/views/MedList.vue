@@ -233,6 +233,7 @@ Vue.use(Chartkick.use(Chart))
         this.loading = true;
         this.$http.get('/api/getAllMedbyType',{
           params: {
+            dbs : 'test_medlist',
 						medtype : this.medRadio
 					}
         }).then( (res) => {

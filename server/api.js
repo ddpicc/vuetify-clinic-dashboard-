@@ -14,10 +14,11 @@ const pool = mysql.createPool({
 
 module.exports = {
   getAllMedbyType(req, res, next) {
+    var dbs = req.query.dbs;
     var medtype = req.query.medtype;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.getAllMedbyType;
-      connection.query(sql, [medtype], (err, result) => {
+      connection.query(sql, [dbs,medtype], (err, result) => {
           res.json(result);
           connection.release();
       })
