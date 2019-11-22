@@ -71,6 +71,7 @@
         var userInfo = {username: this.loginName, password: this.password};
         this.$store.dispatch('user/LoginByEmail', userInfo);
         alert(this.$store.state.user.token);
+        alert(this.$store.state.user.name);
 /*         this.$http.get('/api/getTokenFromLogin',{
           params: {
             username : this.loginName,

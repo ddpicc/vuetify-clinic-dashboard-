@@ -13,6 +13,7 @@ export default {
 				const data = response.data;
 				//Cookies.set('Admin-Token', response.data);
 				commit('SET_TOKEN', data.token);
+				commit('SET_NAME','sdsdsd');
 			})
 	},
 
