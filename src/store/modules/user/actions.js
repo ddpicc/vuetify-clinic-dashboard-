@@ -1,20 +1,26 @@
-import axios from 'axios'
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 export default {
 	LoginByEmail({ commit }, userInfo) {
 		const username = userInfo.username.trim();
 		const password = userInfo.password.trim();
-		axios.get('/api/getTokenFromLogin',{
+		return new Promise((resolve, reject) => {
+			axios.get('/api/getTokenFromLogin',{
 				params: {
-				  username : username,
-				  password : password,
+					username : username,
+					password : password,
 					}
-			  }).then(response => {
+				}).then(response => {
 				const data = response.data;
-				//Cookies.set('Admin-Token', response.data);
-				commit('SET_TOKEN', data.token);
+				Cookies.set('Admin-Token', data[0].token);
+				commit('SET_TOKEN', data[0].token);
 				commit('SET_NAME','sdsdsd');
-			})
+				resolve();
+			}).catch(error =>{
+				reject(error);
+			});
+		});
 	},
 
 

@@ -260,6 +260,8 @@ Vue.use(Chartkick.use(Chart))
       },
 
       addMedShow: function(){
+        alert(this.$store.state.user.name);
+        alert(this.$store.state.user.token);
         this.adddialog = true;
         this.dialogTitle = "新增药品";
         this.dialogMedRadio = this.medRadio;
