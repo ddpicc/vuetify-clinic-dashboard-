@@ -11,40 +11,29 @@ import Vue from 'vue'
 import VueAnalytics from 'vue-analytics'
 import Router from 'vue-router'
 import Meta from 'vue-meta'
-import Full from '@/Full'
 import Homepage from '../views/HomePage'
 import Login from '../components/core/Login'
 
 // Routes
 import paths from './paths'
 
-function route (path, view, name) {
-  return {
-    name: name || view,
-    path,
-    component: (resovle) => import(
-      `@/views/${view}.vue`
-    ).then(resovle)
-  }
+//不理解，但是是为了解决 next()的时候路由导航钩子时出现"uncaught (in promise) undefined 
+//https://blog.csdn.net/hgs_5683/article/details/101027580
+const originalPush = Router.prototype.push;
+Router.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
 }
 
 Vue.use(Router)
 
+export const constantRouterMap = [
+  { path: '', component: Homepage, hidden: true},
+  { path: '/login', component: Login, hidden: true }
+]
 // Create a new router
 const router = new Router({
   mode: 'history',
-  routes: [
-    { path: '', component: Homepage, hidden: true},
-    { path: '/login', component: Login, hidden: true },
-    {
-      path: '/dashboard',
-      component: Full,
-      meta : {requireAuth:true},
-      children: paths.map(path => route(path.path, path.view, path.name)).concat([
-        { path: '*', redirect: '/' }
-      ]),
-    }
-  ],
+  routes: constantRouterMap,
   
   scrollBehavior (to, from, savedPosition) {
     if (savedPosition) {
@@ -55,7 +44,23 @@ const router = new Router({
     }
     return { x: 0, y: 0 }
   }
-})
+});
+
+export const asyncRouterMap = [
+  {
+    path: '/dashboard',
+    component: () => import('../Full.vue'),
+    children: [
+      {path: '/dashboard', component: () => import('../views/Dashboard.vue')},
+      {path: '/user-profile', name: 'User Profile', component: () => import('../views/UserProfile.vue')},
+      {path: '/med-list', name: '药品管理', component: () => import('../views/MedList.vue')},
+      {path: '/ord-list', name: '处方管理', component: () => import('../views/OrderList.vue')},
+      {path: '/create-ord', name: '生成处方', component: () => import('../views/CreateOrd.vue')},
+      {path: '/patient-list', name: '病人管理', component: () => import('../views/PatientList.vue')},
+      { path: '*', redirect: '/' }
+    ]
+  }
+]
 
 Vue.use(Meta)
 

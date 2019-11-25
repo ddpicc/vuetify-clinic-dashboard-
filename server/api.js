@@ -26,6 +26,7 @@ module.exports = {
   },
 
   updateMedbyId(req, res, next) {
+    var dbs = req.body.dbs;
     var medname = req.body.medname,alias = req.body.alias;
     var spec = req.body.spec, medtype = req.body.medtype;
     var bagperbox = req.body.bagperbox, inventoryNm = req.body.inventoryNm;
@@ -33,7 +34,7 @@ module.exports = {
     var checked = req.body.checked, id = req.body.id;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.updateMedbyId;
-      connection.query(sql, [medname,alias,spec,medtype,bagperbox,inventoryNm,baseprice,sellprice,checked,id], (err, result) => {
+      connection.query(sql, [dbs,medname,alias,spec,medtype,bagperbox,inventoryNm,baseprice,sellprice,checked,id], (err, result) => {
           res.json(result);
           connection.release();
       })
@@ -41,6 +42,7 @@ module.exports = {
   },
 
   insertMed(req, res, next) {
+    var dbs = req.body.dbs;
     var medname = req.body.medname,alias = req.body.alias;
     var spec = req.body.spec, medtype = req.body.medtype;
     var bagperbox = req.body.bagperbox, inventoryNm = req.body.inventoryNm;
@@ -48,7 +50,7 @@ module.exports = {
     var checked = req.body.checked;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.insertMed;
-      connection.query(sql, [medname,alias,spec,medtype,bagperbox,inventoryNm,baseprice,sellprice,checked], (err, result) => {
+      connection.query(sql, [dbs,medname,alias,spec,medtype,bagperbox,inventoryNm,baseprice,sellprice,checked], (err, result) => {
         res.json(result);
           connection.release();
       })
@@ -56,10 +58,11 @@ module.exports = {
   },
 
   deleteMedbyId(req, res, next) {
+    var dbs = req.query.dbs;
     var id = req.query.id;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.deleteMedbyId;
-      connection.query(sql, [id], (err, result) => {
+      connection.query(sql, [dbs,id], (err, result) => {
           res.json(result);
           connection.release();
       })
@@ -67,9 +70,10 @@ module.exports = {
   },
 
   getAllOrd(req, res, next) {
+    var dbs = req.query.dbs;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.getAllOrd;
-      connection.query(sql, [], (err, result) => {
+      connection.query(sql, [dbs], (err, result) => {
           res.json(result);
           connection.release();
       })
@@ -77,13 +81,14 @@ module.exports = {
   },
 
   insertOrd(req, res, next) {
+    var dbs = req.body.dbs;
     var patient = req.body.patient,patient_id = req.body.patient_id;
     var medtype = req.body.medtype, dose = req.body.dose;
     var medarray = req.body.medarray, total = req.body.total;
     var date = req.body.date;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.insertOrd;
-      connection.query(sql, [patient,patient_id,medtype,dose,medarray,total,date], (err, result) => {
+      connection.query(sql, [dbs,patient,patient_id,medtype,dose,medarray,total,date], (err, result) => {
         console.log(err);  
         res.json(result);
           connection.release();
@@ -92,9 +97,10 @@ module.exports = {
   },
 
   getAllPatient(req, res, next) {
+    var dbs = req.query.dbs;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.getAllPatient;
-      connection.query(sql, [], (err, result) => {
+      connection.query(sql, [dbs], (err, result) => {
           res.json(result);
           connection.release();
       })
@@ -102,12 +108,13 @@ module.exports = {
   },
 
   insertPatientOrderPage(req, res, next) {
+    var dbs = req.body.dbs;
     var name = req.body.name,sex = req.body.sex;
     var age = req.body.age, phone = req.body.phone;
     var lastVisit = req.body.lastVisit;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.insertPatientOrderPage;
-      connection.query(sql, [name,sex,age,phone,lastVisit], (err, result) => {
+      connection.query(sql, [dbs,name,sex,age,phone,lastVisit], (err, result) => {
         if(err)
           console.log(err);
         res.json(result);
@@ -117,13 +124,14 @@ module.exports = {
   },
 
   insertPatientDetailPage(req, res, next) {
+    var dbs = req.body.dbs;
     var name = req.body.name,sex = req.body.sex;
     var age = req.body.age, address = req.body.address;
     var phone = req.body.phone, wechat = req.body.totwechatal;
     var lastVisit = req.body.lastVisit, comment = req.body.comment;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.insertPatientDetailPage;
-      connection.query(sql, [name,sex,age,address,phone,wechat,lastVisit,comment], (err, result) => {
+      connection.query(sql, [dbs,name,sex,age,address,phone,wechat,lastVisit,comment], (err, result) => {
         if(err)
           console.log(err);
         res.json(result);
@@ -138,6 +146,20 @@ module.exports = {
     pool.getConnection((err, connection) => {
       var sql = sqlMap.getTokenFromLogin;
       connection.query(sql, [username,password], (err, result) => {
+        if(err)
+          console.log(err);
+        res.json(result);
+        connection.release();
+      })
+    })
+  },
+
+  getUserInfo(req, res, next) {
+    console.log('api - getUserInfo');
+    var token = req.query.token;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.getUserInfo;
+      connection.query(sql, [token], (err, result) => {
         if(err)
           console.log(err);
         res.json(result);

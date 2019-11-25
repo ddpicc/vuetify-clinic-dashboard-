@@ -191,7 +191,11 @@
       // 获取全部数据
       getAll: function() {
         this.loading = true;
-        this.$http.get('/api/getAllOrd').then( (res) => {
+        this.$http.get('/api/getAllOrd',{
+          params: {
+            dbs : 'qcui_ordlist'
+					}
+        }).then( (res) => {
           this.items = res.data;
           for(let element of this.items) {
             element.medarray = element.medarray.split(";");

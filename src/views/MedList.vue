@@ -142,11 +142,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import Chartkick from 'vue-chartkick'
-import Chart from 'chart.js'
-
-Vue.use(Chartkick.use(Chart))
   export default {
     data: () => ({
       searchStr: '',
@@ -233,7 +228,7 @@ Vue.use(Chartkick.use(Chart))
         this.loading = true;
         this.$http.get('/api/getAllMedbyType',{
           params: {
-            dbs : 'test_medlist',
+            dbs : 'qcui_medlist',
 						medtype : this.medRadio
 					}
         }).then( (res) => {
@@ -260,8 +255,6 @@ Vue.use(Chartkick.use(Chart))
       },
 
       addMedShow: function(){
-        alert(this.$store.state.user.name);
-        alert(this.$store.state.user.token);
         this.adddialog = true;
         this.dialogTitle = "新增药品";
         this.dialogMedRadio = this.medRadio;
@@ -301,7 +294,8 @@ Vue.use(Chartkick.use(Chart))
 
       saveDialog: function(){
         if(this.dialogTitle === "修改药品"){
-          this.$http.post('/api/updateMedbyId',{            
+          this.$http.post('/api/updateMedbyId',{   
+              dbs : 'qcui_medlist',         
               medname : this.dialogMedName,
               alias : this.dialogAlias,
               spec : this.dialogSpec,
@@ -319,7 +313,8 @@ Vue.use(Chartkick.use(Chart))
             this.getAll();
           })
         }else if(this.dialogTitle === "新增药品"){
-          this.$http.post('/api/insertMed',{            
+          this.$http.post('/api/insertMed',{
+              dbs : 'qcui_medlist',           
               medname : this.dialogMedName,
               alias : this.dialogAlias,
               spec : this.dialogSpec,
@@ -344,6 +339,7 @@ Vue.use(Chartkick.use(Chart))
       deleteItem(medId){
         this.$http.delete('/api/deleteMedbyId',{
           params: {
+            dbs : 'qcui_medlist',
 						id : medId
 					}
         }).then( (res) => {

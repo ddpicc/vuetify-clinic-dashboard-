@@ -1,5 +1,6 @@
+import { asyncRouterMap, constantRouterMap } from '../../../router/index';
 export default {
-  routers: [],
+  routers: constantRouterMap,
   addRouters: [],
   siderbar_routers:[],
 }

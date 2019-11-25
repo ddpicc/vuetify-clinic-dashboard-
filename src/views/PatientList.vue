@@ -90,7 +90,11 @@
       // 根据类型获取药品数据
       getAll: function() {
         this.loading = true;
-        this.$http.get('/api/getAllPatient').then( (res) => {
+        this.$http.get('/api/getAllPatient',{
+          params: {
+            dbs : 'qcui_patient'
+					}
+        }).then( (res) => {
           this.items = res.data;
           this.loading = false;
         })

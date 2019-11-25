@@ -42,4 +42,8 @@ router.get('/getTokenFromLogin', (req, res, next) => {
   api.getTokenFromLogin(req, res, next);
 });
 
+router.get('/getUserInfo', (req, res, next) => {
+  api.getUserInfo(req, res, next);
+});
+
 module.exports = router;
