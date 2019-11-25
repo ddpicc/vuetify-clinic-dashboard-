@@ -12,7 +12,7 @@ import VueAnalytics from 'vue-analytics'
 import Router from 'vue-router'
 import Meta from 'vue-meta'
 import Homepage from '../views/HomePage'
-import Login from '../components/core/Login'
+import Login from '../views/Login'
 
 // Routes
 import paths from './paths'

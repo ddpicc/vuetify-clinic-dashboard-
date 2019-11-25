@@ -5,12 +5,7 @@
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer />
       <v-toolbar-items>
-        <v-row
-          align="center"
-          class="mx-0"
-        >
-          <v-btn text @click.stop="loginClick">登陆</v-btn>
-        </v-row>
+          <v-btn text @click.stop="loginClick">登录</v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <v-content>
