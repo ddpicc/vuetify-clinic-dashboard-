@@ -2,7 +2,6 @@
   <div id="app">
    <v-app light>
      <v-progress-linear
-      v-model="power"
       color="blue-grey"
       height="25"
       reactive
@@ -42,19 +41,20 @@
                   <v-card-text>
                     <v-form>
                       <v-text-field
-                        label="Login"
-                        name="login"
+                        label="用户名"
                         type="text"
                         v-model="loginName"
                       />
-
                       <v-text-field
                         id="password"
-                        label="Password"
-                        name="password"
+                        label="密码"
                         type="password"
                         v-model="password"
                       />
+                      <v-card-actions>
+                        <v-spacer />
+                        <v-btn color="blue" @click.stop="loginClick">登录</v-btn>
+                      </v-card-actions>
                     </v-form>
                   </v-card-text>
                 </v-tab-item>
@@ -62,27 +62,29 @@
                   <v-card-text>
                     <v-form>
                       <v-text-field
-                        label="Login"
-                        name="login"
+                        label="用户名"
                         type="text"
                         v-model="loginName"
                       />
-
+                      <v-text-field
+                        label="手机号"
+                        type="text"
+                        v-model="phoneNumber"
+                      />
                       <v-text-field
                         id="password"
-                        label="Password"
-                        name="password"
+                        label="密码"
                         type="password"
                         v-model="password"
                       />
+                      <v-card-actions>
+                        <v-spacer />
+                        <v-btn color="blue" @click.stop="loginClick">注册</v-btn>
+                      </v-card-actions>
                     </v-form>
                   </v-card-text>
                 </v-tab-item>
-              </v-tabs-items>
-              <v-card-actions>
-                <v-spacer />
-                <v-btn color="blue" @click.stop="loginClick">登录</v-btn>
-              </v-card-actions>
+              </v-tabs-items>              
             </v-card>
           </v-col>
         </v-row>
@@ -121,7 +123,9 @@
       return {
         loginName: '',
         password: '',
+        phoneNumber: '',
         tab: null,
+        loginBtnName: "登录",
         snackbar: false,
         snackbarColor: '',
         notification: ''
@@ -138,7 +142,8 @@
             this.snackbar = true;
             this.notification = '登录成功';
             this.snackbarColor = 'green';
-            this.$router.push({ path: '/dashboard' });
+            
+            setTimeout( () => {this.$router.push({ path: '/dashboard' });},2000);
           }).catch(err => {
             this.snackbar = true;
             this.notification = '连接错误，请重试';

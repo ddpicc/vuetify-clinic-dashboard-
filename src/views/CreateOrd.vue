@@ -73,6 +73,7 @@
                         label="症状"
                       ></v-text-field>
                     </v-col>
+                    <v-col cols="1"><v-icon>mdi-account-card-details</v-icon></v-col>
                   </v-row>
                 </v-container>
               </v-col>
@@ -471,11 +472,16 @@
                   medarray : this.medString,
                   total : parseInt(this.total),
                   date : this.getNowFormatDate(),          
-              }).then( (resord) => {
+            }).then( (resord) => {
                 
             })
+            .catch( (err) =>{
+              console.log(err);
+            })
           })
-        
+          .catch( (err) =>{
+            console.log(err);
+          })        
       },
 
       save: function(str){
