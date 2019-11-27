@@ -26,6 +26,10 @@ router.post('/insertOrd', (req, res, next) => {
   api.insertOrd(req, res, next);
 });
 
+router.delete('/deleteOrdbyId', (req, res, next) => {
+  api.deleteOrdbyId(req, res, next);
+});
+
 router.get('/getAllPatient', (req, res, next) => {
   api.getAllPatient(req, res, next);
 });

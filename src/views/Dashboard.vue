@@ -7,7 +7,6 @@
       >
         <material-chart-card
           :data="dailySalesChart.data"
-          :options="dailySalesChart.options"
           color="info"
           type="Line"
         >
@@ -415,25 +414,7 @@ import TimeLine from '../components/helper/TimeLine'
     data () {
       return {
         dailySalesChart: {
-          data: {
-            labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-            series: [
-              [12, 17, 7, 17, 23, 18, 38]
-            ]
-          },
-          options: {
-            lineSmooth: this.$chartist.Interpolation.cardinal({
-              tension: 0
-            }),
-            low: 0,
-            high: 50, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-            chartPadding: {
-              top: 0,
-              right: 0,
-              bottom: 0,
-              left: 0
-            }
-          }
+          data: [['Jan', 44], ['Feb', 27], ['Mar', 60], ['Apr', 55], ['May', 37], ['Jun', 40], ['Jul', 69], ['Aug', 33], ['Sept', 76], ['Oct', 90], ['Nov', 34], ['Dec', 22]],
         },
         dataCompletedTasksChart: {
           data: {

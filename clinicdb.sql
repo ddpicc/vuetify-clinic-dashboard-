@@ -80,3 +80,15 @@ CREATE TABLE `myDbs_user` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 insert into `myDbs_user`(`username`,`password`,`token`,`role`) values ('qcui','8890','1c2b','admin')
+
+/* 创建user表 */
+DROP TABLE IF EXISTS `myDbs_userconfig`;
+
+CREATE TABLE `myDbs_userconfig` (
+  `userid` smallint(5) unsigned NOT NULL,
+  `overallTotal` float(10) NOT NULL DEFAULT 0,
+  `2019/12` float(10) NOT NULL DEFAULT 0,
+  `2020/01` float(10) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`userid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+

@@ -96,6 +96,18 @@ module.exports = {
     })
   },
 
+  deleteOrdbyId(req, res, next) {
+    var dbs = req.query.dbs;
+    var id = req.query.id;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.deleteOrdbyId;
+      connection.query(sql, [dbs,id], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
   getAllPatient(req, res, next) {
     var dbs = req.query.dbs;
     pool.getConnection((err, connection) => {

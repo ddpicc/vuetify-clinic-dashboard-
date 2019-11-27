@@ -22,15 +22,13 @@
               top
               right
               color="amber"
-              @click="outDbEnable"
+              @click="deleteEnabled = !deleteEnabled"
             >
               <v-icon>mdi-send</v-icon>
             </v-btn>
           </template>
           <!--  need a key of id -->
           <v-data-table
-            v-model="selected"
-            :show-select="selectEnabled"
             :headers="headers"
             :items="items"
             item-key="id"
@@ -49,28 +47,16 @@
             <v-icon
               small
               class="mr-2"
-              @click="editItem(item)"
+              @click="reuse(item)"
             >
               mdi-pencil
             </v-icon>
-            <v-icon
+            <v-icon v-if="deleteEnabled"
               small
-              @click="deleteItem(item)"
+              @click="deleteItem(item.id)"
             >
               mdi-close
             </v-icon>
-          </template>
-          <template v-if="selectEnabled" v-slot:body.append="{ headers }">
-            <tr>
-              <td :colspan="headers.length-2">
-              </td>
-              <td :colspan="1" align="right">
-                <v-btn text small>确认</v-btn>
-              </td>
-              <td :colspan="1" align="left">
-                <v-btn text small>取消</v-btn>
-              </td>
-            </tr>
           </template>
           <template v-slot:item.medtype="{ item }">
             <v-chip :color="getColor(item.medtype)" dark>{{ item.medtype }}</v-chip>
@@ -124,6 +110,29 @@
             </td>              
           </template>
           </v-data-table>
+          <v-snackbar
+            v-model="snackbar"
+            :color="snackbarColor"
+            :timeout="3000"
+            top
+            dark
+          >
+            <v-icon
+              color="white"
+              class="mr-3"
+            >
+              mdi-bell-plus
+            </v-icon>
+            {{notification}}
+            <v-btn
+              icon
+              @click="snackbar = false"
+            >
+              <v-icon>
+                mdi-close-circle
+              </v-icon>
+            </v-btn>
+          </v-snackbar>
         </material-card>
       </v-col>
     </v-row>
@@ -135,10 +144,12 @@
   export default {
     data: () => ({
       searchStr: '',
-      selected: [],
-      selectEnabled: false,
+      deleteEnabled: false,
       loading: false,
       expanded: [],
+      snackbar: false,
+      snackbarColor: '',
+      notification: '',
       headers: [
         { text: '', value: 'data-table-expand' },
         { text: '序号', value: 'id' },
@@ -204,18 +215,29 @@
         })
       },
 
-      outDbEnable: function(){
-        if(this.selectEnabled)
-          this.selectEnabled = false;
-        else
-          this.selectEnabled = true;
-      },
-
       getColor (medtype) {
         if (medtype == '免煎') return 'lime darken-2'
         else if (medtype == '西药') return 'blue lighten-2'
         else return 'green'
       },
+
+      reuse: function(){
+
+      },
+
+       deleteItem(ordId){
+        this.$http.delete('/api/deleteOrdbyId',{
+          params: {
+            dbs : 'qcui_ordlist',
+						id : ordId
+					}
+        }).then( (res) => {
+          this.snackbar = true;
+          this.notification = '删除成功';
+          this.snackbarColor = 'green';
+          this.getAll();
+        })
+      }
     },
 
     mounted: function() {

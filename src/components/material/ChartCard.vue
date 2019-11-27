@@ -5,15 +5,7 @@
     v-on="$listeners"
   >
     <template v-slot:header>
-      <chartist
-        :data="data"
-        :event-handlers="eventHandlers"
-        :options="options"
-        :ratio="ratio"
-        :responsive-options="responsiveOptions"
-        :type="type"
-        style="max-height: 150px;"
-      />
+       <line-chart :data="data" :colors="['#b00', '#666']" height="150px"></line-chart>
     </template>
 
     <slot />
