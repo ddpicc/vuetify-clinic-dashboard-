@@ -51,7 +51,7 @@
             >
               mdi-pencil
             </v-icon>
-            <v-icon v-if="deleteEnabled"
+            <v-icon v-if="canDelete(item)"
               small
               @click="deleteItem(item.id)"
             >
@@ -225,7 +225,24 @@
 
       },
 
-       deleteItem(ordId){
+      //获取当前时间，格式YYYY-MM-DD
+      getNowFormatDate() {
+				var date = new Date();
+				var seperator1 = "/";
+				var year = date.getFullYear();  //年
+				var month = date.getMonth() + 1;   //月
+				var strDate = date.getDate();   //日
+				if (month >= 1 && month <= 9) {
+					month = "0" + month;
+				}
+				if (strDate >= 0 && strDate <= 9) {
+					strDate = "0" + strDate;
+				}
+				var currentdate = year + seperator1 + month + seperator1 + strDate;
+				return currentdate;
+      },
+
+      deleteItem(ordId){
         this.$http.delete('/api/deleteOrdbyId',{
           params: {
             dbs : 'qcui_ordlist',
@@ -237,6 +254,17 @@
           this.snackbarColor = 'green';
           this.getAll();
         })
+      },
+
+      canDelete: function(item){
+        if(this.deleteEnabled){
+          if(this.getNowFormatDate() == item.date)
+            return true;
+          else
+            return false;
+        }
+        else
+          return false;
       }
     },
 
