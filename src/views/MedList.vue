@@ -228,7 +228,7 @@
         this.loading = true;
         this.$http.get('/api/getAllMedbyType',{
           params: {
-            dbs : 'qcui_medlist',
+            dbs : this.$store.state.user.dbs_prefix+'medlist',
 						medtype : this.medRadio
 					}
         }).then( (res) => {
@@ -295,7 +295,7 @@
       saveDialog: function(){
         if(this.dialogTitle === "修改药品"){
           this.$http.post('/api/updateMedbyId',{   
-              dbs : 'qcui_medlist',         
+              dbs : this.$store.state.user.dbs_prefix+'medlist',      
               medname : this.dialogMedName,
               alias : this.dialogAlias,
               spec : this.dialogSpec,
@@ -314,7 +314,7 @@
           })
         }else if(this.dialogTitle === "新增药品"){
           this.$http.post('/api/insertMed',{
-              dbs : 'qcui_medlist',           
+              dbs : this.$store.state.user.dbs_prefix+'medlist',          
               medname : this.dialogMedName,
               alias : this.dialogAlias,
               spec : this.dialogSpec,
@@ -339,7 +339,7 @@
       deleteItem(medId){
         this.$http.delete('/api/deleteMedbyId',{
           params: {
-            dbs : 'qcui_medlist',
+            dbs : this.$store.state.user.dbs_prefix+'medlist',
 						id : medId
 					}
         }).then( (res) => {

@@ -21,8 +21,8 @@
             md="4"
           >
             <v-card class="elevation-12">
-              <v-card-title class="text-center justify-center py-6">
-                <h1 class="font-weight-bold display-3 basil--text" @click.stop="jumpHome">BASiL</h1>
+              <v-card-title class="text-left justify-left py-6">
+                <h1 class="font-weight-bold display-3 basil--text" @click.stop="jumpHome">大饼医疗</h1>
               </v-card-title>
               <v-tabs
                 v-model="tab"
@@ -143,7 +143,7 @@
             this.notification = '登录成功';
             this.snackbarColor = 'green';
             
-            setTimeout( () => {this.$router.push({ path: '/dashboard' });},2000);
+            setTimeout( () => {this.$router.push({ path: '/dashboard' });},1200);
           }).catch(err => {
             this.snackbar = true;
             this.notification = '连接错误，请重试';

@@ -276,6 +276,7 @@
         this.loading = true;
         this.$http.get('/api/getAllMedbyType',{
           params: {
+            dbs : this.$store.state.user.dbs_prefix+'medlist',
 						medtype : this.medRadio
 					}
         }).then( (res) => {
@@ -453,13 +454,15 @@
           alert('姓名不能为空');
           return;
         }
-        this.$http.post('/api/insertPatientOrderPage',{            
+        this.$http.post('/api/insertPatientOrderPage',{
+              dbs : this.$store.state.user.dbs_prefix+'patient',
               name : this.patientName,
               sex : this.patientSex,
               age : this.patientAge,
               phone : this.patientPhone,         
           }).then( (res) => {
             this.$http.post('/api/insertOrd',{
+                  dbs : this.$store.state.user.dbs_prefix+'ordlist',
                   patient : this.patientName,
                   patient_id : res.data.insertId,
                   patient_sex : this.patientSex,

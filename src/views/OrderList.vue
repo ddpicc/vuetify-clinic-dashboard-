@@ -73,13 +73,13 @@
                     <tbody>
                       <tr>
                         <td :colspan="2"><p>姓名： {{item.patient}}</p></td>
-                        <td :colspan="2"><p>年龄： {{item.patient}}</p></td>
-                        <td :colspan="2"><p>性别： {{item.patient}}</p></td>
-                        <td :colspan="2"><p>电话:  {{item.patient}}</p></td>
+                        <td :colspan="2"><p>年龄： {{item.patient_age}}</p></td>
+                        <td :colspan="2"><p>性别： {{item.patient_sex}}</p></td>
+                        <td :colspan="2"><p>电话:  {{item.patient_phone}}</p></td>
                       </tr>
                       <tr>
-                        <td  :colspan="6" style="border-bottom:1px solid"><p>症状： {{item.patient}}</p></td>
-                        <td  :colspan="2" style="border-bottom:1px solid"><p>备注： {{item.patient}}</p></td>
+                        <td  :colspan="6" style="border-bottom:1px solid"><p>症状： {{item.symptom}}</p></td>
+                        <td  :colspan="2" style="border-bottom:1px solid"><p>备注： {{item.order_comment}}</p></td>
                       </tr>
                       <tr v-for="element in item.medarray" :key="element.name">
                         <td>{{ JSON.parse(element).name1 }}</td>
@@ -204,7 +204,7 @@
         this.loading = true;
         this.$http.get('/api/getAllOrd',{
           params: {
-            dbs : 'qcui_ordlist'
+            dbs : this.$store.state.user.dbs_prefix+'ordlist',
 					}
         }).then( (res) => {
           this.items = res.data;
@@ -245,7 +245,7 @@
       deleteItem(ordId){
         this.$http.delete('/api/deleteOrdbyId',{
           params: {
-            dbs : 'qcui_ordlist',
+            dbs : this.$store.state.user.dbs_prefix+'ordlist',
 						id : ordId
 					}
         }).then( (res) => {

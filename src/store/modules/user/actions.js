@@ -33,7 +33,7 @@ export default {
 				}).then(response => {
 				const data = response.data;
 				commit('SET_ROLES', data[0].role);
-				//commit('SET_PREFIX',data[0].dbs_prefix);
+				commit('SET_PREFIX',data[0].dbs_prefix);
 				resolve(response);
 			}).catch(error => {
 				reject(error);
