@@ -53,10 +53,11 @@ export const asyncRouterMap = [
     children: [
       {path: '/dashboard', component: () => import('../views/Dashboard.vue')},
       {path: '/user-profile', name: 'User Profile', component: () => import('../views/UserProfile.vue')},
-      {path: '/med-list', name: '药品管理', component: () => import('../views/MedList.vue')},
+      {path: '/med-list', name: '药品管理', component: () => import('../views/MedList.vue'), meta: { role: ['admin'] }},
       {path: '/ord-list', name: '处方管理', component: () => import('../views/OrderList.vue')},
       {path: '/create-ord', name: '生成处方', component: () => import('../views/CreateOrd.vue')},
       {path: '/patient-list', name: '病人管理', component: () => import('../views/PatientList.vue')},
+      {path: '/settings', component: () => import('../views/Setting.vue')},
       { path: '*', redirect: '/' }
     ]
   }

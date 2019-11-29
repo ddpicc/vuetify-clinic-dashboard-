@@ -112,6 +112,7 @@ DROP TABLE IF EXISTS `test_patient`;
 CREATE TABLE `test_patient` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
+  `quanpin` varchara(50) NOT NULL,
   `sex` varchar(5) NOT NULL DEFAULT '男',
   `age` smallint(5) DEFAULT 0,
   `address` varchar(20),
@@ -135,7 +136,7 @@ CREATE TABLE `myDbs_user` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
-insert into `myDbs_user`(`username`,`password`,`token`,`role`,`dbs_prefix`) values ('qcui','8890','1c2b','admin','qcui_'), ('test','test','3d4a','admin','test_');
+insert into `myDbs_user`(`username`,`password`,`token`,`role`,`dbs_prefix`) values ('qcui','8890','1c2b','admin','qcui_'), ('test','test','3d4a','test','test_');
 
 /* 创建user表 */
 DROP TABLE IF EXISTS `myDbs_userconfig`;
