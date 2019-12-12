@@ -455,6 +455,7 @@
           return;
         }
         this.$http.post('/api/insertPatientOrderPage',{
+              //搜索全拼相同，在得到的结果中找至少有一个字相同的名字,找到了就列出来，没找到就创建一个新的病人
               dbs : this.$store.state.user.dbs_prefix+'patient',
               name : this.patientName,
               sex : this.patientSex,
@@ -493,9 +494,6 @@
         this.inTableChanged = !this.inTableChanged;
       },
 
-      checkTable: function(){
-        alert(JSON.stringify(this.items));
-      },
       cancel: function(){
 
       },
@@ -547,6 +545,9 @@
         /* alert('changed something');
         alert(this.inputMed); */
         alert(JSON.stringify(this.items));
+/*         for(var i=0; i < this.items.length; i++){
+          if(items[i].count)
+        } */
       },
 
       //items: function(){
