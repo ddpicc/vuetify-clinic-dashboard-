@@ -22,7 +22,7 @@
           >
             <v-card class="elevation-12">
               <v-card-title class="text-left justify-left py-6">
-                <h1 class="font-weight-bold display-3 basil--text" @click.stop="jumpHome">大饼医疗</h1>
+                <h1 class="font-weight-bold display-3 basil--text" @click.stop="jumpHome">半夏医疗</h1>
               </v-card-title>
               <v-tabs
                 v-model="tab"
@@ -79,7 +79,7 @@
                       />
                       <v-card-actions>
                         <v-spacer />
-                        <v-btn color="blue" @click.stop="loginClick">注册</v-btn>
+                        <v-btn color="blue" @click="registerClick">注册</v-btn>
                       </v-card-actions>
                     </v-form>
                   </v-card-text>
@@ -91,7 +91,7 @@
         <v-snackbar
           v-model="snackbar"
           :color="snackbarColor"
-          :timeout="3000"
+          :timeout="snackbarTimeout"
           top
           dark
         >
@@ -128,7 +128,8 @@
         loginBtnName: "登录",
         snackbar: false,
         snackbarColor: '',
-        notification: ''
+        notification: '',
+        snackbarTimeout: 3000
       }
     },
 
@@ -150,6 +151,12 @@
             console.log(err);
           });
         }         
+      },
+
+      registerClick: function(){
+        this.snackbar = true;
+        this.notification = '注册功能暂不能用，请联系管理员分配账号。可用的使试用账号为test，密码test';
+        this.snackbarTimeout = 5000;
       },
 
       jumpHome: function(){

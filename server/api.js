@@ -156,6 +156,8 @@ module.exports = {
     console.log('api - getTokenFromLogin');
     var username = req.query.username,password = req.query.password;
     pool.getConnection((err, connection) => {
+      if(err)
+        console.log(err);
       var sql = sqlMap.getTokenFromLogin;
       connection.query(sql, [username,password], (err, result) => {
         if(err)
@@ -170,6 +172,8 @@ module.exports = {
     console.log('api - getUserInfo');
     var token = req.query.token;
     pool.getConnection((err, connection) => {
+      if(err)
+        console.log(err);
       var sql = sqlMap.getUserInfo;
       connection.query(sql, [token], (err, result) => {
         if(err)

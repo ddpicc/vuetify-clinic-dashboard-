@@ -109,6 +109,11 @@
           to: '/patient-list',
           icon: 'mdi-human-male-female',
           text: '病人管理'
+        },
+        {
+          to: '/detail-info',
+          icon: 'mdi-human-male-female',
+          text: '详细账单'
         }
       ]
     }),

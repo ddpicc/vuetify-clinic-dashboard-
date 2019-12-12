@@ -57,6 +57,7 @@ export const asyncRouterMap = [
       {path: '/ord-list', name: '处方管理', component: () => import('../views/OrderList.vue')},
       {path: '/create-ord', name: '生成处方', component: () => import('../views/CreateOrd.vue')},
       {path: '/patient-list', name: '病人管理', component: () => import('../views/PatientList.vue')},
+      {path: '/detail-info', name: '详细账单', component: () => import('../views/DetailInfo.vue')},
       { path: '*', redirect: '/' }
     ]
   }
