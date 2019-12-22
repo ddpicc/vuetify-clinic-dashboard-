@@ -17,8 +17,7 @@
             justify-center
             class="white--text"
           >
-            <img src="../assets/vuetify.png" alt="Vuetify.js" height="200">
-            <h1 class="white--text mb-2 display-1 text-center">Parallax Template</h1>
+            <h1 class="white--text mb-2 display-1 text-center">半夏医疗</h1>
             <div class="subheading mb-4 text-center">Powered by Vuetify</div>
             <v-btn
               class="mt-12"
