@@ -221,8 +221,7 @@
   var staticHeader=[{sortable: false, text: '名称', value: 'name1', width: '15%'}, {sortable: false,text: '数量', value: 'count1', width: '10%'}, {sortable: false,text: '名称', value: 'name2', width: '15%'}, {sortable: false,text: '数量', value: 'count2', width: '10%'}, 
                  {sortable: false,text: '名称', value: 'name3', width: '15%'}, {sortable: false,text: '数量', value: 'count3', width: '10%'}, {sortable: false,text: '名称', value: 'name4', width: '15%'}, {sortable: false,text: '数量', value: 'count4', width: '10%'}];
 
-  var xiyaoHeader=[{sortable: false,text: '名称', value: 'name1'}, {sortable: false,text: '数量', value: 'count1'}, {sortable: false,text: '用量', value: 'usage1'}, {sortable: false,text: '名称', value: 'name2'}, 
-                 {sortable: false,text: '数量', value: 'count2'}, {sortable: false,text: '用量', value: 'usage2'}];
+  var xiyaoHeader=[{sortable: false,text: '名称', value: 'name1'}, {sortable: false,text: '数量', value: 'count1'}, {sortable: false,text: '用法', value: 'usage1'}];
 
   export default {
     data: () => ({
@@ -460,7 +459,7 @@
               name : this.patientName,
               sex : this.patientSex,
               age : this.patientAge,
-              phone : this.patientPhone,         
+              phone : this.patientPhone,
           }).then( (res) => {
             this.$http.post('/api/insertOrd',{
                   dbs : this.$store.state.user.dbs_prefix+'ordlist',
@@ -527,7 +526,6 @@
           this.perOrdBase = parseFloat((this.perOrdBase + parseFloat((basePriceOfMed*medDose).toFixed(2))).toFixed(2));
           this.perOrdTotal = parseFloat((this.perOrdTotal + parseFloat((sellPriceOfMed*medDose).toFixed(2))).toFixed(2));
           let temp = (this.perOrdTotal * this.orderCount).toFixed(2);
-          temp += ' 元';
           this.total = temp;
         }
       },
@@ -537,7 +535,6 @@
           this.orderCount = val;
         }
         let temp = (this.perOrdTotal * this.orderCount).toFixed(2);
-        temp += ' 元';
         this.total = temp;
       },
 
@@ -545,9 +542,14 @@
         /* alert('changed something');
         alert(this.inputMed); */
         alert(JSON.stringify(this.items));
-/*         for(var i=0; i < this.items.length; i++){
-          if(items[i].count)
-        } */
+        for(var i=0; i < this.items.length; i++){
+          //if(parseInt(items[i].count1)
+          if(parseInt(this.items[i].count1))
+            alert("fafafaf");
+          alert(parseInt(this.items[i].count2));
+          alert(parseInt(this.items[i].count3));
+          alert(parseInt(this.items[i].count4));
+        } 
       },
 
       //items: function(){

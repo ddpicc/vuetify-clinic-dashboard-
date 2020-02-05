@@ -81,22 +81,22 @@
               active-class=""
             >
               <v-list-item>
-                <template v-slot:default="{ active }">
+                <template v-slot:default="{  }">
                   <v-list-item-action>
-                    <v-checkbox v-model="active"></v-checkbox>
+                    <v-checkbox v-model="active1"></v-checkbox>
                   </v-list-item-action>
 
                   <v-list-item-content>
-                    <v-list-item-title>Notifications</v-list-item-title>
-                    <v-list-item-subtitle>Notify me about updates to apps or games that I downloaded</v-list-item-subtitle>
+                    <v-list-item-title>删除处方</v-list-item-title>
+                    <v-list-item-subtitle>是否允许删除以前的处方</v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
               </v-list-item>
 
               <v-list-item>
-                <template v-slot:default="{ active }">
+                <template v-slot:default="{  }">
                   <v-list-item-action>
-                    <v-checkbox v-model="active"></v-checkbox>
+                    <v-checkbox v-model="active2"></v-checkbox>
                   </v-list-item-action>
 
                   <v-list-item-content>
@@ -107,9 +107,9 @@
               </v-list-item>
 
               <v-list-item>
-                <template v-slot:default="{ active }">
+                <template v-slot:default="{  }">
                   <v-list-item-action>
-                    <v-checkbox v-model="active"></v-checkbox>
+                    <v-checkbox v-model="active3"></v-checkbox>
                   </v-list-item-action>
 
                   <v-list-item-content>
@@ -120,6 +120,9 @@
               </v-list-item>
             </v-list-item-group>
           </v-list>
+          <v-btn color="success" @click="kk">
+              Follow
+            </v-btn>
         </material-card>
       </v-col>
     </v-row>
@@ -134,6 +137,7 @@
         canEdit: true,
         canEditPass: true,
         show: false,
+        active1: true,
         clinicName: "云杰诊所",
         password: 'Password',
         rules: {
@@ -147,7 +151,7 @@
 
     methods: {
       kk(){
-        alert("fsd");
+        alert(this.active);
       }
     }
   }

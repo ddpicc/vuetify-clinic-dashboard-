@@ -88,7 +88,7 @@
         {
           to: '/dashboard',
           icon: 'mdi-view-dashboard',
-          text: 'Dashboard'
+          text: '首页'
         },
         {
           to: '/med-list',
@@ -112,7 +112,7 @@
         },
         {
           to: '/detail-info',
-          icon: 'mdi-human-male-female',
+          icon: 'mdi-receipt',
           text: '详细账单'
         }
       ]

@@ -24,7 +24,7 @@
               color="amber"
               @click="deleteEnabled = !deleteEnabled"
             >
-              <v-icon>mdi-send</v-icon>
+              <v-icon>mdi-plus</v-icon>
             </v-btn>
           </template>
           <!--  need a key of id -->
@@ -97,7 +97,7 @@
                       </tr>
                       <tr>
                         <td :colspan="6" style="border-bottom:1px solid"></td>
-                        <td :colspan="2" style="border-bottom:1px solid"><p>价钱： {{item.total}}</p></td>
+                        <td :colspan="2" style="border-bottom:1px solid"><p>价钱： {{item.total}}元</p></td>
                       </tr>
                       <tr>
                         <td :colspan="6"><p>处方医师：  崔云杰</p></td>
@@ -258,10 +258,10 @@
 
       canDelete: function(item){
         if(this.deleteEnabled){
-          if(this.getNowFormatDate() == item.date)
+          /* if(this.getNowFormatDate() == item.date)
             return true;
-          else
-            return false;
+          else */
+            return true;
         }
         else
           return false;
