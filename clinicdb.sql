@@ -68,7 +68,6 @@ CREATE TABLE `qcui_ordlist` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
-insert into `qcui_ordlist`(`patient`,`medtype`,`dose`,`total`,`date`) values ('李帅','免煎',10,732.3,'2019/10/22'), ('代桂玲','草药',5,225,'2019/10/23'), ('尹玉良','西药',1,24,'2019/10/22');
 
 /* 创建test_ordlist表 */
 DROP TABLE IF EXISTS `test_ordlist`;
@@ -143,9 +142,19 @@ DROP TABLE IF EXISTS `myDbs_userconfig`;
 
 CREATE TABLE `myDbs_userconfig` (
   `userid` smallint(5) unsigned NOT NULL,
-  `overallTotal` float(10) NOT NULL DEFAULT 0,
-  `2019/12` float(10) NOT NULL DEFAULT 0,
-  `2020/01` float(10) NOT NULL DEFAULT 0,
+  `overallIncome` float(10) NOT NULL DEFAULT 0,
+  `overallProfit` float(10) NOT NULL DEFAULT 0,
+  `income_2020` float(10) NOT NULL DEFAULT 0,
+  `profit_2020` float(10) NOT NULL DEFAULT 0,
   PRIMARY KEY (`userid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/* 创建user表 */
+DROP TABLE IF EXISTS `myDbs_clinicOverall`;
+
+CREATE TABLE `myDbs_clinicOverall` (
+  `clinicId` smallint(5) unsigned NOT NULL,
+  `overallTotal` float(50) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`clinicId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

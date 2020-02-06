@@ -476,7 +476,8 @@
                   total : parseInt(this.total),
                   date : this.getNowFormatDate(),          
             }).then( (resord) => {
-                
+              
+              this.clearInfo();
             })
             .catch( (err) =>{
               console.log(err);
@@ -485,6 +486,19 @@
           .catch( (err) =>{
             console.log(err);
           })        
+      },
+
+      clearInfo: function(){
+        this.patientName = '';
+        this.patientSex = '';
+        this.patientAge = '';
+        this.patientPhone = '';
+        this.patientSymptom = '';
+        this.orderComment = '';
+        this.medRadio = '草药';
+        this.orderCount = '';
+        this.medString = '';
+        this.total = '';
       },
 
       save: function(str){
