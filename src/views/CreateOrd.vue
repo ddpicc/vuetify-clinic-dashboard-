@@ -497,8 +497,10 @@
         this.orderComment = '';
         this.medRadio = '草药';
         this.orderCount = '';
-        this.medString = '';
+        this.items = [];
         this.total = '';
+        this.perOrdTotal = 0;
+        this.inputDose = '';
       },
 
       save: function(str){
