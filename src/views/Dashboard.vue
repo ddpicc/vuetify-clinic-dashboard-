@@ -5,14 +5,14 @@
         cols="12"
         lg="4"
       >
-        <material-chart-card
+        <material-linechart-card
           :data="dailySalesChart.data"
-          color="info"
-          type="Line"
+          color="green"
+          :chartColor="['#FFB677', '#666']"
         >
-          <h4 class="title font-weight-light">
+          <h7 class="title font-weight-light">
             Daily Sales
-          </h4>
+          </h7>
 
           <p class="category d-inline-flex font-weight-light">
             <v-icon
@@ -34,7 +34,7 @@
             </v-icon>
             <span class="caption grey--text font-weight-light">updated 4 minutes ago</span>
           </template>
-        </material-chart-card>
+        </material-linechart-card>
       </v-col>
 
       <v-col
@@ -413,6 +413,7 @@ import TimeLine from '../components/helper/TimeLine'
     components: {TimeLine},
     data () {
       return {
+        infocolor: ['#FFB677', '#436790'],
         dailySalesChart: {
           data: [['Jan', 44], ['Feb', 27], ['Mar', 60], ['Apr', 55], ['May', 37], ['Jun', 40], ['Jul', 69], ['Aug', 33], ['Sept', 76], ['Oct', 90], ['Nov', 34], ['Dec', 22]],
         },

@@ -5,7 +5,7 @@
     v-on="$listeners"
   >
     <template v-slot:header>
-       <line-chart :data="data" :colors="['#b00', '#666']" height="150px"></line-chart>
+       <pie-chart :data="data" :colors="chartColor" height="150px"></pie-chart>
     </template>
 
     <slot />
@@ -19,7 +19,7 @@
 
 <script>
   export default {
-    name: 'MaterialChartCard',
+    name: 'MaterialPiechartCard',
 
     inheritAttrs: false,
 
@@ -28,26 +28,9 @@
         type: Object,
         default: () => ({})
       },
-      eventHandlers: {
+      chartColor: {
         type: Array,
-        default: () => ([])
-      },
-      options: {
-        type: Object,
         default: () => ({})
-      },
-      ratio: {
-        type: String,
-        default: undefined
-      },
-      responsiveOptions: {
-        type: Array,
-        default: () => ([])
-      },
-      type: {
-        type: String,
-        required: true,
-        validator: v => ['Bar', 'Line', 'Pie'].includes(v)
       }
     }
   }
