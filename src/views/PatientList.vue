@@ -65,7 +65,7 @@
         {
           sortable: false,
           text: '最近一次诊断',
-					value: 'bagperbox',
+					value: 'lastVisit',
 					width: '25%'
         },
         {

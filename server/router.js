@@ -42,12 +42,20 @@ router.post('/insertPatientDetailPage', (req, res, next) => {
   api.insertPatientDetailPage(req, res, next);
 });
 
+router.get('/findPatientByPinyin', (req, res, next) => {
+  api.findPatientByPinyin(req, res, next);
+});
+
 router.get('/getTokenFromLogin', (req, res, next) => {
   api.getTokenFromLogin(req, res, next);
 });
 
 router.get('/getUserInfo', (req, res, next) => {
   api.getUserInfo(req, res, next);
+});
+
+router.get('/getLast30Days', (req, res, next) => {
+  api.getLast30Days(req, res, next);
 });
 
 module.exports = router;

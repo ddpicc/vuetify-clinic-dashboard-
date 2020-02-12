@@ -123,10 +123,10 @@ module.exports = {
     var dbs = req.body.dbs;
     var name = req.body.name,sex = req.body.sex;
     var age = req.body.age, phone = req.body.phone;
-    var lastVisit = req.body.lastVisit;
+    var lastVisit = req.body.lastVisit, name_pinyin = req.body.name_pinyin
     pool.getConnection((err, connection) => {
       var sql = sqlMap.insertPatientOrderPage;
-      connection.query(sql, [dbs,name,sex,age,phone,lastVisit], (err, result) => {
+      connection.query(sql, [dbs,name,name_pinyin,sex,age,phone,lastVisit], (err, result) => {
         if(err)
           console.log(err);
         res.json(result);
@@ -148,6 +148,17 @@ module.exports = {
           console.log(err);
         res.json(result);
         connection.release();
+      })
+    })
+  },
+
+  findPatientByPinyin(req, res, next) {
+    var dbs = req.query.dbs, name_pinyin = req.query.name_pinyin;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.findPatientByPinyin;
+      connection.query(sql, [dbs,name_pinyin], (err, result) => {
+          res.json(result);
+          connection.release();
       })
     })
   },
@@ -180,6 +191,20 @@ module.exports = {
           console.log(err);
         res.json(result);
         connection.release();
+      })
+    })
+  },
+
+  getLast30Days(req, res, next) {
+    console.log('api - getLast30Days');
+    var dbs = req.query.dbs;
+    var startDate = req.query.startDate;
+    var endDate = req.query.endDate;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.getLast30Days;
+      connection.query(sql, [dbs,startDate,endDate], (err, result) => {
+          res.json(result);
+          connection.release();
       })
     })
   },

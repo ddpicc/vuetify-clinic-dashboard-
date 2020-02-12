@@ -10,9 +10,9 @@
           color="green"
           :chartColor="['#FFB677', '#666']"
         >
-          <h7 class="title font-weight-light">
+          <h5 class="title font-weight-light">
             Daily Sales
-          </h7>
+          </h5>
 
           <p class="category d-inline-flex font-weight-light">
             <v-icon
@@ -409,13 +409,14 @@
 
 <script>
 import TimeLine from '../components/helper/TimeLine'
+import { dateToString, stringToDate} from '../utils/handleDate';
   export default {
     components: {TimeLine},
     data () {
       return {
         infocolor: ['#FFB677', '#436790'],
         dailySalesChart: {
-          data: [['Jan', 44], ['Feb', 27], ['Mar', 60], ['Apr', 55], ['May', 37], ['Jun', 40], ['Jul', 69], ['Aug', 33], ['Sept', 76], ['Oct', 90], ['Nov', 34], ['Dec', 22]],
+          data: [],
         },
         dataCompletedTasksChart: {
           data: {
@@ -548,7 +549,43 @@ import TimeLine from '../components/helper/TimeLine'
     methods: {
       complete (index) {
         this.list[index] = !this.list[index]
+      },
+
+      loadMonth: function(){
+        var end = dateToString(new Date());
+        var start = dateToString(new Date(new Date().setDate(new Date().getDate()-29)));
+        var last30daysIncome = [];
+        this.$http.get('/api/getLast30Days', {
+          params: {
+            dbs : this.$store.state.user.dbs_prefix+'ordlist',
+            startDate: start,
+            endDate: end
+          }
+        }).then(response => {
+          this.$nextTick( () => {
+            alert(JSON.stringify(response.data));
+            let index = 0;
+            let curDate = '';            
+            for(let item of response.data){
+              if(item.date != curDate){
+                index = parseInt((new Date() - stringToDate(item.date)) / (1000 * 60 * 60 * 24));
+                curDate = item.date;
+                last30daysIncome[index] = item.total;
+              }
+              else{
+                last30daysIncome[index] = parseFloat((last30daysIncome[index] + item.total).toFixed(2));
+              }
+            }
+            for(var i = 0;i<30;i++) {
+              this.dailySalesChart.data.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysIncome[i]]);
+            }
+          })
+        })
       }
-    }
+    },
+
+    mounted: function() {
+			this.loadMonth();
+		}
   }
 </script>

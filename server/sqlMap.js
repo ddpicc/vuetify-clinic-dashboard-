@@ -7,10 +7,12 @@ var sqlMap = {
     insertOrd: 'INSERT INTO ??(patient,patient_id,medtype,dose,medarray,total,date) VALUES(?,?,?,?,?,?,?)',
     deleteOrdbyId: 'DELETE FROM ?? where id=?',
     getAllPatient: 'SELECT * FROM ??',
-    insertPatientOrderPage: 'INSERT INTO ??(name,sex,age,phone,lastVisit) VALUES(?,?,?,?,?)',
+    insertPatientOrderPage: 'INSERT INTO ??(name,name_pinyin,sex,age,phone,lastVisit) VALUES(?,?,?,?,?,?)',
     insertPatientDetailPage: 'INSERT INTO ??(name,sex,age,address,phone,wechat,lastVisit,comment) VALUES(?,?,?,?,?,?,?,?)',
+    findPatientByPinyin: 'SELECT * FROM ?? WHERE name_pinyin like ?',
     getTokenFromLogin: 'SELECT token FROM myDbs_user WHERE username = ? and password = ?',
     getUserInfo: 'SELECT * FROM myDbs_user WHERE token = ?',
+    getLast30Days: 'SELECT total,date from ?? where date between ? and ?',
   }
   
   module.exports = sqlMap;

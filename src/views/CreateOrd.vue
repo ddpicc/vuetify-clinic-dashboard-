@@ -154,7 +154,7 @@
               :return-value.sync="props.item.count1"
               large
               persistent
-              @save="save(props.item.count1)"
+              @save="save(props.item.count1, props.item.name1)"
               @cancel="cancel"
             >
               <div>{{ props.item.count1 }}</div>
@@ -210,6 +210,26 @@
               </v-col>
             </v-row>
           </div>
+          <v-dialog v-model="selectPatientDialog" persistent max-width="600px">
+            <v-card>
+              <v-card-title>
+                <span class="headline">{{kk}}</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                  
+                  </v-row>
+                </v-container>
+                <small>*表示选项是必填的</small>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="cancelDialog">取消</v-btn>
+                <v-btn color="blue darken-1" text @click="saveDialog">保存</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>          
         </material-card>
       </v-col>
     </v-row>
@@ -217,7 +237,7 @@
 </template>
 
 <script>
-
+  var pinyin = require("pinyin");
   var staticHeader=[{sortable: false, text: '名称', value: 'name1', width: '15%'}, {sortable: false,text: '数量', value: 'count1', width: '10%'}, {sortable: false,text: '名称', value: 'name2', width: '15%'}, {sortable: false,text: '数量', value: 'count2', width: '10%'}, 
                  {sortable: false,text: '名称', value: 'name3', width: '15%'}, {sortable: false,text: '数量', value: 'count3', width: '10%'}, {sortable: false,text: '名称', value: 'name4', width: '15%'}, {sortable: false,text: '数量', value: 'count4', width: '10%'}];
 
@@ -252,7 +272,7 @@
       inputMed: '',
       inputDose: '',
       medString: '',
-      inTableChanged: false,
+      selectPatientDialog: false,
       notzero: v=> v > 0 || '不能是0'
     }),
 
@@ -457,9 +477,11 @@
               //搜索全拼相同，在得到的结果中找至少有一个字相同的名字,找到了就列出来，没找到就创建一个新的病人
               dbs : this.$store.state.user.dbs_prefix+'patient',
               name : this.patientName,
+              name_pinyin : pinyin(this.patientName,{style: pinyin.STYLE_NORMAL}).join(""),
               sex : this.patientSex,
-              age : this.patientAge,
-              phone : this.patientPhone,
+              age : !this.patientAge? 0 : parseFloat(this.patientAge),
+              phone : !this.patientPhone? 0 : parseInt(this.patientPhone),
+              lastVisit : this.getNowFormatDate(),
           }).then( (res) => {
             this.$http.post('/api/insertOrd',{
                   dbs : this.$store.state.user.dbs_prefix+'ordlist',
@@ -473,7 +495,7 @@
                   medtype : this.medRadio,
                   dose : this.orderCount,
                   medarray : this.medString,
-                  total : parseInt(this.total),
+                  total : parseFloat(this.total),
                   date : this.getNowFormatDate(),          
             }).then( (resord) => {
               
@@ -500,13 +522,29 @@
         this.items = [];
         this.total = '';
         this.perOrdTotal = 0;
+        this.perOrdBase = 0;
         this.inputDose = '';
       },
 
-      save: function(str){
-        if(str === "")
-          alert(str);
-        this.inTableChanged = !this.inTableChanged;
+      save: function(count, name){
+        let existInTable = this.orderMed1PerObj.find(function(p){
+            return p.name === name;
+        });
+        var index = this.orderMed1PerObj.indexOf(existInTable);
+        if(!count || !parseInt(count) || parseInt(count) == 0){
+          this.orderMed1PerObj.splice(index, 1);
+          this.disPlayToTb();
+        }else{
+          //splice can activate watch
+          this.orderMed1PerObj.splice(index,1,{
+            name: name,
+            count: parseInt(count),
+            spec: existInTable.spec,
+            baseprice: existInTable.baseprice,
+						sellprice: existInTable.sellprice
+          })
+          this.disPlayToTb();
+        }
       },
 
       cancel: function(){
@@ -523,7 +561,19 @@
       },
 
       nameLostFoucs: function(){
-        //alert(this.patientName);
+        if(this.patientName == '')
+          return;
+        let p_name_pinyin = pinyin(this.patientName,{style: pinyin.STYLE_NORMAL}).join("");
+        this.$http.get('/api/findPatientByPinyin',{
+          params: {
+            dbs : this.$store.state.user.dbs_prefix+'patient',
+            name_pinyin : '%' + p_name_pinyin + '%',
+					}
+        }).then( (res) => {
+          alert(JSON.stringify(res.data));
+        })
+        
+        //this.selectPatientDialog = true;
         //to do 
         //check if the patient exist
       }
@@ -553,24 +603,6 @@
         let temp = (this.perOrdTotal * this.orderCount).toFixed(2);
         this.total = temp;
       },
-
-      inTableChanged: function(){
-        /* alert('changed something');
-        alert(this.inputMed); */
-        alert(JSON.stringify(this.items));
-        for(var i=0; i < this.items.length; i++){
-          //if(parseInt(items[i].count1)
-          if(parseInt(this.items[i].count1))
-            alert("fafafaf");
-          alert(parseInt(this.items[i].count2));
-          alert(parseInt(this.items[i].count3));
-          alert(parseInt(this.items[i].count4));
-        } 
-      },
-
-      //items: function(){
-      //  alert("changed");
-      //},
     },
 
     mounted: function() {
