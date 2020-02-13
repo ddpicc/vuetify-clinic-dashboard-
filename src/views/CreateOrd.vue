@@ -210,24 +210,24 @@
               </v-col>
             </v-row>
           </div>
-          <v-dialog v-model="selectPatientDialog" persistent max-width="600px">
+          <v-dialog v-model="selectPatientDialog" scrollable max-width="800px">
             <v-card>
               <v-card-title>
-                <span class="headline">{{kk}}</span>
+                <span class="headline"></span>
               </v-card-title>
               <v-card-text>
                 <v-container>
-                  <v-row>
-                  
-                  </v-row>
+                  <v-data-table
+                    :headers="findPatientHeader"
+                    :items="cacheFindedPatient"
+                    hide-default-footer
+                  >
+                    <template v-slot:item.action="{ item }">
+                      <v-btn color="blue darken-1" text @click="choosePatient(item)">选择</v-btn>
+                    </template>
+                  </v-data-table>
                 </v-container>
-                <small>*表示选项是必填的</small>
               </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="cancelDialog">取消</v-btn>
-                <v-btn color="blue darken-1" text @click="saveDialog">保存</v-btn>
-              </v-card-actions>
             </v-card>
           </v-dialog>          
         </material-card>
@@ -245,12 +245,11 @@
 
   export default {
     data: () => ({
-      direction: 'bottom',
       fab: false,
       searchStr: '',
-      transition: 'slide-y-reverse-transition',
       sexItems: ['男', '女'],
       patientName: '',
+      patient_id: '',
 			patientAge: '',
       patientSex: '',
       patientPhone: '',
@@ -273,7 +272,22 @@
       inputDose: '',
       medString: '',
       selectPatientDialog: false,
-      notzero: v=> v > 0 || '不能是0'
+      cacheFindedPatient: [],
+      notzero: v=> v > 0 || '不能是0',
+      findPatientHeader: [
+        {
+          text: '姓名',
+          align: 'left',
+          sortable: false,
+          value: 'name',
+        },
+        { text: '性别', value: 'sex' },
+        { text: '年龄', value: 'age' },
+        { text: '地址', value: 'address' },
+        { text: '电话', value: 'phone' },
+        { text: '最近一次', value: 'lastVisit' },
+        { text: '操作', value: 'action' },
+      ]
     }),
 
     methods: {
@@ -487,9 +501,6 @@
                   dbs : this.$store.state.user.dbs_prefix+'ordlist',
                   patient : this.patientName,
                   patient_id : res.data.insertId,
-                  patient_sex : this.patientSex,
-                  patient_age : this.patientAge,
-                  patient_phone : this.patientPhone,
                   symptom : this.patientSymptom,
                   order_comment : this.orderComment,
                   medtype : this.medRadio,
@@ -561,7 +572,7 @@
       },
 
       nameLostFoucs: function(){
-        if(this.patientName == '')
+        if(this.patientName == '' || this.patientName.length < 2)
           return;
         let p_name_pinyin = pinyin(this.patientName,{style: pinyin.STYLE_NORMAL}).join("");
         this.$http.get('/api/findPatientByPinyin',{
@@ -570,12 +581,30 @@
             name_pinyin : '%' + p_name_pinyin + '%',
 					}
         }).then( (res) => {
-          alert(JSON.stringify(res.data));
+          this.cacheFindedPatient = [];
+          let serverFindP = res.data;
+          for(let item of serverFindP){
+            for(var i=0; i<this.patientName.length; i++){
+              let index = item.name.indexOf(this.patientName[i]);
+              if(index == i){
+                this.cacheFindedPatient.push(item);
+                break;
+              }
+            }
+          }
+          if(this.cacheFindedPatient.length != 0 && !this.patient_id){
+            this.selectPatientDialog = true;
+          }
         })
-        
-        //this.selectPatientDialog = true;
-        //to do 
-        //check if the patient exist
+      },
+
+      choosePatient: function(item){
+        this.patient_id = item.id;
+        this.patientName = item.name;
+        this.patientSex = item.sex;
+        this.patientAge = item.age;
+        this.patientPhone = item.phone;
+        this.selectPatientDialog = false;   
       }
     },
 

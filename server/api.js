@@ -70,10 +70,10 @@ module.exports = {
   },
 
   getAllOrd(req, res, next) {
-    var dbs = req.query.dbs;
+    var dbs_a = req.query.dbs_a,dbs_b = req.query.dbs_b;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.getAllOrd;
-      connection.query(sql, [dbs], (err, result) => {
+      connection.query(sql, [dbs_a, dbs_b], (err, result) => {
           res.json(result);
           connection.release();
       })
@@ -83,12 +83,13 @@ module.exports = {
   insertOrd(req, res, next) {
     var dbs = req.body.dbs;
     var patient = req.body.patient,patient_id = req.body.patient_id;
+    var symptom = req.body.symptom,order_comment = req.body.order_comment;
     var medtype = req.body.medtype, dose = req.body.dose;
     var medarray = req.body.medarray, total = req.body.total;
     var date = req.body.date;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.insertOrd;
-      connection.query(sql, [dbs,patient,patient_id,medtype,dose,medarray,total,date], (err, result) => {
+      connection.query(sql, [dbs,patient,patient_id,symptom,order_comment,medtype,dose,medarray,total,date], (err, result) => {
         console.log(err);  
         res.json(result);
           connection.release();
@@ -157,8 +158,10 @@ module.exports = {
     pool.getConnection((err, connection) => {
       var sql = sqlMap.findPatientByPinyin;
       connection.query(sql, [dbs,name_pinyin], (err, result) => {
-          res.json(result);
-          connection.release();
+        if(err)
+          console.log(err);
+        res.json(result);
+        connection.release();
       })
     })
   },
