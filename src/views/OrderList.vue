@@ -208,8 +208,8 @@
             dbs_b : this.$store.state.user.dbs_prefix+'patient',
 					}
         }).then( (res) => {
-          this.items = res.data;
           alert(JSON.stringify(res.data));
+          this.items = res.data;
           for(let element of this.items) {
             element.medarray = element.medarray.split(";");
           }

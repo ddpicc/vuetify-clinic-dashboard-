@@ -166,6 +166,18 @@ module.exports = {
     })
   },
 
+  getPatientInfo(req, res, next) {
+    var dbs = req.query.dbs;
+    var id = req.query.patient_id;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.getPatientInfo;
+      connection.query(sql, [dbs,id], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
   getTokenFromLogin(req, res, next) {
     console.log('api - getTokenFromLogin');
     var username = req.query.username,password = req.query.password;

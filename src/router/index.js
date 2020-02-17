@@ -52,7 +52,7 @@ export const asyncRouterMap = [
     component: () => import('../Full.vue'),
     children: [
       {path: '/dashboard', component: () => import('../views/Dashboard.vue')},
-      {path: '/user-profile', name: 'User Profile', component: () => import('../views/UserProfile.vue')},
+      {path: '/patient-profile', name: 'Patient Profile', component: () => import('../views/PatientProfile.vue')},
       {path: '/med-list', name: '药品管理', component: () => import('../views/MedList.vue')},
       {path: '/ord-list', name: '处方管理', component: () => import('../views/OrderList.vue')},
       {path: '/create-ord', name: '生成处方', component: () => import('../views/CreateOrd.vue')},

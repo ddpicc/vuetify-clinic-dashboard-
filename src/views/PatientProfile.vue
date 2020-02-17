@@ -20,6 +20,7 @@
                   <v-text-field
                     class="purple-input"
                     label="姓名"
+                    v-model="patientName"
                   />
                 </v-col>
                 <v-col cols="12" md="4">
@@ -117,8 +118,25 @@
       onClick () {
         
       },
+
+      getAll: function() {
+        this.loading = true;
+        this.$http.get('/api/getPatientInfo',{
+          params: {
+            dbs : this.$store.state.user.dbs_prefix+'patient',
+						patient_id : this.patientId
+					}
+        }).then( (res) => {
+          alert(JSON.stringify(res.data));
+          this.loading = false;
+        })
+      },
     },
 
+    mounted: function() {
+			this.getAll();
+    },
+    
     created() {
       this.patientId = this.$route.params.pt_id;
     }
