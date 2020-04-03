@@ -12,7 +12,7 @@ export default [
   {
     path: '/user-profile',
     name: 'User Profile',
-    view: 'UserProfile'
+    view: 'PatientProfile'
   },
   {
     path: '/med-list',

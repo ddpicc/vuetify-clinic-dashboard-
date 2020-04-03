@@ -73,9 +73,9 @@
                     <tbody>
                       <tr>
                         <td :colspan="2"><p>姓名： {{item.patient}}</p></td>
-                        <td :colspan="2"><p>年龄： {{item.patient_age}}</p></td>
-                        <td :colspan="2"><p>性别： {{item.patient_sex}}</p></td>
-                        <td :colspan="2"><p>电话:  {{item.patient_phone}}</p></td>
+                        <td :colspan="2"><p>年龄： {{item.age}}</p></td>
+                        <td :colspan="2"><p>性别： {{item.sex}}</p></td>
+                        <td :colspan="2"><p>电话:  {{item.phone}}</p></td>
                       </tr>
                       <tr>
                         <td  :colspan="6" style="border-bottom:1px solid"><p>症状： {{item.symptom}}</p></td>
@@ -204,9 +204,11 @@
         this.loading = true;
         this.$http.get('/api/getAllOrd',{
           params: {
-            dbs : this.$store.state.user.dbs_prefix+'ordlist',
+            dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
+            dbs_b : this.$store.state.user.dbs_prefix+'patient',
 					}
         }).then( (res) => {
+          alert(JSON.stringify(res.data));
           this.items = res.data;
           for(let element of this.items) {
             element.medarray = element.medarray.split(";");

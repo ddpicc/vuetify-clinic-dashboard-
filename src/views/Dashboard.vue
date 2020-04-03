@@ -563,7 +563,6 @@ import { dateToString, stringToDate} from '../utils/handleDate';
           }
         }).then(response => {
           this.$nextTick( () => {
-            alert(JSON.stringify(response.data));
             let index = 0;
             let curDate = '';            
             for(let item of response.data){

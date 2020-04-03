@@ -28,7 +28,7 @@
               <v-col>
                 <v-container>
                   <v-row dense>
-                    <v-col sm="4" md="3">
+                    <v-col sm="4" md="4">
                       <v-text-field v-model="patientName" @blur="nameLostFoucs"
                         label="姓名"
                       ></v-text-field>
@@ -39,12 +39,11 @@
                         label="性别"
                       ></v-select>
                     </v-col>
-                    <v-col sm="3" md="3">
+                    <v-col sm="4" md="3">
                       <v-text-field v-model="patientAge"
                         label="年龄"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="1.5"></v-col>
                     <v-col sm="1.5" md="1.5"
                     align="right">
                       <v-btn
@@ -63,7 +62,7 @@
                   <v-row 
                   dense
                   >
-                    <v-col sm="4" md="4">
+                    <v-col sm="5" md="5">
                       <v-text-field v-model="patientPhone"
                         label="电话"
                       ></v-text-field>
@@ -73,7 +72,6 @@
                         label="症状"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="1"><v-icon>mdi-account-card-details</v-icon></v-col>
                   </v-row>
                 </v-container>
               </v-col>
@@ -210,24 +208,25 @@
               </v-col>
             </v-row>
           </div>
-          <v-dialog v-model="selectPatientDialog" persistent max-width="600px">
+          <v-dialog v-model="selectPatientDialog" scrollable max-width="800px">
             <v-card>
               <v-card-title>
-                <span class="headline">{{kk}}</span>
+                <span class="headline"></span>
               </v-card-title>
               <v-card-text>
                 <v-container>
-                  <v-row>
-                  
-                  </v-row>
+                  <v-data-table
+                    :headers="findPatientHeader"
+                    :items="cacheFindedPatient"
+                    hide-default-footer
+                  >
+                    <template v-slot:item.action="{ item }">
+                      <v-btn color="blue darken-1" text @click="choosePatient(item)">选择</v-btn>
+                      <v-btn color="blue darken-1" text @click="jumpToPDetail(item.id)">详情</v-btn>
+                    </template>
+                  </v-data-table>
                 </v-container>
-                <small>*表示选项是必填的</small>
               </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="cancelDialog">取消</v-btn>
-                <v-btn color="blue darken-1" text @click="saveDialog">保存</v-btn>
-              </v-card-actions>
             </v-card>
           </v-dialog>          
         </material-card>
@@ -245,12 +244,11 @@
 
   export default {
     data: () => ({
-      direction: 'bottom',
       fab: false,
       searchStr: '',
-      transition: 'slide-y-reverse-transition',
       sexItems: ['男', '女'],
       patientName: '',
+      patient_id: '',
 			patientAge: '',
       patientSex: '',
       patientPhone: '',
@@ -273,7 +271,21 @@
       inputDose: '',
       medString: '',
       selectPatientDialog: false,
-      notzero: v=> v > 0 || '不能是0'
+      cacheFindedPatient: [],
+      notzero: v=> v > 0 || '不能是0',
+      findPatientHeader: [
+        {
+          text: '姓名',
+          align: 'left',
+          sortable: false,
+          value: 'name',
+        },
+        { text: '性别', value: 'sex' },
+        { text: '年龄', value: 'age' },
+        { text: '电话', value: 'phone' },
+        { text: '最近一次', value: 'lastVisit' },
+        { text: '操作', value: 'action' },
+      ]
     }),
 
     methods: {
@@ -473,41 +485,57 @@
           alert('姓名不能为空');
           return;
         }
-        this.$http.post('/api/insertPatientOrderPage',{
-              //搜索全拼相同，在得到的结果中找至少有一个字相同的名字,找到了就列出来，没找到就创建一个新的病人
-              dbs : this.$store.state.user.dbs_prefix+'patient',
-              name : this.patientName,
-              name_pinyin : pinyin(this.patientName,{style: pinyin.STYLE_NORMAL}).join(""),
-              sex : this.patientSex,
-              age : !this.patientAge? 0 : parseFloat(this.patientAge),
-              phone : !this.patientPhone? 0 : parseInt(this.patientPhone),
-              lastVisit : this.getNowFormatDate(),
-          }).then( (res) => {
-            this.$http.post('/api/insertOrd',{
-                  dbs : this.$store.state.user.dbs_prefix+'ordlist',
-                  patient : this.patientName,
-                  patient_id : res.data.insertId,
-                  patient_sex : this.patientSex,
-                  patient_age : this.patientAge,
-                  patient_phone : this.patientPhone,
-                  symptom : this.patientSymptom,
-                  order_comment : this.orderComment,
-                  medtype : this.medRadio,
-                  dose : this.orderCount,
-                  medarray : this.medString,
-                  total : parseFloat(this.total),
-                  date : this.getNowFormatDate(),          
-            }).then( (resord) => {
-              
-              this.clearInfo();
+        if(!this.patient_id){
+          this.$http.post('/api/insertPatientOrderPage',{
+                //搜索全拼相同，在得到的结果中找至少有一个字相同的名字,找到了就列出来，没找到就创建一个新的病人
+                dbs : this.$store.state.user.dbs_prefix+'patient',
+                name : this.patientName,
+                name_pinyin : pinyin(this.patientName,{style: pinyin.STYLE_NORMAL}).join(""),
+                sex : this.patientSex,
+                age : !this.patientAge? 0 : parseFloat(this.patientAge),
+                phone : !this.patientPhone? 0 : parseInt(this.patientPhone),
+                lastVisit : this.getNowFormatDate(),
+            }).then( (res) => {
+              this.$http.post('/api/insertOrd',{
+                    dbs : this.$store.state.user.dbs_prefix+'ordlist',
+                    patient : this.patientName,
+                    patient_id : res.data.insertId,
+                    symptom : this.patientSymptom,
+                    order_comment : this.orderComment,
+                    medtype : this.medRadio,
+                    dose : this.orderCount,
+                    medarray : this.medString,
+                    total : parseFloat(this.total),
+                    date : this.getNowFormatDate(),          
+              }).then( (resord) => {              
+                this.clearInfo();
+              })
+              .catch( (err) =>{
+                console.log(err);
+              })
             })
             .catch( (err) =>{
               console.log(err);
             })
+        }else{
+          this.$http.post('/api/insertOrd',{
+                dbs : this.$store.state.user.dbs_prefix+'ordlist',
+                patient : this.patientName,
+                patient_id : this.patient_id,
+                symptom : this.patientSymptom,
+                order_comment : this.orderComment,
+                medtype : this.medRadio,
+                dose : this.orderCount,
+                medarray : this.medString,
+                total : parseFloat(this.total),
+                date : this.getNowFormatDate(),          
+          }).then( (resord) => {              
+            this.clearInfo();
           })
           .catch( (err) =>{
             console.log(err);
-          })        
+          })
+        }
       },
 
       clearInfo: function(){
@@ -561,7 +589,7 @@
       },
 
       nameLostFoucs: function(){
-        if(this.patientName == '')
+        if(this.patientName == '' || this.patientName.length < 2)
           return;
         let p_name_pinyin = pinyin(this.patientName,{style: pinyin.STYLE_NORMAL}).join("");
         this.$http.get('/api/findPatientByPinyin',{
@@ -570,12 +598,34 @@
             name_pinyin : '%' + p_name_pinyin + '%',
 					}
         }).then( (res) => {
-          alert(JSON.stringify(res.data));
+          this.cacheFindedPatient = [];
+          let serverFindP = res.data;
+          for(let item of serverFindP){
+            for(var i=0; i<this.patientName.length; i++){
+              let index = item.name.indexOf(this.patientName[i]);
+              if(index == i){
+                this.cacheFindedPatient.push(item);
+                break;
+              }
+            }
+          }
+          if(this.cacheFindedPatient.length != 0 && !this.patient_id){
+            this.selectPatientDialog = true;
+          }
         })
-        
-        //this.selectPatientDialog = true;
-        //to do 
-        //check if the patient exist
+      },
+
+      choosePatient: function(item){
+        this.patient_id = item.id;
+        this.patientName = item.name;
+        this.patientSex = item.sex;
+        this.patientAge = item.age;
+        this.patientPhone = item.phone;
+        this.selectPatientDialog = false;   
+      },
+
+      jumpToPDetail: function(id){
+        this.$router.push({name: 'User Profile', params: {pt_id: id}});
       }
     },
 

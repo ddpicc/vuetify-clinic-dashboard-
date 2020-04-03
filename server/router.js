@@ -46,6 +46,10 @@ router.get('/findPatientByPinyin', (req, res, next) => {
   api.findPatientByPinyin(req, res, next);
 });
 
+router.get('/getPatientInfo', (req, res, next) => {
+  api.getPatientInfo(req, res, next);
+});
+
 router.get('/getTokenFromLogin', (req, res, next) => {
   api.getTokenFromLogin(req, res, next);
 });

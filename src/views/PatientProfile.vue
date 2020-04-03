@@ -20,6 +20,7 @@
                   <v-text-field
                     class="purple-input"
                     label="姓名"
+                    v-model="patientName"
                   />
                 </v-col>
                 <v-col cols="12" md="4">
@@ -29,31 +30,31 @@
                   ></v-select>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-text-field
+                  <v-text-field v-model="patientAge"
                     class="purple-input"
                     label="年龄"
                   />
                 </v-col>
                 <v-col cols="12" md="6">
-                  <v-text-field
+                  <v-text-field v-model="patientPhone"
                     label="电  话"
                     class="purple-input"
                   />
                 </v-col>
                 <v-col cols="12" md="6">
-                  <v-text-field
+                  <v-text-field v-model="patientWechat"
                     label="微  信"
                     class="purple-input"
                   />
                 </v-col>
                 <v-col cols="12">
-                  <v-text-field
+                  <v-text-field v-model="patienAddress"
                     label="城  市"
                     class="purple-input"
                   />
                 </v-col>
                 <v-col cols="12">
-                  <v-text-field
+                  <v-text-field v-model="patientComment"
                     class="purple-input"
                     label="备  注"
                   />
@@ -110,6 +111,14 @@
   export default {
     data: () => ({
       patientId: '',
+      patientName: '',
+      patientAge: '',
+      sexItems: ['男', '女'],
+      patientSex: '',
+      patientPhone: '',
+      patientWechat: '',
+      patienAddress: '',
+      patientComment: '',
       chartData: [['Jan', 44], ['Feb', 27], ['Mar', 60], ['Apr', 55], ['May', 37], ['Jun', 40], ['Jul', 69], ['Aug', 33], ['Sept', 76], ['Oct', 90], ['Nov', 34], ['Dec', 22]]
     }),
 
@@ -117,8 +126,32 @@
       onClick () {
         
       },
+
+      getAll: function() {
+        this.loading = true;
+        this.$http.get('/api/getPatientInfo',{
+          params: {
+            dbs : this.$store.state.user.dbs_prefix+'patient',
+						patient_id : this.patientId
+					}
+        }).then( (res) => {
+          alert(JSON.stringify(res.data));
+          this.patientName = res.data[0].name;
+          this.patientAge = res.data[0].age;
+          this.patientSex = res.data[0].sex;
+          this.patientPhone = res.data[0].phone;
+          this.patientWechat = res.data[0].wechat;
+          this.patienAddress = res.data[0].address;
+          this.patientComment = res.data[0].comment;
+          this.loading = false;
+        })
+      },
     },
 
+    mounted: function() {
+			this.getAll();
+    },
+    
     created() {
       this.patientId = this.$route.params.pt_id;
     }
