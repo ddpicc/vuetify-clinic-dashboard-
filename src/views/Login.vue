@@ -50,6 +50,7 @@
                         label="密码"
                         type="password"
                         v-model="password"
+                        @keyup.enter.native="loginClick"
                       />
                       <v-card-actions>
                         <v-spacer />
@@ -161,15 +162,6 @@
 
       jumpHome: function(){
         this.$router.push({ path: '/' });
-      }
-    },
-    mounted: function() {
-      let self = this;
-      document.onkeydown = function(e) {
-        let ev = document.all ? window.event : e
-        if (ev.keyCode === 13) {
-          self.loginClick()
-        }
       }
     }
   }

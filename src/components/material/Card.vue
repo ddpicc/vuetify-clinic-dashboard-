@@ -17,7 +17,7 @@
         class="v-card--material__header d-flex align-center"
         dark
         min-height="80"
-        max-height="150"
+        max-height="200"
       >
         <slot
           v-if="!title && !text"

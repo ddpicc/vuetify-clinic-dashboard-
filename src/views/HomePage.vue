@@ -23,7 +23,7 @@
                     </div>
                     <ul class="header-links list-reset m-0">
                         <li>
-                            <a href="#">Login</a>
+                            <a href="#" @click.stop="loginClick">Login</a>
                         </li>
                         <li>
                             <a class="button button-sm button-shadow" href="#">Signup</a>
@@ -421,6 +421,13 @@
           scrollReveal: scrollReveal()
         }
       },
+
+      methods: {
+          loginClick: function(){
+            this.$router.push({ path: '/login' });
+          }
+      },
+
       mounted () {
         // this.mask=false
         this.$nextTick(function () {            

@@ -24,16 +24,6 @@
             <span class="green--text">55%</span>&nbsp;
             increase in today's sales
           </p>
-
-          <template v-slot:actions>
-            <v-icon
-              class="mr-2"
-              small
-            >
-              mdi-clock-outline
-            </v-icon>
-            <span class="caption grey--text font-weight-light">updated 4 minutes ago</span>
-          </template>
         </material-linechart-card>
       </v-col>
 
@@ -41,12 +31,9 @@
         cols="12"
         lg="4"
       >
-        <material-chart-card
-          :data="emailsSubscriptionChart.data"
-          :options="emailsSubscriptionChart.options"
-          :responsive-options="emailsSubscriptionChart.responsiveOptions"
+        <material-linechart-card
+          :data="monthSalesChart.data"
           color="red"
-          type="Bar"
         >
           <h4 class="title font-weight-light">
             Email Subscription
@@ -64,18 +51,16 @@
             </v-icon>
             <span class="caption grey--text font-weight-light">updated 10 minutes ago</span>
           </template>
-        </material-chart-card>
+        </material-linechart-card>
       </v-col>
 
       <v-col
         cols="12"
         lg="4"
       >
-        <material-chart-card
-          :data="dataCompletedTasksChart.data"
-          :options="dataCompletedTasksChart.options"
+        <material-linechart-card
+          :data="dailyNmPeopleChart.data"
           color="green"
-          type="Line"
         >
           <h3 class="title font-weight-light">
             Completed Tasks
@@ -93,9 +78,10 @@
             </v-icon>
             <span class="caption grey--text font-weight-light">campaign sent 26 minutes ago</span>
           </template>
-        </material-chart-card>
+        </material-linechart-card>
       </v-col>
 
+      <!-- 全年收入，当天收入，当天病人，月收入，月病人-->
       <v-col
         cols="12"
         sm="6"
@@ -104,7 +90,7 @@
         <material-stats-card
           color="green"
           icon="mdi-store"
-          title="Revenue"
+          title="当天收入"
           value="$34,245"
           sub-icon="mdi-calendar"
           sub-text="Last 24 Hours"
@@ -119,7 +105,7 @@
         <material-stats-card
           color="orange"
           icon="mdi-content-copy"
-          title="Used Space"
+          title="当天病人"
           value="49/50"
           small-value="GB"
           sub-icon="mdi-alert"
@@ -137,7 +123,7 @@
         <material-stats-card
           color="red"
           icon="mdi-information-outline"
-          title="Fixed Issues"
+          title="月收入"
           value="75"
           sub-icon="mdi-tag"
           sub-text="Tracked from Github"
@@ -152,8 +138,8 @@
         <material-stats-card
           color="info"
           icon="mdi-twitter"
-          title="Followers"
-          value="+245"
+          title="月病人"
+          value="245"
           sub-icon="mdi-update"
           sub-text="Just Updated"
         />

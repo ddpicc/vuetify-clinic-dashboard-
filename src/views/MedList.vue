@@ -6,7 +6,7 @@
   >
     <v-row justify="center">
       <v-col cols="12">
-        <material-card flat full-width :color=cardColor>
+        <material-card flat :color=cardColor>
           <template v-slot:header>
             <div class="px-3">
               <div class="title font-weight-light mb-2">

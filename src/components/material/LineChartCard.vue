@@ -5,7 +5,7 @@
     v-on="$listeners"
   >
     <template v-slot:header>
-       <line-chart :data="data" :colors="chartColor" height="150px"></line-chart>
+       <line-chart :data="data" :colors="chartColor" height="200px"></line-chart>
     </template>
 
     <slot />
