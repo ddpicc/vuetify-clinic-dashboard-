@@ -7,7 +7,7 @@
       >
         <material-linechart-card
           :data="dailySalesChart.data"
-          color="green"
+          color="grey"
           :chartColor="['#FFB677', '#666']"
         >
           <h5 class="title font-weight-light">
@@ -33,7 +33,7 @@
       >
         <material-linechart-card
           :data="monthSalesChart.data"
-          color="red"
+          color="orange"
         >
           <h4 class="title font-weight-light">
             Email Subscription
@@ -41,16 +41,6 @@
           <p class="category d-inline-flex font-weight-light">
             Last Campaign Performance
           </p>
-
-          <template v-slot:actions>
-            <v-icon
-              class="mr-2"
-              small
-            >
-              mdi-clock-outline
-            </v-icon>
-            <span class="caption grey--text font-weight-light">updated 10 minutes ago</span>
-          </template>
         </material-linechart-card>
       </v-col>
 
@@ -62,22 +52,12 @@
           :data="dailyNmPeopleChart.data"
           color="green"
         >
-          <h3 class="title font-weight-light">
+          <h4 class="title font-weight-light">
             Completed Tasks
-          </h3>
+          </h4>
           <p class="category d-inline-flex font-weight-light">
             Last Last Campaign Performance
           </p>
-
-          <template v-slot:actions>
-            <v-icon
-              class="mr-2"
-              small
-            >
-              mdi-clock-outline
-            </v-icon>
-            <span class="caption grey--text font-weight-light">campaign sent 26 minutes ago</span>
-          </template>
         </material-linechart-card>
       </v-col>
 
@@ -107,11 +87,10 @@
           icon="mdi-content-copy"
           title="当天病人"
           value="49/50"
-          small-value="GB"
+          small-value="人"
           sub-icon="mdi-alert"
           sub-icon-color="error"
-          sub-text="Get More Space..."
-          sub-text-color="text-primary"
+          :sub-text="todayDate()"
         />
       </v-col>
 
@@ -140,6 +119,7 @@
           icon="mdi-twitter"
           title="月病人"
           value="245"
+          small-value="人"
           sub-icon="mdi-update"
           sub-text="Just Updated"
         />
@@ -404,6 +384,12 @@ import { dateToString, stringToDate} from '../utils/handleDate';
         dailySalesChart: {
           data: [],
         },
+        monthSalesChart: {
+          data: [],
+        },
+        dailyNmPeopleChart: {
+          data: [],
+        },
         dataCompletedTasksChart: {
           data: {
             labels: ['12am', '3pm', '6pm', '9pm', '12pm', '3am', '6am', '9am'],
@@ -535,6 +521,14 @@ import { dateToString, stringToDate} from '../utils/handleDate';
     methods: {
       complete (index) {
         this.list[index] = !this.list[index]
+      },
+
+      todayDate: function(){
+        var myDate = new Date();     //获取当前年份(2位)
+        var month=myDate.getMonth();       //获取当前月份(0-11,0代表1月)
+        var day=myDate.getDate();        //获取当前日(1-31)
+        var dayNow=(month+1)+"月"+day+"日";
+        return dayNow;
       },
 
       loadMonth: function(){
