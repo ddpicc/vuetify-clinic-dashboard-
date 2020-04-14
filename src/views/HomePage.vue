@@ -89,33 +89,28 @@
 
             <v-divider></v-divider>
           </v-responsive>
-
-          <v-responsive
-            class="mx-auto title font-weight-light mb-8"
-            max-width="720"
-          >
-            Vuetify is the #1 component library for Vue.js and has been in active development since 2016. The goal of the project is to provide users with everything that is needed to build rich and engaging web applications using the Material Design specification. It accomplishes that with a consistent update cycle, Long-term Support (LTS) for previous versions, responsive community engagement, a vast ecosystem of resources and a dedication to quality components.
-          </v-responsive>
-
-          <v-avatar
-            class="elevation-12 mb-12"
-            size="128"
-          >
-            <v-img src="https://cdn.vuetifyjs.com/images/john.png"></v-img>
-          </v-avatar>
-
-          <div></div>
-
-          <v-btn
-            color="grey"
-            href="https://vuetifyjs.com"
-            outlined
-            large
-          >
-            <span class="grey--text text--darken-1 font-weight-bold">
-              Vuetify Documentation
-            </span>
-          </v-btn>
+          <v-row dense>
+            <v-col class="d-flex" sm="3" md="3">
+              <v-select
+              :items="items"
+              label="Outlined style"
+              outlined
+              dense
+              ></v-select>
+            </v-col>
+            <v-col class="d-flex" sm="9" md="9">
+              <v-select
+              :items="items"
+              label="Outlined style"
+              outlined
+              dense
+              ></v-select>
+            </v-col>
+          </v-row>
+          <baidu-map class="map" :center="center" :zoom="zoom" @ready="handler"></baidu-map>
+          <v-col cols="12">
+            <v-btn text large>Normal</v-btn>
+          </v-col>
         </v-container>
 
         <div class="py-12"></div>
@@ -355,6 +350,8 @@
   export default {
     data () {
       return {
+        center: {lng: 0, lat: 0},
+        zoom: 3,
         articles: [
           {
             src: 'https://images.unsplash.com/photo-1423784346385-c1d4dac9893a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80',
@@ -396,6 +393,19 @@
           ['5m', 'Total Downloads'],
         ],
       }
+    },
+    methods: {
+      handler ({BMap, map}) {
+        this.center.lng = 104.103016
+        this.center.lat = 30.626884
+        this.zoom = 15
+      }
     }
   }
 </script>
+<style>
+.map {
+  width: 100%;
+  height: 400px;
+}
+</style>
