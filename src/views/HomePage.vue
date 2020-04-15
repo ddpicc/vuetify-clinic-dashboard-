@@ -4,12 +4,12 @@
     <v-app-bar
       app
       color="white"
-      height="60"
+      height="50"
     >
       <v-avatar
         class="mr-3"
         color="grey lighten-5"
-        size="60"
+        size="50"
       >
         <v-img
           contain
@@ -19,8 +19,24 @@
       </v-avatar>
 
       <v-toolbar-title class="font-weight-black headline">
-        VUETIFY
+        半夏
       </v-toolbar-title>
+      <v-spacer />
+
+      <v-toolbar-items>
+        <v-row
+          align="center"
+          class="mx-0"
+        >
+
+          <v-btn
+            text
+            to="/login"
+          >
+            登录
+          </v-btn>
+        </v-row>
+      </v-toolbar-items>
     </v-app-bar>
 
     <v-content>
@@ -79,11 +95,11 @@
         <div class="py-12"></div>
 
         <v-container class="text-center">
-          <h2 class="display-2 font-weight-bold mb-3">ABOUT ME</h2>
+          <h2 class="display-2 font-weight-bold mb-3">附近的诊所</h2>
 
           <v-responsive
-            class="mx-auto mb-8"
-            width="56"
+            class="mx-auto mb-6"
+            width="26"
           >
             <v-divider class="mb-1"></v-divider>
 
@@ -92,24 +108,32 @@
           <v-row dense>
             <v-col class="d-flex" sm="3" md="3">
               <v-select
-              :items="items"
-              label="Outlined style"
+              :items="districtItems"
+              label="区"
+              v-model="district"
+              @change="handleDistrictChange"
               outlined
               dense
               ></v-select>
             </v-col>
             <v-col class="d-flex" sm="9" md="9">
               <v-select
-              :items="items"
-              label="Outlined style"
+              :items="clinicItems"
+              label="诊所名称"
+              v-model="clinicName"
               outlined
               dense
               ></v-select>
             </v-col>
           </v-row>
-          <baidu-map class="map" :center="center" :zoom="zoom" @ready="handler"></baidu-map>
+          <baidu-map class="map" :center="center" :zoom="zoom" @ready="handler"  :scroll-wheel-zoom="true">
+            <bm-marker :position="center" :dragging="true" animation="BMAP_ANIMATION_BOUNCE">
+              <bm-city-list anchor="BMAP_ANCHOR_TOP_LEFT"></bm-city-list>
+              <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
+            </bm-marker>
+          </baidu-map>
           <v-col cols="12">
-            <v-btn text large>Normal</v-btn>
+            <v-btn x-large color="blue">查看更多信息</v-btn>
           </v-col>
         </v-container>
 
@@ -123,11 +147,11 @@
         <div class="py-12"></div>
 
         <v-container class="text-center">
-          <h2 class="display-2 font-weight-bold mb-3">VUETIFY FEATURES</h2>
+          <h2 class="display-2 font-weight-bold mb-3">我们的功能</h2>
 
           <v-responsive
             class="mx-auto mb-12"
-            width="56"
+            width="26"
           >
             <v-divider class="mb-1"></v-divider>
 
@@ -212,11 +236,11 @@
         <div class="py-12"></div>
 
         <v-container>
-          <h2 class="display-2 font-weight-bold mb-3 text-uppercase text-center">Blog</h2>
+          <h2 class="display-2 font-weight-bold mb-3 text-uppercase text-center">最近的新闻</h2>
 
           <v-responsive
             class="mx-auto mb-12"
-            width="56"
+            width="26"
           >
             <v-divider class="mb-1"></v-divider>
 
@@ -346,12 +370,17 @@
   </v-app>
  </div>
  </template>
+
 <script>
   export default {
     data () {
       return {
         center: {lng: 0, lat: 0},
         zoom: 3,
+        districtItems: ['卧龙区','宛城区'],
+        district: '宛城区',
+        clinicItems: ['云杰诊所','老师'],
+        clinicName: '云杰诊所',
         articles: [
           {
             src: 'https://images.unsplash.com/photo-1423784346385-c1d4dac9893a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80',
@@ -396,13 +425,24 @@
     },
     methods: {
       handler ({BMap, map}) {
-        this.center.lng = 104.103016
-        this.center.lat = 30.626884
-        this.zoom = 15
+        this.center.lng = 112.578809
+        this.center.lat = 33.024595
+        this.zoom = 20
+      },
+
+      handleDistrictChange: function(){
+        if(this.district == '宛城区'){
+          this.clinicItems = ['云杰诊所','老师'];
+          this.clinicName = '云杰诊所';
+        }else if(this.district == '卧龙区'){
+          this.clinicItems = ['云诊所'];
+          this.clinicName = '云诊所';
+        }
       }
     }
   }
 </script>
+
 <style>
 .map {
   width: 100%;
