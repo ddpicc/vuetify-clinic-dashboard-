@@ -11,7 +11,7 @@
           :chartColor="['#FFB677', '#666']"
         >
           <h5 class="title font-weight-light">
-            Daily Sales
+            每天收入
           </h5>
 
           <p class="category d-inline-flex font-weight-light">
@@ -22,7 +22,7 @@
               mdi-arrow-up
             </v-icon>
             <span class="green--text">55%</span>&nbsp;
-            increase in today's sales
+            今天收入提高
           </p>
         </material-linechart-card>
       </v-col>
@@ -36,10 +36,17 @@
           color="orange"
         >
           <h4 class="title font-weight-light">
-            Email Subscription
+            每月收入
           </h4>
           <p class="category d-inline-flex font-weight-light">
-            Last Campaign Performance
+            <v-icon
+              color="green"
+              small
+            >
+              mdi-arrow-up
+            </v-icon>
+            <span class="green--text">55%</span>&nbsp;
+            此月收入提高
           </p>
         </material-linechart-card>
       </v-col>
@@ -53,10 +60,17 @@
           color="green"
         >
           <h4 class="title font-weight-light">
-            Completed Tasks
+            每天病人
           </h4>
           <p class="category d-inline-flex font-weight-light">
-            Last Last Campaign Performance
+            <v-icon
+              color="green"
+              small
+            >
+              mdi-arrow-up
+            </v-icon>
+            <span class="green--text">55%</span>&nbsp;
+            今天人数提高
           </p>
         </material-linechart-card>
       </v-col>
@@ -73,7 +87,7 @@
           title="当天收入"
           value="$34,245"
           sub-icon="mdi-calendar"
-          sub-text="Last 24 Hours"
+          :sub-text="todayDate()"
         />
       </v-col>
 
@@ -105,7 +119,7 @@
           title="月收入"
           value="75"
           sub-icon="mdi-tag"
-          sub-text="Tracked from Github"
+          :sub-text="todayMonth()"
         />
       </v-col>
 
@@ -121,7 +135,34 @@
           value="245"
           small-value="人"
           sub-icon="mdi-update"
-          sub-text="Just Updated"
+          :sub-text="todayMonth()"
+        />
+      </v-col>
+      
+      <v-col
+        cols="12"
+        lg="6"
+      >
+        <material-stats-card
+          color="green"
+          icon="mdi-store"
+          title="当天收入"
+          value="$34,245"
+          sub-icon="mdi-calendar"
+          :sub-text="todayDate()"
+        />
+      </v-col>
+      <v-col
+        cols="12"
+        lg="6"
+      >
+        <material-stats-card
+          color="green"
+          icon="mdi-store"
+          title="当天收入"
+          value="$34,245"
+          sub-icon="mdi-calendar"
+          :sub-text="todayDate()"
         />
       </v-col>
 
@@ -529,6 +570,13 @@ import { dateToString, stringToDate} from '../utils/handleDate';
         var day=myDate.getDate();        //获取当前日(1-31)
         var dayNow=(month+1)+"月"+day+"日";
         return dayNow;
+      },
+
+      todayMonth: function(){
+        var myDate = new Date();     //获取当前年份(2位)
+        var month=myDate.getMonth();       //获取当前月份(0-11,0代表1月)
+        var monthNow=(month+1)+"月";
+        return monthNow;
       },
 
       loadMonth: function(){

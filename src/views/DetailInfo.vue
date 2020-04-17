@@ -13,9 +13,33 @@
         >
           <v-row>
             <v-col cols="12" sm="12" lg="4" md="4">
-              <v-date-picker v-model="dates" range color="green"></v-date-picker>
+              <v-date-picker full-width v-model="dates" range color="green"></v-date-picker>
+              <div class="py-12"></div>
+              <material-linechart-card
+                :data="monthSalesChart.data"
+                color="orange"
+                v-if="reportDisplay"
+              >
+                <h4 class="title font-weight-light">
+                  每月收入
+                </h4>
+              </material-linechart-card>
             </v-col>
-            <v-col cols="12" sm="12" lg="8" md="8">              
+            <v-col cols="12" sm="12" lg="8" md="8">
+              <v-chip
+                class="ma-2"
+                color="green"
+                text-color="white"
+              >
+                今天
+              </v-chip>
+              <v-chip
+                class="ma-2"
+                color="green"
+                text-color="white"
+              >
+                本月
+              </v-chip>
               <v-card
                 class="mx-auto"
               >
@@ -23,7 +47,8 @@
                   <v-text-field v-model="dateRangeText" label="时间范围" readonly append-icon="mdi-check-bold" color="blue darken-2" @click:append="actionGenerate"></v-text-field>
                   <div  ref="print" v-if="reportDisplay">
                     <h3 style="text-align:center">{{dateRangeText}} 详情</h3>
-                    <v-list subheader>
+                    <v-list subheader dense>
+                      <v-subheader>总计</v-subheader>
                       <v-list-item>
                         <v-list-item-content>
                           <v-list-item-title>总收入</v-list-item-title>
@@ -32,8 +57,146 @@
                           <v-list-item-title>{{totalIncome}}元</v-list-item-title>
                         </v-list-item-action>
                       </v-list-item>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>总利润</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{totalProfit}}元</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
                       <v-divider></v-divider>
-                      <v-subheader>总计</v-subheader>
+
+                      <v-subheader>收入</v-subheader>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>草药</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{incomeCaoyao}}元</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>免煎药</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{incomeMianjian}}元</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>西药</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{incomeXiyao}}元</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>药丸</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{incomeYaowan}}元</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>平均每天</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{averageIncome}}元</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
+                      <v-divider></v-divider>
+
+                      <v-subheader>利润</v-subheader>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>草药</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{profitCaoyao}}元</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>免煎药</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{profitMianjian}}元</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>西药</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{profitXiyao}}元</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>药丸</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{profitYaowan}}元</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>平均每天</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{averageProfit}}元</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
+                      <v-divider></v-divider>
+
+                      <v-subheader>病人</v-subheader>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>总计</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{totalPatient}}元</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>平均每天</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{averagePatient}}元</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>小于20岁</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{profitXiyao}}元</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>大于20岁</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{lt20Patient}}元</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
+                      <v-divider></v-divider>
+
+                      <v-subheader>其他</v-subheader>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title>煎药次数</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{jianyaoTimes}}元</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
                     </v-list>
                   </div>
                 </v-card-text>
@@ -51,7 +214,10 @@
     data: () => ({
       dates: ['2019-09-10', '2019-09-20'],
       reportDisplay: false,
-      totalIncome: 0
+      totalIncome: 0,
+      monthSalesChart: {
+          data: [],
+        },
     }),
 
     methods: {
