@@ -6,4 +6,5 @@ export default {
     avatar: '',
     dbs_prefix: '',
     roles: [],
+    user_id: '',
   }

@@ -30,7 +30,7 @@
           to="/settings"
         >
           <v-icon color="tertiary">
-            mdi-settings
+            mdi-bell
           </v-icon>
         </v-btn>
 

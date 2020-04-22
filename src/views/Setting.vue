@@ -100,8 +100,8 @@
                   </v-list-item-action>
 
                   <v-list-item-content>
-                    <v-list-item-title>Sound</v-list-item-title>
-                    <v-list-item-subtitle>Auto-update apps at any time. Data charges may apply</v-list-item-subtitle>
+                    <v-list-item-title>输入药丸</v-list-item-title>
+                    <v-list-item-subtitle>是否隐藏输入药丸选项</v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
               </v-list-item>
@@ -120,8 +120,8 @@
               </v-list-item>
             </v-list-item-group>
           </v-list>
-          <v-btn color="success" @click="kk">
-              Follow
+          <v-btn color="blue" @click="submit">
+              保存
             </v-btn>
         </material-card>
       </v-col>
@@ -130,6 +130,7 @@
 </template>
 
 <script>
+import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
   export default {
     data () {
       return {
@@ -138,6 +139,7 @@
         canEditPass: true,
         show: false,
         active1: true,
+        active2: true,
         clinicName: "云杰诊所",
         password: 'Password',
         rules: {
@@ -149,10 +151,23 @@
       }
     },
 
+
     methods: {
-      kk(){
-        alert(this.active);
+      submit: function() {
+        let fromlocal = loadFromLocal(1,'cachedOrder','lkl');
+        fromlocal.pop();
+        fromlocal.splice(0,0,{'name':'ccc'});
+        alert(JSON.stringify(fromlocal));
+      },
+
+      getSetting: function() {
+        let userid = this.$store.state.user.user_id;
+        saveToLocal(1,'cachedOrder',[{'name':'aaa'},{'name':'bbb'}]);
       }
-    }
+    },
+
+    mounted: function() {
+			this.getSetting();
+		}
   }
 </script>

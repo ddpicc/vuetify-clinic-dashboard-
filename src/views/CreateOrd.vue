@@ -9,18 +9,18 @@
         <material-card flat full-width :color=cardColor>
           <template v-slot:header>
             <v-row align="center">
-              <v-col sm="4" md="3">
+              <v-col sm="4" md="4">
                 <div class="px-3">
                   <div class="title font-weight-light mb-2">
                     <v-radio-group v-model="medRadio" :mandatory="false" row @change="radioChanged">
                       <v-radio label="草药" value="草药" color="grey darken-1"></v-radio>
                       <v-radio label="免煎" value="免煎" color="grey darken-1"></v-radio>
                       <v-radio label="西药" value="西药" color="grey darken-1"></v-radio>
+                      <v-radio label="药丸" value="药丸" color="grey darken-1"></v-radio>
                     </v-radio-group>
                   </div>
                 </div>
               </v-col>
-              <v-col cols="1"></v-col>
               <v-divider
                 class="mx-2"
                 vertical
@@ -241,6 +241,7 @@
                  {sortable: false,text: '名称', value: 'name3', width: '15%'}, {sortable: false,text: '数量', value: 'count3', width: '10%'}, {sortable: false,text: '名称', value: 'name4', width: '15%'}, {sortable: false,text: '数量', value: 'count4', width: '10%'}];
 
   var xiyaoHeader=[{sortable: false,text: '名称', value: 'name1'}, {sortable: false,text: '数量', value: 'count1'}, {sortable: false,text: '用法', value: 'usage1'}];
+  var yaowanHeader=[];
 
   export default {
     data: () => ({
@@ -536,6 +537,10 @@
             console.log(err);
           })
         }
+      },
+
+      saveOrdToLocal: function(){
+
       },
 
       clearInfo: function(){

@@ -34,6 +34,7 @@ export default {
 				const data = response.data;
 				commit('SET_ROLES', data[0].role);
 				commit('SET_PREFIX',data[0].dbs_prefix);
+				commit('SET_USERID',data[0].id);
 				resolve(response);
 			}).catch(error => {
 				reject(error);

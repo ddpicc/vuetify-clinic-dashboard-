@@ -224,5 +224,36 @@ module.exports = {
     })
   },
 
+  saveUserSetting(req, res, next) {
+    console.log('api - saveUserSetting');
+    var id = req.body.userid;
+    var canDeletePOrder = req.body.canDeletePOrder,notDisplayYaowan = req.body.notDisplayYaowan;
+    pool.getConnection((err, connection) => {
+      if(err)
+        console.log(err);
+      var sql = sqlMap.saveUserSetting;
+      connection.query(sql, [canDeletePOrder,notDisplayYaowan,id], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
+  getUserSetting(req, res, next) {
+    console.log('api - getUserSetting');
+    var id = req.query.userid;
+    pool.getConnection((err, connection) => {
+      if(err)
+        console.log(err);
+      var sql = sqlMap.getUserSetting;
+      connection.query(sql, [id], (err, result) => {
+        if(err)
+          console.log(err);
+        res.json(result);
+        connection.release();
+      })
+    })
+  },
+
   
 }

@@ -128,22 +128,12 @@ CREATE TABLE `myDbs_user` (
   `token` varchar(50) NOT NULL,
   `role` varchar(20) NOT NULL,
   `dbs_prefix` varchar(20),
+  `canDeletePOrder` smallint(5) NOT NULL DEFAULT 0,
+  `notDisplayYaowan` smallint(5) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 insert into `myDbs_user`(`username`,`password`,`token`,`role`,`dbs_prefix`) values ('qcui','8890','1c2b','admin','qcui_'), ('test','test','3d4a','test','test_');
-
-/* 创建user表 */
-DROP TABLE IF EXISTS `myDbs_userconfig`;
-
-CREATE TABLE `myDbs_userconfig` (
-  `userid` smallint(5) unsigned NOT NULL,
-  `overallIncome` float(10) NOT NULL DEFAULT 0,
-  `overallProfit` float(10) NOT NULL DEFAULT 0,
-  `income_2020` float(10) NOT NULL DEFAULT 0,
-  `profit_2020` float(10) NOT NULL DEFAULT 0,
-  PRIMARY KEY (`userid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /* 创建user表 */
 DROP TABLE IF EXISTS `myDbs_clinicOverall`;

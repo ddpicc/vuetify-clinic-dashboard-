@@ -62,4 +62,12 @@ router.get('/getLast30Days', (req, res, next) => {
   api.getLast30Days(req, res, next);
 });
 
+router.post('/saveUserSetting', (req, res, next) => {
+  api.saveUserSetting(req, res, next);
+});
+
+router.get('/getUserSetting', (req, res, next) => {
+  api.getUserSetting(req, res, next);
+});
+
 module.exports = router;
