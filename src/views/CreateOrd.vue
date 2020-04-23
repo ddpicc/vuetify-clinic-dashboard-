@@ -462,10 +462,9 @@
       },
 
       //获取当前时间，格式YYYY-MM-DD
-      getNowFormatDate(sep) {
+      getNowFormatDate() {
         var date = new Date();
-        if (sep =='')
-				  sep = "/";
+				let sep = "-";
 				var year = date.getFullYear();  //年
 				var month = date.getMonth() + 1;   //月
 				var strDate = date.getDate();   //日
@@ -579,7 +578,7 @@
         if (fromlocal.length>30){
           fromlocal.pop();
         }
-        let today = this.getNowFormatDate('-');
+        let today = this.getNowFormatDate();
         if(fromlocal.length == 0){
           let insertOrdObj = {[today]: [ordObj]};
           fromlocal.splice(0,0,insertOrdObj);
