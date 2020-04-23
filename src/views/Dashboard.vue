@@ -582,6 +582,7 @@ import { dateToString, stringToDate} from '../utils/handleDate';
       loadMonth: function(){
         var end = dateToString(new Date());
         var start = dateToString(new Date(new Date().setDate(new Date().getDate()-29)));
+        alert(start);
         var last30daysIncome = [];
         this.$http.get('/api/getLast30Days', {
           params: {

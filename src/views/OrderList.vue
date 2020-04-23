@@ -203,27 +203,22 @@
       // 获取全部数据
       getAll: function() {
         this.loading = true;
+        //let fromlocal = loadFromLocal(1,'cachedOrder','lkl');
+        //let dateKey = Object.keys(fromlocal[fromlocal.length-1]);
+        //alert(dateKey);
 
-        let fromlocal = loadFromLocal(1,'cachedOrder','lkl');
-        this.items = fromlocal;
-        for(let element of this.items) {
-            element.medarray = element.medarray.split(";");
-          }
-        //alert(JSON.stringify(fromlocal));
-
-        /* this.$http.get('/api/getAllOrd',{
+        this.$http.get('/api/getAllOrd',{
           params: {
             dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
             dbs_b : this.$store.state.user.dbs_prefix+'patient',
 					}
         }).then( (res) => {
           this.items = res.data;
-          console.log(JSON.stringify(this.items));
           for(let element of this.items) {
             element.medarray = element.medarray.split(";");
           }
           this.loading = false;
-        }) */
+        })
       },
 
       getColor (medtype) {
@@ -281,7 +276,6 @@
 
 
     mounted: function() {
-      saveToLocal(1,'cachedOrder',[{"id":1,"patient":"我的天测试","medtype":"免煎","symptom":"啦啊","order_comment":"是非法","dose":1,"medarray":"{\"name1\":\"白术\",\"count1\":\"7袋\"}","total":266,"totalprofit":0,"date":"2020-02-13","sex":"女","age":13,"phone":"12525"},{"id":2,"patient":"我的天天天测试","medtype":"草药","symptom":"肚子疼","order_comment":"","dose":1,"medarray":"{\"name1\":\"炒山药\",\"count1\":\"15克\"}","total":0.75,"totalprofit":0,"date":"2020-02-14","sex":"女","age":13,"phone":"12525"}]);
       this.getAll();      
 		}
 

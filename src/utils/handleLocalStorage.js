@@ -37,4 +37,4 @@ export function loadFromLocal(id, key, def) {
 	let ret = clinicUser[key];
 	
 	return ret;
-};
+}
