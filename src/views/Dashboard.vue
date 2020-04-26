@@ -58,6 +58,7 @@
         <material-linechart-card
           :data="dailyNmPeopleChart.data"
           color="green"
+          :chartColor="['#FFB677', '#666']"
         >
           <h4 class="title font-weight-light">
             每天病人
@@ -417,6 +418,7 @@
 <script>
 import TimeLine from '../components/helper/TimeLine'
 import { dateToString, stringToDate} from '../utils/handleDate';
+import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
   export default {
     components: {TimeLine},
     data () {
@@ -582,8 +584,8 @@ import { dateToString, stringToDate} from '../utils/handleDate';
       loadMonth: function(){
         var end = dateToString(new Date());
         var start = dateToString(new Date(new Date().setDate(new Date().getDate()-29)));
-        alert(start);
         var last30daysIncome = [];
+        var last30daysNum = [];
         this.$http.get('/api/getLast30Days', {
           params: {
             dbs : this.$store.state.user.dbs_prefix+'ordlist',
@@ -599,13 +601,16 @@ import { dateToString, stringToDate} from '../utils/handleDate';
                 index = parseInt((new Date() - stringToDate(item.date)) / (1000 * 60 * 60 * 24));
                 curDate = item.date;
                 last30daysIncome[index] = item.total;
+                last30daysNum[index] = 1;
               }
               else{
                 last30daysIncome[index] = parseFloat((last30daysIncome[index] + item.total).toFixed(2));
+                last30daysNum[index] = last30daysNum[index] + 1;
               }
             }
             for(var i = 0;i<30;i++) {
               this.dailySalesChart.data.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysIncome[i]]);
+              this.dailyNmPeopleChart.data.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysNum[i]]);
             }
           })
         })

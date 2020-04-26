@@ -18,8 +18,8 @@ router.delete('/deleteMedbyId', (req, res, next) => {
   api.deleteMedbyId(req, res, next);
 });
 
-router.get('/getAllOrd', (req, res, next) => {
-  api.getAllOrd(req, res, next);
+router.get('/getAllOrdBeforeDate', (req, res, next) => {
+  api.getAllOrdBeforeDate(req, res, next);
 });
 
 router.post('/insertOrd', (req, res, next) => {

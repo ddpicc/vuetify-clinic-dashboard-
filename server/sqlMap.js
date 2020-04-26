@@ -3,7 +3,7 @@ var sqlMap = {
     insertMed: 'INSERT INTO ?? (medname,alias,spec,medtype,bagperbox,inventoryNm,baseprice,sellprice,checked) VALUES(?,?,?,?,?,?,?,?,?)',
     updateMedbyId: 'UPDATE ?? SET medname = ?,alias = ?,spec = ?,medtype = ?,bagperbox = ?,inventoryNm = ?,baseprice = ?,sellprice = ?,checked = ? WHERE id = ?',
     deleteMedbyId: 'DELETE FROM ?? where id=?',
-    getAllOrd: 'SELECT a.id,a.patient,a.medtype,a.symptom,a.order_comment,a.dose,a.medarray,a.total,a.totalprofit,a.date,b.sex,b.age,b.phone FROM ?? a INNER JOIN ?? b ON a.patient_id = b.id',
+    getAllOrdBeforeDate: 'SELECT a.id,a.patient,a.medtype,a.symptom,a.order_comment,a.dose,a.medarray,a.total,a.totalprofit,a.date,b.sex,b.age,b.phone FROM ?? a INNER JOIN ?? b ON a.patient_id = b.id where date < ?',
     insertOrd: 'INSERT INTO ?? (patient,patient_id,symptom,order_comment,medtype,dose,medarray,total,date) VALUES(?,?,?,?,?,?,?,?,?)',
     deleteOrdbyId: 'DELETE FROM ?? where id=?',
     getAllPatient: 'SELECT * FROM ??',

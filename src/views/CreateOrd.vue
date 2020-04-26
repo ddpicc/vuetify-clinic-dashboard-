@@ -84,6 +84,7 @@
             :search="searchStr"
             :custom-filter="filterText"
             hide-default-footer
+            v-if="!isYaowan"
           >
           <template v-slot:top>
             <v-row 
@@ -197,7 +198,7 @@
                 ></v-text-field>
               </v-col>
               <v-col sm="1" md="1">
-                <v-text-field dense v-model="orderCount"
+                <v-text-field dense v-if="!isYaowan" v-model="orderCount"
                   label="几付" suffix="付" placeholder=" "
                 ></v-text-field>
               </v-col>
@@ -261,6 +262,7 @@
       orderCount: '',
       total: '',
       howToUseOn: false,
+      isYaowan: false,
       hotToUse: ['一天一次', '一天三次'],
       medRadio: '草药',
       cardColor: 'green',
@@ -322,10 +324,16 @@
         this.getAll();
         if(this.medRadio == "西药"){
           this.howToUseOn = true;
+           this.isYaowan = false;
           this.cardColor = 'blue lighten-2';
           this.headers = xiyaoHeader;
-				}else{
+        }else if(this.medRadio == "药丸"){
+          this.isYaowan = true;
+          this.headers = yaowanHeader;
+          this.cardColor = 'deep-purple lighten-2';          
+        }else{
           this.howToUseOn = false;
+           this.isYaowan = false;
           this.headers = staticHeader;
           if(this.medRadio == "免煎")
             this.cardColor = 'lime darken-2';
@@ -510,7 +518,6 @@
                     total : parseFloat(this.total),
                     date : this.getNowFormatDate(),          
               }).then( (resord) => {   
-                alert(resord.data.insertId);
                 //{"id":1,"patient":"我的天测试","medtype":"免煎","symptom":"啦啊","order_comment":"是非法","dose":1,"medarray":"{\"name1\":\"白术\",\"count1\":\"7袋\"}","total":266,"totalprofit":0,"date":"2020-02-13","sex":"女","age":13,"phone":"12525"}           
                 let ordObj = {
                   id : resord.data.insertId,

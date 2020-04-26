@@ -24,7 +24,8 @@
               color="amber"
               @click="deleteEnabled = !deleteEnabled"
             >
-              <v-icon>mdi-plus</v-icon>
+              <v-icon v-if="deleteEnabled">mdi-delete-off</v-icon>
+              <v-icon v-if="!deleteEnabled">mdi-delete</v-icon>
             </v-btn>
           </template>
           <!--  need a key of id -->
@@ -203,20 +204,29 @@
       // 获取全部数据
       getAll: function() {
         this.loading = true;
-        //let fromlocal = loadFromLocal(1,'cachedOrder','lkl');
-        //let dateKey = Object.keys(fromlocal[fromlocal.length-1]);
-        //alert(dateKey);
+        let fromlocal = loadFromLocal(1,'cachedOrder',[]);
+        if(fromlocal.length == 0){
+          let _dateBefore = this.getTomorrowFormatDate();
+        }else{
+          for(let element of fromlocal){
+            for(let ele of Object.values(element)[0]){
+              this.items.push(ele);
+            }
+          }
+          let _dateBefore = Object.keys(fromlocal[fromlocal.length - 1])[0];
+        }
 
-        this.$http.get('/api/getAllOrd',{
+        this.$http.get('/api/getAllOrdBeforeDate',{
           params: {
             dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
             dbs_b : this.$store.state.user.dbs_prefix+'patient',
+            dateBefore: _dateBefore
 					}
-        }).then( (res) => {
-          this.items = res.data;
-          for(let element of this.items) {
+        }).then( (res) => {          
+          for(let element of res.data) {
             element.medarray = element.medarray.split(";");
           }
+          this.items = this.items.concat(res.data);
           this.loading = false;
         })
       },
@@ -232,9 +242,10 @@
       },
 
       //获取当前时间，格式YYYY-MM-DD
-      getNowFormatDate() {
-				var date = new Date();
-				var seperator1 = "/";
+      getTomorrowFormatDate() {
+        var date = new Date();
+        date.setDate(date.getDate()+1);
+				var seperator1 = "-";
 				var year = date.getFullYear();  //年
 				var month = date.getMonth() + 1;   //月
 				var strDate = date.getDate();   //日

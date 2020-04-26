@@ -69,11 +69,13 @@ module.exports = {
     })
   },
 
-  getAllOrd(req, res, next) {
+  getAllOrdBeforeDate(req, res, next) {
+    console.log('api - getAllOrdBeforeDate');
     var dbs_a = req.query.dbs_a,dbs_b = req.query.dbs_b;
+    var dateBefore = req.query.dateBefore;
     pool.getConnection((err, connection) => {
-      var sql = sqlMap.getAllOrd;
-      connection.query(sql, [dbs_a, dbs_b], (err, result) => {
+      var sql = sqlMap.getAllOrdBeforeDate;
+      connection.query(sql, [dbs_a, dbs_b,dateBefore], (err, result) => {
           res.json(result);
           connection.release();
       })

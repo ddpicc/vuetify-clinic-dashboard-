@@ -30,7 +30,7 @@
           to="/settings"
         >
           <v-icon color="tertiary">
-            mdi-bell
+            mdi-account
           </v-icon>
         </v-btn>
 
@@ -81,7 +81,7 @@
           icon
         >
           <v-icon color="tertiary">
-            mdi-account
+            mdi-logout
           </v-icon>
         </v-btn>
       </v-row>

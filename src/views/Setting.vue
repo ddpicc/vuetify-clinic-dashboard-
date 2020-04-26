@@ -154,15 +154,11 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
 
     methods: {
       submit: function() {
-        let fromlocal = loadFromLocal(1,'cachedOrder','lkl');
-        fromlocal.pop();
-        fromlocal.splice(0,0,{'name':'ccc'});
-        alert(JSON.stringify(fromlocal));
+        
       },
 
       getSetting: function() {
         let userid = this.$store.state.user.user_id;
-        saveToLocal(1,'cachedOrder',[{'name':'aaa'},{'name':'bbb'}]);
       }
     },
 
