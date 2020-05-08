@@ -58,7 +58,7 @@ export function parseTime(time, cFormat) {
  
   //formate date return date string as yyyy/mm/dd
   export function dateToString(date) {
-   var seperator1 = "/";
+   var seperator1 = "-";
    var year = date.getFullYear();  //年
    var month = date.getMonth() + 1;   //月
    var strDate = date.getDate();   //日
@@ -175,17 +175,21 @@ export function parseTime(time, cFormat) {
     return target;
   }
  
- 
-  export function scrollTo(element, to, duration) {
-    if (duration <= 0) return;
-    const difference = to - element.scrollTop;
-    const perTick = difference / duration * 10;
-    setTimeout(() => {
-      console.log(new Date())
-      element.scrollTop = element.scrollTop + perTick;
-      if (element.scrollTop === to) return;
-      scrollTo(element, to, duration - 10);
-    }, 10);
+  //获取当前时间，格式YYYY-MM-DD
+  export function getNowFormatDate() {
+    var date = new Date();
+    let sep = "-";
+    var year = date.getFullYear();  //年
+    var month = date.getMonth() + 1;   //月
+    var strDate = date.getDate();   //日
+    if (month >= 1 && month <= 9) {
+      month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+      strDate = "0" + strDate;
+    }
+    var currentdate = year + sep + month + sep + strDate;
+    return currentdate;
   }
  
   export function toggleClass(element, className) {

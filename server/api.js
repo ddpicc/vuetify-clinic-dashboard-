@@ -69,19 +69,6 @@ module.exports = {
     })
   },
 
-  getAllOrdBeforeDate(req, res, next) {
-    console.log('api - getAllOrdBeforeDate');
-    var dbs_a = req.query.dbs_a,dbs_b = req.query.dbs_b;
-    var dateBefore = req.query.dateBefore;
-    pool.getConnection((err, connection) => {
-      var sql = sqlMap.getAllOrdBeforeDate;
-      connection.query(sql, [dbs_a, dbs_b,dateBefore], (err, result) => {
-          res.json(result);
-          connection.release();
-      })
-    })
-  },
-
   insertOrd(req, res, next) {
     var dbs = req.body.dbs;
     var patient = req.body.patient,patient_id = req.body.patient_id;
@@ -208,6 +195,45 @@ module.exports = {
           console.log(err);
         res.json(result);
         connection.release();
+      })
+    })
+  },
+
+  getOrdByDate(req, res, next) {
+    console.log('api - getOrdByDate');
+    var dbs_a = req.query.dbs_a,dbs_b = req.query.dbs_b;
+    var dateBy = req.query.dateBy;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.getOrdByDate;
+      connection.query(sql, [dbs_a, dbs_b,dateBy], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
+  getAllOrd(req, res, next) {
+    console.log('api - getAllOrd');
+    var dbs_a = req.query.dbs_a,dbs_b = req.query.dbs_b;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.getAllOrd;
+      connection.query(sql, [dbs_a, dbs_b], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
+  getOrdBetweenDates(req, res, next) {
+    console.log('api - getOrdBetweenDates');
+    var dbs_a = req.query.dbs_a,dbs_b = req.query.dbs_b;
+    var startDate = req.query.startDate;
+    var endDate = req.query.endDate;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.getOrdBetweenDates;
+      connection.query(sql, [dbs_a, dbs_b,startDate, endDate], (err, result) => {
+          res.json(result);
+          connection.release();
       })
     })
   },

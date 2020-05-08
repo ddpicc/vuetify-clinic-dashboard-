@@ -18,10 +18,6 @@ router.delete('/deleteMedbyId', (req, res, next) => {
   api.deleteMedbyId(req, res, next);
 });
 
-router.get('/getAllOrdBeforeDate', (req, res, next) => {
-  api.getAllOrdBeforeDate(req, res, next);
-});
-
 router.post('/insertOrd', (req, res, next) => {
   api.insertOrd(req, res, next);
 });
@@ -60,6 +56,18 @@ router.get('/getUserInfo', (req, res, next) => {
 
 router.get('/getLast30Days', (req, res, next) => {
   api.getLast30Days(req, res, next);
+});
+
+router.get('/getOrdByDate', (req, res, next) => {
+  api.getOrdByDate(req, res, next);
+});
+
+router.get('/getAllOrd', (req, res, next) => {
+  api.getAllOrd(req, res, next);
+});
+
+router.get('/getOrdBetweenDates', (req, res, next) => {
+  api.getOrdBetweenDates(req, res, next);
 });
 
 router.post('/saveUserSetting', (req, res, next) => {

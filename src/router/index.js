@@ -13,9 +13,8 @@ import Router from 'vue-router'
 import Meta from 'vue-meta'
 import Homepage from '../views/HomePage'
 import Login from '../views/Login'
+import LoadDataPage from '../views/LoadDataPage'
 
-// Routes
-import paths from './paths'
 
 //不理解，但是是为了解决 next()的时候路由导航钩子时出现"uncaught (in promise) undefined 
 //https://blog.csdn.net/hgs_5683/article/details/101027580
@@ -28,7 +27,8 @@ Vue.use(Router)
 
 export const constantRouterMap = [
   { path: '', component: Homepage, hidden: true},
-  { path: '/login', component: Login, hidden: true }
+  { path: '/login', component: Login, hidden: true },
+  { path: '/loading', component: LoadDataPage, hidden: true }
 ]
 // Create a new router
 const router = new Router({

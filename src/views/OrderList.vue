@@ -141,6 +141,7 @@
 </template>
 
 <script>
+  import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate';
   import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
   var pinyin = require("pinyin");
   export default {
@@ -204,31 +205,47 @@
       // 获取全部数据
       getAll: function() {
         this.loading = true;
-        let fromlocal = loadFromLocal(1,'cachedOrder',[]);
-        if(fromlocal.length == 0){
-          let _dateBefore = this.getTomorrowFormatDate();
-        }else{
-          for(let element of fromlocal){
-            for(let ele of Object.values(element)[0]){
-              this.items.push(ele);
-            }
-          }
-          let _dateBefore = Object.keys(fromlocal[fromlocal.length - 1])[0];
-        }
+        let idStartFrom = 0;
+        let fromlocal = loadFromLocal(1,'cacheOrder',[]);
 
-        this.$http.get('/api/getAllOrdBeforeDate',{
-          params: {
-            dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
-            dbs_b : this.$store.state.user.dbs_prefix+'patient',
-            dateBefore: _dateBefore
-					}
-        }).then( (res) => {          
-          for(let element of res.data) {
-            element.medarray = element.medarray.split(";");
-          }
-          this.items = this.items.concat(res.data);
-          this.loading = false;
-        })
+        if(fromlocal.length == 0){
+          this.$http.get('/api/getAllOrd',{
+            params: {
+              dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
+              dbs_b : this.$store.state.user.dbs_prefix+'patient',
+            }
+          }).then( (res) => {
+            for(let element of res.data) {
+              element.medarray = element.medarray.split(";");
+              idStartFrom = idStartFrom + 1;
+              element.id = idStartFrom;
+            }
+            this.items = res.data;
+            this.loading = false;
+          })
+        }else{
+          this.$http.get('/api/getOrdByDate',{
+            params: {
+              dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
+              dbs_b : this.$store.state.user.dbs_prefix+'patient',
+              dateBy: dateToString(new Date())
+            }
+          }).then( (res) => {          
+            for(let element of res.data) {
+              element.medarray = element.medarray.split(";");
+              idStartFrom = idStartFrom + 1;
+              element.id = idStartFrom;
+            }
+            for(let ele of fromlocal){
+              ele.medarray = ele.medarray.split(";");
+              idStartFrom = idStartFrom + 1;
+              ele.id = idStartFrom;
+            }
+            this.items = res.data;
+            this.items = this.items.concat(fromlocal);
+            this.loading = false;
+          })
+        }
       },
 
       getColor (medtype) {

@@ -30,6 +30,7 @@
                 class="ma-2"
                 color="green"
                 text-color="white"
+                @click="today"
               >
                 今天
               </v-chip>
@@ -37,8 +38,17 @@
                 class="ma-2"
                 color="green"
                 text-color="white"
+                @click="last7days"
               >
-                本月
+                最近7天
+              </v-chip>
+              <v-chip
+                class="ma-2"
+                color="green"
+                text-color="white"
+                @click="last30days"
+              >
+                最近30天
               </v-chip>
               <v-card
                 class="mx-auto"
@@ -159,7 +169,7 @@
                           <v-list-item-title>总计</v-list-item-title>
                         </v-list-item-content>
                         <v-list-item-action>
-                          <v-list-item-title>{{totalPatient}}元</v-list-item-title>
+                          <v-list-item-title>{{totalPatient}}人</v-list-item-title>
                         </v-list-item-action>
                       </v-list-item>
                       <v-list-item>
@@ -167,7 +177,7 @@
                           <v-list-item-title>平均每天</v-list-item-title>
                         </v-list-item-content>
                         <v-list-item-action>
-                          <v-list-item-title>{{averagePatient}}元</v-list-item-title>
+                          <v-list-item-title>{{averagePatient}}人</v-list-item-title>
                         </v-list-item-action>
                       </v-list-item>
                       <v-list-item>
@@ -175,7 +185,7 @@
                           <v-list-item-title>小于20岁</v-list-item-title>
                         </v-list-item-content>
                         <v-list-item-action>
-                          <v-list-item-title>{{profitXiyao}}元</v-list-item-title>
+                          <v-list-item-title>{{profitXiyao}}人</v-list-item-title>
                         </v-list-item-action>
                       </v-list-item>
                       <v-list-item>
@@ -183,7 +193,7 @@
                           <v-list-item-title>大于20岁</v-list-item-title>
                         </v-list-item-content>
                         <v-list-item-action>
-                          <v-list-item-title>{{lt20Patient}}元</v-list-item-title>
+                          <v-list-item-title>{{lt20Patient}}人</v-list-item-title>
                         </v-list-item-action>
                       </v-list-item>
                       <v-divider></v-divider>
@@ -210,9 +220,10 @@
 </template>
 
 <script>
+import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate';
   export default {
     data: () => ({
-      dates: ['2019-09-10', '2019-09-20'],
+      dates: [],
       reportDisplay: false,
       totalIncome: 0,
       monthSalesChart: {
@@ -221,34 +232,49 @@
     }),
 
     methods: {
+      today: function(){
+        let todayDate = getNowFormatDate();
+        this.dates = [];
+        this.dates.push(todayDate);
+        this.dates.push(todayDate);
+      },
+
+      last7days: function(){
+        var end = dateToString(new Date());
+        var start = dateToString(new Date(new Date().setDate(new Date().getDate()-6)));
+        this.dates = [];
+        this.dates.push(start);
+        this.dates.push(end);
+      },
+
+      last30days: function(){
+        var end = dateToString(new Date());
+        var start = dateToString(new Date(new Date().setDate(new Date().getDate()-29)));
+        this.dates = [];
+        this.dates.push(start);
+        this.dates.push(end);
+      },
+
       actionGenerate: function(){
         this.reportDisplay = true;
         var start = this.dates[0];
         var end = this.dates[1];
-        var range = {
-          startDate: start,
-          endDate: end,
-        };
-        this.startDay = start;
-        this.endDay = end;
-        var orderObj = [];
-        var otherEntryObj = [];
-        let days = 0;
-        days = (this.dateRange[1] - this.dateRange[0]) / (1000*3600*24) + 1;
-        this.$http.get("/ordapi/getOrderStatement", {params:range})
-        .then(
-          function(response) {
-            orderObj = response.data;
-            this.$http.get("/othentryapi/getOtherEntryRange", {params:range}).then(response => {
-              otherEntryObj = response.data;
-              this.calculateAndAnalysis(orderObj, otherEntryObj, days);
-            })							
+        let days = (stringToDate(end) - stringToDate(start)) / (1000*3600*24) + 1;
+        this.$http.get('/api/getOrdBetweenDates', {
+          params: {
+						dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
+						dbs_b : this.$store.state.user.dbs_prefix+'patient',
+            startDate: start,
+            endDate: end
+          }
+        }).then(response => {
+            this.calculateAndAnalysis(response.data,days);            						
           }
         );
       },
 
-      calculateAndAnalysis: function(orderObj,otherEntryObj,days){
-        //alert(orderObj.length);
+      calculateAndAnalysis: function(orderObj,days){
+        alert(JSON.stringify(orderObj));
         //alert(otherEntryObj.length);
         let _totalIncome = 0, _totalProfit = 0, _averageIncome = 0, _averageProfit = 0;
         let _incomeMianjian = 0, _incomeXiyao = 0, _incomeYaowan = 0, _incomeCaoyao = 0;
@@ -256,15 +282,16 @@
         let _taotalPatient = 0, _averagePatient = 0, _gt20Patient = 0, _lt20Patient = 0;
         let _jianyaoTimes = 0;
         for(let item of orderObj){
-          if(item.medType == "免煎药"){
+          alert(item.medtype);
+          if(item.medtype == "免煎"){
             _incomeMianjian = parseFloat((_incomeMianjian + item.total).toFixed(2));
             _profitMianjian = parseFloat((_profitMianjian + item.totalprofit).toFixed(2));
           } 
-          else if(item.medType == "草药"){
+          else if(item.medtype == "草药"){
             _incomeCaoyao = parseFloat((_incomeCaoyao + item.total).toFixed(2));
             _profitCaoyao = parseFloat((_profitCaoyao + item.totalprofit).toFixed(2));
           }
-          else if(item.medType == "西药"){
+          else if(item.medtype == "西药"){
             _incomeXiyao = parseFloat((_incomeXiyao + item.total).toFixed(2));
             _profitXiyao = parseFloat((_profitXiyao + item.totalprofit).toFixed(2));
           }
@@ -277,21 +304,10 @@
           }else{
             _lt20Patient = _lt20Patient + 1;
           }
-          let searchStr = JSON.stringify(item.med);
+          /* let searchStr = JSON.stringify(item.med);
           if(searchStr.indexOf('煎药') != -1){
             _jianyaoTimes = _jianyaoTimes + 1;
-          }
-        }
-
-        for(let item of otherEntryObj){
-          if(item.detailType == "药丸"){
-            _incomeYaowan = parseFloat((_incomeYaowan + item.amount).toFixed(2));
-            _profitYaowan = parseFloat((_profitYaowan + item.profit).toFixed(2));
-          }
-          _totalIncome = parseFloat((_totalIncome + item.amount).toFixed(2));
-          _totalProfit = parseFloat((_totalProfit + item.profit).toFixed(2));
-          _taotalPatient = _taotalPatient + 1;
-
+          } */
         }
         _averageIncome = parseFloat((_totalIncome / days).toFixed(2));
         _averageProfit = parseFloat((_totalProfit / days).toFixed(2));
@@ -317,12 +333,8 @@
         this.gt20Patient = _gt20Patient;
         this.lt20Patient = _lt20Patient;
         //其它
-        this.jianyaoTimes = _jianyaoTimes;
+        this.jianyaoTimes = _jianyaoTimes; 
       },
-    },
-
-    mounted: function() {
-			this.getAll();
     },
     
     computed: {

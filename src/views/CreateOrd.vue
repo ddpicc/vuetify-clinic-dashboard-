@@ -237,13 +237,13 @@
 </template>
 
 <script>
-  import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
   var pinyin = require("pinyin");
   var staticHeader=[{sortable: false, text: '名称', value: 'name1', width: '15%'}, {sortable: false,text: '数量', value: 'count1', width: '10%'}, {sortable: false,text: '名称', value: 'name2', width: '15%'}, {sortable: false,text: '数量', value: 'count2', width: '10%'}, 
                  {sortable: false,text: '名称', value: 'name3', width: '15%'}, {sortable: false,text: '数量', value: 'count3', width: '10%'}, {sortable: false,text: '名称', value: 'name4', width: '15%'}, {sortable: false,text: '数量', value: 'count4', width: '10%'}];
 
   var xiyaoHeader=[{sortable: false,text: '名称', value: 'name1'}, {sortable: false,text: '数量', value: 'count1'}, {sortable: false,text: '用法', value: 'usage1'}];
   var yaowanHeader=[];
+  import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate';
 
   export default {
     data: () => ({
@@ -469,23 +469,6 @@
         this.$refs.mark1.$el.querySelector('input').focus();
       },
 
-      //获取当前时间，格式YYYY-MM-DD
-      getNowFormatDate() {
-        var date = new Date();
-				let sep = "-";
-				var year = date.getFullYear();  //年
-				var month = date.getMonth() + 1;   //月
-				var strDate = date.getDate();   //日
-				if (month >= 1 && month <= 9) {
-					month = "0" + month;
-				}
-				if (strDate >= 0 && strDate <= 9) {
-					strDate = "0" + strDate;
-				}
-				var currentdate = year + sep + month + sep + strDate;
-				return currentdate;
-      },
-
       postOrdToDbSure:function() {
         if(this.items.length == 0){
           alert('订单为空');
@@ -504,7 +487,7 @@
                 sex : this.patientSex,
                 age : !this.patientAge? 0 : parseFloat(this.patientAge),
                 phone : !this.patientPhone? 0 : parseInt(this.patientPhone),
-                lastVisit : this.getNowFormatDate(),
+                lastVisit : getNowFormatDate(),
             }).then( (res) => {
               this.$http.post('/api/insertOrd',{
                     dbs : this.$store.state.user.dbs_prefix+'ordlist',
@@ -516,7 +499,7 @@
                     dose : this.orderCount,
                     medarray : this.medString,
                     total : parseFloat(this.total),
-                    date : this.getNowFormatDate(),          
+                    date : getNowFormatDate(),          
               }).then( (resord) => {   
                 //{"id":1,"patient":"我的天测试","medtype":"免煎","symptom":"啦啊","order_comment":"是非法","dose":1,"medarray":"{\"name1\":\"白术\",\"count1\":\"7袋\"}","total":266,"totalprofit":0,"date":"2020-02-13","sex":"女","age":13,"phone":"12525"}           
                 let ordObj = {
@@ -528,12 +511,11 @@
                   dose : this.orderCount,
                   medarray : this.medString,
                   total : parseFloat(this.total),
-                  date : this.getNowFormatDate(),
+                  date : getNowFormatDate(),
                   sex : this.patientSex,
                   age : !this.patientAge? 0 : parseFloat(this.patientAge),
                   phone : !this.patientPhone? 0 : parseInt(this.patientPhone)
                 }
-                this.saveOrdToLocal(ordObj);
                 this.clearInfo();
               })
               .catch( (err) =>{
@@ -554,7 +536,7 @@
                 dose : this.orderCount,
                 medarray : this.medString,
                 total : parseFloat(this.total),
-                date : this.getNowFormatDate(),          
+                date : getNowFormatDate(),          
           }).then( (resord) => {       
             let ordObj = {
                   id : resord.data.insertId,
@@ -565,39 +547,17 @@
                   dose : this.orderCount,
                   medarray : this.medString,
                   total : parseFloat(this.total),
-                  date : this.getNowFormatDate(),
+                  date : getNowFormatDate(),
                   sex : this.patientSex,
                   age : !this.patientAge? 0 : parseFloat(this.patientAge),
                   phone : !this.patientPhone? 0 : parseInt(this.patientPhone)
-            }
-            this.saveOrdToLocal(ordObj);       
+            }     
             this.clearInfo();
           })
           .catch( (err) =>{
             console.log(err);
           })
         }
-      },
-
-      saveOrdToLocal: function(ordObj){
-        //load from local first
-        let fromlocal = loadFromLocal(1,'cachedOrder', []);
-        if (fromlocal.length>30){
-          fromlocal.pop();
-        }
-        let today = this.getNowFormatDate();
-        if(fromlocal.length == 0){
-          let insertOrdObj = {[today]: [ordObj]};
-          fromlocal.splice(0,0,insertOrdObj);
-        }else{
-          if(!fromlocal[0][today]){
-            let insertOrdObj = {[today]: [ordObj]};
-            fromlocal.splice(0,0,insertOrdObj);
-          }else {
-            fromlocal[0][today].splice(0,0,ordObj);
-          }
-        }
-        saveToLocal(1,'cachedOrder',fromlocal); 
       },
 
       clearInfo: function(){

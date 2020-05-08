@@ -1,11 +1,29 @@
 <template>
   <div id="app">
    <v-app light>
-     <v-progress-linear
-      color="blue-grey"
-      height="25"
-      reactive
-    ></v-progress-linear>
+    <v-app-bar
+      app
+      color="white"
+      height="50"
+    >
+      <v-avatar
+        class="mr-3"
+        color="grey lighten-5"
+        size="50"
+      >
+        <v-img
+          contain
+          max-height="70%"
+          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+        ></v-img>
+      </v-avatar>
+
+      <v-toolbar-title class="font-weight-black headline">
+        半夏
+      </v-toolbar-title>
+
+    </v-app-bar>
+
     <v-content>
       <v-container
         class="fill-height"
@@ -22,7 +40,7 @@
           >
             <v-card class="elevation-12">
               <v-card-title class="text-left justify-left py-6">
-                <h1 class="font-weight-bold display-3 basil--text" @click.stop="jumpHome">半夏医疗</h1>
+                <h1 class="font-weight-bold display-3 basil--text" @click.stop="jumpHome">半夏</h1>
               </v-card-title>
               <v-tabs
                 v-model="tab"
@@ -145,7 +163,7 @@
             this.notification = '登录成功';
             this.snackbarColor = 'green';
             
-            setTimeout( () => {this.$router.push({ path: '/dashboard' });},1200);
+            this.$router.push({ path: '/loading' });
           }).catch(err => {
             this.snackbar = true;
             this.notification = '连接错误，请重试';

@@ -22,7 +22,7 @@
               mdi-arrow-up
             </v-icon>
             <span class="green--text">55%</span>&nbsp;
-            今天收入提高
+            昨天收入提高
           </p>
         </material-linechart-card>
       </v-col>
@@ -71,7 +71,7 @@
               mdi-arrow-up
             </v-icon>
             <span class="green--text">55%</span>&nbsp;
-            今天人数提高
+            昨天人数提高
           </p>
         </material-linechart-card>
       </v-col>
@@ -580,10 +580,11 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         var monthNow=(month+1)+"月";
         return monthNow;
       },
+      
 
       loadMonth: function(){
-        var end = dateToString(new Date());
-        var start = dateToString(new Date(new Date().setDate(new Date().getDate()-29)));
+        var end = dateToString(new Date(new Date().setDate(new Date().getDate()-1)));
+        var start = dateToString(new Date(new Date().setDate(new Date().getDate()-30)));
         var last30daysIncome = [];
         var last30daysNum = [];
         this.$http.get('/api/getLast30Days', {
@@ -608,7 +609,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
                 last30daysNum[index] = last30daysNum[index] + 1;
               }
             }
-            for(var i = 0;i<30;i++) {
+            for(var i = 1;i<=30;i++) {
               this.dailySalesChart.data.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysIncome[i]]);
               this.dailyNmPeopleChart.data.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysNum[i]]);
             }
