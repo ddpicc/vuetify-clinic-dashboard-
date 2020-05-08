@@ -13,14 +13,10 @@
       >
         <v-img
           contain
-          max-height="70%"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+          max-height="100%"
+          src="../assets/logo.png"
         ></v-img>
       </v-avatar>
-
-      <v-toolbar-title class="font-weight-black headline">
-        半夏
-      </v-toolbar-title>
       <v-spacer />
 
       <v-toolbar-items>

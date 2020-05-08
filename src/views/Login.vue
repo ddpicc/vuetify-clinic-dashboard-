@@ -13,14 +13,11 @@
       >
         <v-img
           contain
-          max-height="70%"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+          max-height="100%"
+          src="../assets/logo.png"
         ></v-img>
       </v-avatar>
 
-      <v-toolbar-title class="font-weight-black headline">
-        半夏
-      </v-toolbar-title>
 
     </v-app-bar>
 
@@ -40,7 +37,12 @@
           >
             <v-card class="elevation-12">
               <v-card-title class="text-left justify-left py-6">
-                <h1 class="font-weight-bold display-3 basil--text" @click.stop="jumpHome">半夏</h1>
+                <v-img
+                  contain
+                  max-height="120"
+                  src="../assets/logo.png"
+                  @click.stop="jumpHome"
+                ></v-img>
               </v-card-title>
               <v-tabs
                 v-model="tab"
