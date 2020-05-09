@@ -91,19 +91,19 @@
           text: '首页'
         },
         {
-          to: '/med-list',
-          icon: 'mdi-pill',
-          text: '药品管理'
-        },
+          to: '/create-ord',
+          icon: 'mdi-format-font',
+          text: '生成处方'
+        },        
         {
           to: '/ord-list',
           icon: 'mdi-clipboard-outline',
           text: '处方管理'
         },
         {
-          to: '/create-ord',
-          icon: 'mdi-format-font',
-          text: '生成处方'
+          to: '/med-list',
+          icon: 'mdi-pill',
+          text: '药品管理'
         },
         {
           to: '/patient-list',

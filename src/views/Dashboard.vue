@@ -587,7 +587,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         var start = dateToString(new Date(new Date().setDate(new Date().getDate()-30)));
         var last30daysIncome = [];
         var last30daysNum = [];
-        this.$http.get('/api/getLast30Days', {
+        this.$http.get('/api/getChartInfoFromOrder', {
           params: {
             dbs : this.$store.state.user.dbs_prefix+'ordlist',
             startDate: start,
@@ -615,6 +615,40 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
             }
           })
         })
+      },
+
+      loadToday: function(){
+        let fromlocal = loadFromLocal(1,'cacheOrder',[]);
+
+        if(fromlocal.length == 0){
+          var end = dateToString(new Date());
+          var start = dateToString(new Date(new Date().setDate(new Date().getDate()-30)));
+          //directly get last 30 days
+          this.$http.get('/api/getChartInfoFromOrder',{
+            params: {
+              dbs : this.$store.state.user.dbs_prefix+'ordlist',
+              startDate: start,
+              endDate: end
+            }
+          }).then( (res) => {
+            
+          })
+        }else{
+          //get today
+          this.$http.get('/api/getChartInfoFromOrder',{
+            params: {
+              dbs : this.$store.state.user.dbs_prefix+'ordlist',
+              startDate: dateToString(new Date()),
+              endDate: dateToString(new Date())
+            }
+          }).then( (res) => {
+            for(let ele of fromlocal){
+              ele.medarray = ele.medarray.split(";");
+              idStartFrom = idStartFrom + 1;
+              ele.id = idStartFrom;
+            }
+          })
+        }
       }
     },
 

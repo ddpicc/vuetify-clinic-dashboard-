@@ -54,8 +54,8 @@ router.get('/getUserInfo', (req, res, next) => {
   api.getUserInfo(req, res, next);
 });
 
-router.get('/getLast30Days', (req, res, next) => {
-  api.getLast30Days(req, res, next);
+router.get('/getChartInfoFromOrder', (req, res, next) => {
+  api.getChartInfoFromOrder(req, res, next);
 });
 
 router.get('/getOrdByDate', (req, res, next) => {

@@ -155,7 +155,7 @@
       notification: '',
       headers: [
         { text: '', value: 'data-table-expand' },
-        { text: '序号', value: 'id' },
+        { text: '序号', value: 'pid' },
         {
           sortable: false,
           text: '名字',
@@ -218,7 +218,7 @@
             for(let element of res.data) {
               element.medarray = element.medarray.split(";");
               idStartFrom = idStartFrom + 1;
-              element.id = idStartFrom;
+              element.pid = idStartFrom;
             }
             this.items = res.data;
             this.loading = false;
@@ -230,16 +230,16 @@
               dbs_b : this.$store.state.user.dbs_prefix+'patient',
               dateBy: dateToString(new Date())
             }
-          }).then( (res) => {          
+          }).then( (res) => {
             for(let element of res.data) {
               element.medarray = element.medarray.split(";");
               idStartFrom = idStartFrom + 1;
-              element.id = idStartFrom;
+              element.pid = idStartFrom;
             }
             for(let ele of fromlocal){
               ele.medarray = ele.medarray.split(";");
               idStartFrom = idStartFrom + 1;
-              ele.id = idStartFrom;
+              ele.pid = idStartFrom;
             }
             this.items = res.data;
             this.items = this.items.concat(fromlocal);
@@ -251,29 +251,12 @@
       getColor (medtype) {
         if (medtype == '免煎') return 'lime darken-2'
         else if (medtype == '西药') return 'blue lighten-2'
+        else if(medtype == "药丸") return 'deep-purple lighten-2'
         else return 'green'
       },
 
       reuse: function(){
 
-      },
-
-      //获取当前时间，格式YYYY-MM-DD
-      getTomorrowFormatDate() {
-        var date = new Date();
-        date.setDate(date.getDate()+1);
-				var seperator1 = "-";
-				var year = date.getFullYear();  //年
-				var month = date.getMonth() + 1;   //月
-				var strDate = date.getDate();   //日
-				if (month >= 1 && month <= 9) {
-					month = "0" + month;
-				}
-				if (strDate >= 0 && strDate <= 9) {
-					strDate = "0" + strDate;
-				}
-				var currentdate = year + seperator1 + month + seperator1 + strDate;
-				return currentdate;
       },
 
       deleteItem(ordId){
@@ -292,10 +275,10 @@
 
       canDelete: function(item){
         if(this.deleteEnabled){
-          /* if(this.getNowFormatDate() == item.date)
+          if(getNowFormatDate() == item.date)
             return true;
-          else */
-            return true;
+          else
+            return false;
         }
         else
           return false;

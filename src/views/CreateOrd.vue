@@ -324,13 +324,13 @@
         this.getAll();
         if(this.medRadio == "西药"){
           this.howToUseOn = true;
-           this.isYaowan = false;
+          this.isYaowan = false;
           this.cardColor = 'blue lighten-2';
           this.headers = xiyaoHeader;
         }else if(this.medRadio == "药丸"){
           this.isYaowan = true;
           this.headers = yaowanHeader;
-          this.cardColor = 'deep-purple lighten-2';          
+          this.cardColor = 'deep-purple lighten-2';
         }else{
           this.howToUseOn = false;
            this.isYaowan = false;
@@ -339,7 +339,7 @@
             this.cardColor = 'lime darken-2';
           else
             this.cardColor = 'green';
-				}					
+				}
       },
 
       getColor (count) {
@@ -470,13 +470,20 @@
       },
 
       postOrdToDbSure:function() {
-        if(this.items.length == 0){
+        if(this.items.length == 0 && this.medRadio!='药丸'){
+          alert('订单为空');
+          return;
+        }
+        if(this.medRadio == '药丸' && this.total == 0){
           alert('订单为空');
           return;
         }
         if(this.patientName == ''){
           alert('姓名不能为空');
           return;
+        }
+        if(this.medRadio == '药丸' && this.total != 0){
+          this.orderCount = 1;
         }
         if(!this.patient_id){
           this.$http.post('/api/insertPatientOrderPage',{
@@ -499,7 +506,7 @@
                     dose : this.orderCount,
                     medarray : this.medString,
                     total : parseFloat(this.total),
-                    date : getNowFormatDate(),          
+                    date : getNowFormatDate(),
               }).then( (resord) => {   
                 //{"id":1,"patient":"我的天测试","medtype":"免煎","symptom":"啦啊","order_comment":"是非法","dose":1,"medarray":"{\"name1\":\"白术\",\"count1\":\"7袋\"}","total":266,"totalprofit":0,"date":"2020-02-13","sex":"女","age":13,"phone":"12525"}           
                 let ordObj = {
@@ -536,7 +543,7 @@
                 dose : this.orderCount,
                 medarray : this.medString,
                 total : parseFloat(this.total),
-                date : getNowFormatDate(),          
+                date : getNowFormatDate(),
           }).then( (resord) => {       
             let ordObj = {
                   id : resord.data.insertId,
@@ -603,7 +610,7 @@
 
       deleteMed(deleteMed) {
         let existInTable = this.orderMed1PerObj.find(function(p){
-            return p.name === deleteMed;
+          return p.name === deleteMed;
         });
         var index = this.orderMed1PerObj.indexOf(existInTable);
         this.orderMed1PerObj.splice(index, 1);

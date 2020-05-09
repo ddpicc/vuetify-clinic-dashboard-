@@ -15,7 +15,7 @@
             <v-col cols="12" sm="12" lg="4" md="4">
               <v-date-picker full-width v-model="dates" range color="green"></v-date-picker>
               <div class="py-12"></div>
-              <material-linechart-card
+              <material-piechart-card
                 :data="monthSalesChart.data"
                 color="orange"
                 v-if="reportDisplay"
@@ -23,7 +23,7 @@
                 <h4 class="title font-weight-light">
                   每月收入
                 </h4>
-              </material-linechart-card>
+              </material-piechart-card>
             </v-col>
             <v-col cols="12" sm="12" lg="8" md="8">
               <v-chip
@@ -54,7 +54,7 @@
                 class="mx-auto"
               >
                 <v-card-text>
-                  <v-text-field v-model="dateRangeText" label="时间范围" readonly append-icon="mdi-check-bold" color="blue darken-2" @click:append="actionGenerate"></v-text-field>
+                  <v-text-field v-model="dateRangeText" label="时间范围" readonly :append-icon=iconChange color="blue darken-2" @click:append="actionGenerate"></v-text-field>
                   <div  ref="print" v-if="reportDisplay">
                     <h3 style="text-align:center">{{dateRangeText}} 详情</h3>
                     <v-list subheader dense>
@@ -185,7 +185,7 @@
                           <v-list-item-title>小于20岁</v-list-item-title>
                         </v-list-item-content>
                         <v-list-item-action>
-                          <v-list-item-title>{{profitXiyao}}人</v-list-item-title>
+                          <v-list-item-title>{{lt20Patient}}人</v-list-item-title>
                         </v-list-item-action>
                       </v-list-item>
                       <v-list-item>
@@ -193,7 +193,7 @@
                           <v-list-item-title>大于20岁</v-list-item-title>
                         </v-list-item-content>
                         <v-list-item-action>
-                          <v-list-item-title>{{lt20Patient}}人</v-list-item-title>
+                          <v-list-item-title>{{gt20Patient}}人</v-list-item-title>
                         </v-list-item-action>
                       </v-list-item>
                       <v-divider></v-divider>
@@ -226,8 +226,9 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
       dates: [],
       reportDisplay: false,
       totalIncome: 0,
+      iconChange: 'mdi-check-bold',
       monthSalesChart: {
-          data: [],
+          data: [['Blueberry', 44], ['Strawberry', 23]],
         },
     }),
 
@@ -256,33 +257,38 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
       },
 
       actionGenerate: function(){
-        this.reportDisplay = true;
-        var start = this.dates[0];
-        var end = this.dates[1];
-        let days = (stringToDate(end) - stringToDate(start)) / (1000*3600*24) + 1;
-        this.$http.get('/api/getOrdBetweenDates', {
-          params: {
-						dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
-						dbs_b : this.$store.state.user.dbs_prefix+'patient',
-            startDate: start,
-            endDate: end
-          }
-        }).then(response => {
-            this.calculateAndAnalysis(response.data,days);            						
-          }
-        );
+        if(this.reportDisplay != true){
+          this.reportDisplay = true;
+          this.iconChange = 'mdi-close';
+          var start = this.dates[0];
+          var end = this.dates[1];
+          let days = (stringToDate(end) - stringToDate(start)) / (1000*3600*24) + 1;
+          this.$http.get('/api/getOrdBetweenDates', {
+            params: {
+              dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
+              dbs_b : this.$store.state.user.dbs_prefix+'patient',
+              startDate: start,
+              endDate: end
+            }
+          }).then(response => {
+              this.calculateAndAnalysis(response.data,days);            						
+            }
+          );
+        }else{
+          this.reportDisplay = false;
+          this.iconChange = 'mdi-check-bold';
+          tjos.dates = [];
+        }
       },
 
       calculateAndAnalysis: function(orderObj,days){
-        alert(JSON.stringify(orderObj));
-        //alert(otherEntryObj.length);
+        //alert(JSON.stringify(orderObj));
         let _totalIncome = 0, _totalProfit = 0, _averageIncome = 0, _averageProfit = 0;
         let _incomeMianjian = 0, _incomeXiyao = 0, _incomeYaowan = 0, _incomeCaoyao = 0;
         let _profitMianjian = 0, _profitXiyao = 0, _profitYaowan = 0, _profitCaoyao = 0;
         let _taotalPatient = 0, _averagePatient = 0, _gt20Patient = 0, _lt20Patient = 0;
         let _jianyaoTimes = 0;
         for(let item of orderObj){
-          alert(item.medtype);
           if(item.medtype == "免煎"){
             _incomeMianjian = parseFloat((_incomeMianjian + item.total).toFixed(2));
             _profitMianjian = parseFloat((_profitMianjian + item.totalprofit).toFixed(2));
@@ -304,10 +310,10 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
           }else{
             _lt20Patient = _lt20Patient + 1;
           }
-          /* let searchStr = JSON.stringify(item.med);
+          let searchStr = JSON.stringify(item.medarray);
           if(searchStr.indexOf('煎药') != -1){
             _jianyaoTimes = _jianyaoTimes + 1;
-          } */
+          }
         }
         _averageIncome = parseFloat((_totalIncome / days).toFixed(2));
         _averageProfit = parseFloat((_totalProfit / days).toFixed(2));

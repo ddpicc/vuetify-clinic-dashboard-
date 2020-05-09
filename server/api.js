@@ -87,8 +87,10 @@ module.exports = {
   },
 
   deleteOrdbyId(req, res, next) {
+    console.log('api - deleteOrdbyId');
     var dbs = req.query.dbs;
     var id = req.query.id;
+    console.log(id);
     pool.getConnection((err, connection) => {
       var sql = sqlMap.deleteOrdbyId;
       connection.query(sql, [dbs,id], (err, result) => {
@@ -238,13 +240,13 @@ module.exports = {
     })
   },
 
-  getLast30Days(req, res, next) {
-    console.log('api - getLast30Days');
+  getChartInfoFromOrder(req, res, next) {
+    console.log('api - getChartInfoFromOrder');
     var dbs = req.query.dbs;
     var startDate = req.query.startDate;
     var endDate = req.query.endDate;
     pool.getConnection((err, connection) => {
-      var sql = sqlMap.getLast30Days;
+      var sql = sqlMap.getChartInfoFromOrder;
       connection.query(sql, [dbs,startDate,endDate], (err, result) => {
           res.json(result);
           connection.release();
