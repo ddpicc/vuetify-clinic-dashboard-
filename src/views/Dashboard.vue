@@ -86,7 +86,7 @@
           color="green"
           icon="mdi-store"
           title="当天收入"
-          value="$34,245"
+          :value="todayIncome"
           sub-icon="mdi-calendar"
           :sub-text="todayDate()"
         />
@@ -101,7 +101,7 @@
           color="orange"
           icon="mdi-content-copy"
           title="当天病人"
-          value="49/50"
+          :value="todayNum"
           small-value="人"
           sub-icon="mdi-alert"
           sub-icon-color="error"
@@ -118,7 +118,7 @@
           color="red"
           icon="mdi-information-outline"
           title="月收入"
-          value="75"
+          :value="monthIncome"
           sub-icon="mdi-tag"
           :sub-text="todayMonth()"
         />
@@ -133,7 +133,7 @@
           color="info"
           icon="mdi-twitter"
           title="月病人"
-          value="245"
+          :value="monthNum"
           small-value="人"
           sub-icon="mdi-update"
           :sub-text="todayMonth()"
@@ -147,7 +147,7 @@
         <material-stats-card
           color="green"
           icon="mdi-store"
-          title="当天收入"
+          title="全年收入"
           value="$34,245"
           sub-icon="mdi-calendar"
           :sub-text="todayDate()"
@@ -160,7 +160,7 @@
         <material-stats-card
           color="green"
           icon="mdi-store"
-          title="当天收入"
+          title="总收入"
           value="$34,245"
           sub-icon="mdi-calendar"
           :sub-text="todayDate()"
@@ -658,12 +658,18 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         let curDate = '';
         var last30daysIncome = [];
         var last30daysNum = [];
+        let _todayIncome = 0;
+        let _todayNum = 0;
+        let _monthIncome = 0;
+        let _monthNum = 0;
         for(let item of data30Days){
-          if(item.data == dateToString(new Date())){
-
+          if(item.date == dateToString(new Date())){
+            _todayIncome = parseFloat((_todayIncome + item.total).toFixed(2));
+            _todayNum = _todayNum + 1;
           }
-          if(item.date.substring(0,4) == this.todayMonth()){
-
+          if(item.date.substring(0,7) == dateToString(new Date()).substring(0,7)){
+            _monthIncome = parseFloat((_monthIncome + item.total).toFixed(2));
+            _monthNum = _monthNum + 1;
           }
           if(item.date != curDate){
             index = parseInt((new Date() - stringToDate(item.date)) / (1000 * 60 * 60 * 24));
@@ -679,6 +685,10 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
             break;
           }
         }
+        this.todayIncome = _todayIncome;
+        this.monthIncome = _monthIncome;
+        this.todayNum = _todayNum;
+        this.monthNum = _monthNum;
         for(var i=0;i<30;i++) {
           this.dailySalesChart.data.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysIncome[i]]);
           this.dailyNmPeopleChart.data.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysNum[i]]);
