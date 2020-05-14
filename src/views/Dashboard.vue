@@ -576,8 +576,11 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
 
       todayMonth: function(){
         var myDate = new Date();     //获取当前年份(2位)
-        var month=myDate.getMonth();       //获取当前月份(0-11,0代表1月)
-        var monthNow=(month+1)+"月";
+        var month=myDate.getMonth()+1;       //获取当前月份(0-11,0代表1月)
+        if (month >= 1 && month <= 9) {
+          month = "0" + month;
+        }
+        var monthNow=month + "月";
         return monthNow;
       },
       
@@ -617,8 +620,9 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         })
       },
 
-      loadToday: function(){
+      loadDataAndSetupChart: function(){
         let fromlocal = loadFromLocal(1,'cacheOrder',[]);
+        let data30Days = [];
 
         if(fromlocal.length == 0){
           var end = dateToString(new Date());
@@ -631,7 +635,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
               endDate: end
             }
           }).then( (res) => {
-            
+            this.calculateData(res.data);
           })
         }else{
           //get today
@@ -642,18 +646,49 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
               endDate: dateToString(new Date())
             }
           }).then( (res) => {
-            for(let ele of fromlocal){
-              ele.medarray = ele.medarray.split(";");
-              idStartFrom = idStartFrom + 1;
-              ele.id = idStartFrom;
-            }
+            data30Days = res.data;
+            data30Days = data30Days.concat(fromlocal);
+            this.calculateData(data30Days);
           })
         }
+      },
+
+      calculateData: function(data30Days){
+        let index = 0;
+        let curDate = '';
+        var last30daysIncome = [];
+        var last30daysNum = [];
+        for(let item of data30Days){
+          if(item.data == dateToString(new Date())){
+
+          }
+          if(item.date.substring(0,4) == this.todayMonth()){
+
+          }
+          if(item.date != curDate){
+            index = parseInt((new Date() - stringToDate(item.date)) / (1000 * 60 * 60 * 24));
+            curDate = item.date;
+            last30daysIncome[index] = item.total;
+            last30daysNum[index] = 1;
+          }
+          else{
+            last30daysIncome[index] = parseFloat((last30daysIncome[index] + item.total).toFixed(2));
+            last30daysNum[index] = last30daysNum[index] + 1;
+          }
+          if(index > 30){
+            break;
+          }
+        }
+        for(var i=0;i<30;i++) {
+          this.dailySalesChart.data.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysIncome[i]]);
+          this.dailyNmPeopleChart.data.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysNum[i]]);
+        }
       }
+
     },
 
     mounted: function() {
-			this.loadMonth();
+			this.loadDataAndSetupChart();
 		}
   }
 </script>

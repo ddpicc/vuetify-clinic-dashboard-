@@ -368,6 +368,7 @@
  </template>
 
 <script>
+  var wanchengItems = ['云杰诊所','惠济诊所'];
   export default {
     data () {
       return {
@@ -375,7 +376,7 @@
         zoom: 3,
         districtItems: ['卧龙区','宛城区'],
         district: '宛城区',
-        clinicItems: ['云杰诊所','老师'],
+        clinicItems: ['云杰诊所'],
         clinicName: '云杰诊所',
         articles: [
           {
@@ -428,7 +429,7 @@
 
       handleDistrictChange: function(){
         if(this.district == '宛城区'){
-          this.clinicItems = ['云杰诊所','老师'];
+          this.clinicItems = wanchengItems;
           this.clinicName = '云杰诊所';
         }else if(this.district == '卧龙区'){
           this.clinicItems = ['云诊所'];
