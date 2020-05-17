@@ -75,10 +75,10 @@ module.exports = {
     var symptom = req.body.symptom,order_comment = req.body.order_comment;
     var medtype = req.body.medtype, dose = req.body.dose;
     var medarray = req.body.medarray, total = req.body.total;
-    var date = req.body.date;
+    var totalprofit = req.body.totalprofit, date = req.body.date;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.insertOrd;
-      connection.query(sql, [dbs,patient,patient_id,symptom,order_comment,medtype,dose,medarray,total,date], (err, result) => {
+      connection.query(sql, [dbs,patient,patient_id,symptom,order_comment,medtype,dose,medarray,total,totalprofit,date], (err, result) => {
         console.log(err);  
         res.json(result);
           connection.release();

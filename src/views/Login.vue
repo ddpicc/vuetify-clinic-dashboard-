@@ -14,7 +14,8 @@
         <v-img
           contain
           max-height="100%"
-          src="../assets/logo.png"
+          src="../assets/logo1.png"
+          @click.stop="jumpHome"
         ></v-img>
       </v-avatar>
 
@@ -39,8 +40,8 @@
               <v-card-title class="text-left justify-left py-6">
                 <v-img
                   contain
-                  max-height="120"
-                  src="../assets/logo.png"
+                  max-height="150"
+                  src="../assets/logo1.png"
                   @click.stop="jumpHome"
                 ></v-img>
               </v-card-title>

@@ -78,4 +78,8 @@ router.get('/getUserSetting', (req, res, next) => {
   api.getUserSetting(req, res, next);
 });
 
+router.get('/addMonthColToUserConfig', (req, res, next) => {
+  api.addMonthColToUserConfig(req, res, next);
+});
+
 module.exports = router;

@@ -33,7 +33,7 @@
       >
         <material-linechart-card
           :data="monthSalesChart.data"
-          color="orange"
+          color="white"
         >
           <h4 class="title font-weight-light">
             每月收入

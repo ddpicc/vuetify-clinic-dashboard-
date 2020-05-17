@@ -13,14 +13,12 @@
       >
         <v-img
           contain
-          max-height="70%"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+          max-height="100%"
+          src="../assets/logo1.png"
+          @click.stop="jumpHome"
         ></v-img>
       </v-avatar>    
 
-      <v-toolbar-title class="font-weight-black headline">
-        半夏
-      </v-toolbar-title>
     	</v-app-bar>
 
 			<v-content>
@@ -72,7 +70,7 @@
         setTimeout( () => {this.$router.push({ path: '/dashboard' });},7600);
 			},
 
-			//todo
+			//读取最近90天的订单数据存在本地
 			loadData: function(){
         var end = dateToString(new Date(new Date().setDate(new Date().getDate()-1)));
         var start = dateToString(new Date(new Date().setDate(new Date().getDate()-90)));
@@ -88,6 +86,42 @@
             saveToLocal(1,'cacheOrder',response.data);
           })
         })
+			},
+			
+      //读取每月数据，用户配置存在本地
+      //生成column，如果数据库读到的是0,本地读取上个月的数据，把它替换掉，如果不是0,就算了
+			loadUserConfig: function(){
+        let date = new Date();
+        let lastMonth = date.getMonth();
+        if (lastMonth >= 1 && lastMonth <= 9) {
+          lastMonth = "0" + lastMonth;
+        }
+        let thisMonth = date.getMonth()+1;
+        if (thisMonth >= 1 && thisMonth <= 9) {
+          thisMonth = "0" + thisMonth;
+        }
+        let columnName = 'month' + date.getFullYear() + lastMonth;
+
+        this.$http.get('/api/getUserSetting', {
+          params: {
+						userid : this.$store.state.user.user_id
+          }
+        }).then(response => {
+          if (response.data[0][columnName] == 0){
+            this.$http.get('/api/getOrdBetweenDates', {
+              params: {
+                dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
+                dbs_b : this.$store.state.user.dbs_prefix+'patient',
+                startDate: lastMonth,
+                endDate: thisMonth
+              }
+            }).then(response => {
+              this.$nextTick( () => {
+                saveToLocal(1,'cacheOrder',response.data);
+              })
+            })
+          }
+        })
       },
 			
 			completeColor: function() {
@@ -97,7 +131,8 @@
     },
 
     mounted: function() {
-      this.loadData();
+      //this.loadData();
+      this.loadUserConfig();
 			this.loadingData();
 		}
   }
