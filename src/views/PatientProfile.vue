@@ -124,12 +124,7 @@
 
     methods: {
       onClick () {
-        this.$http.get('/api/addColUserConfig',{
-          params: {
-						colname : '2020/04'
-					}
-        }).then( (res) => {
-        })
+        
       },
 
       getAll: function() {

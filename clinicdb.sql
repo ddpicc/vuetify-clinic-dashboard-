@@ -135,6 +135,17 @@ CREATE TABLE `myDbs_user` (
 
 insert into `myDbs_user`(`username`,`password`,`token`,`role`,`dbs_prefix`) values ('qcui','8890','1c2b','admin','qcui_'), ('test','test','3d4a','test','test_');
 
+/* 创建myDbs_userconfig表 */
+DROP TABLE IF EXISTS `myDbs_userconfig`;
+
+CREATE TABLE `myDbs_userconfig` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `userid` smallint(5) unsigned,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+insert into `myDbs_userconfig`(`userid`) values (1);
+
 /* 创建user表 */
 DROP TABLE IF EXISTS `myDbs_clinicOverall`;
 

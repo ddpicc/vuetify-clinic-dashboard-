@@ -108,20 +108,46 @@
           }
         }).then(response => {
           if (response.data[0][columnName] == 0){
-            this.$http.get('/api/getOrdBetweenDates', {
-              params: {
-                dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
-                dbs_b : this.$store.state.user.dbs_prefix+'patient',
-                startDate: lastMonth,
-                endDate: thisMonth
-              }
-            }).then(response => {
-              this.$nextTick( () => {
-                saveToLocal(1,'cacheOrder',response.data);
-              })
-            })
+            this.saveLastMonthTotalToDb(columnName);
           }
         })
+      },
+
+      saveLastMonthTotalToDb: function(columnName){
+        let date = new Date();
+        let _todayIncome = 0;
+        let _totalProfit = 0;
+        let lastMonth = date.getMonth();
+        if (lastMonth >= 1 && lastMonth <= 9) {
+          lastMonth = "0" + lastMonth;
+        }
+        let thisMonth = date.getMonth()+1;
+        if (thisMonth >= 1 && thisMonth <= 9) {
+          thisMonth = "0" + thisMonth;
+        }
+        
+        this.$http.get('/api/getChartInfoFromOrder',{
+          params: {
+            dbs : this.$store.state.user.dbs_prefix+'ordlist',
+            startDate: lastMonth,
+            endDate: thisMonth
+          }
+        }).then( (res) => {
+          for(let item of res.data){
+            _todayIncome = parseFloat((_totalIncome + item.total).toFixed(2));
+            _totalProfit = parseFloat((_totalProfit + item.totalprofit).toFixed(2));
+          }
+          if (_todayIncome == 0)
+            return ;
+          this.$http.post('/api/saveMonthTotalToUserSetting',{
+            userid : this.$store.state.user.user_id,
+            col : columnName,
+            lastMonthTotal: _todayIncome
+          }).then( (res) => {
+
+          })
+        })
+        
       },
 			
 			completeColor: function() {

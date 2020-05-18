@@ -254,15 +254,15 @@ module.exports = {
     })
   },
 
-  saveUserSetting(req, res, next) {
-    console.log('api - saveUserSetting');
+  saveMonthTotalToUserSetting(req, res, next) {
+    console.log('api - saveMonthTotalToUserSetting');
     var id = req.body.userid;
-    var canDeletePOrder = req.body.canDeletePOrder,notDisplayYaowan = req.body.notDisplayYaowan;
+    var col = req.body.col,data = req.body.lastMonthTotal;
     pool.getConnection((err, connection) => {
       if(err)
         console.log(err);
-      var sql = sqlMap.saveUserSetting;
-      connection.query(sql, [canDeletePOrder,notDisplayYaowan,id], (err, result) => {
+      var sql = sqlMap.saveMonthTotalToUserSetting;
+      connection.query(sql, [col,data,id], (err, result) => {
           res.json(result);
           connection.release();
       })

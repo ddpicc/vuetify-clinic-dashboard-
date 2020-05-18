@@ -70,16 +70,13 @@ router.get('/getOrdBetweenDates', (req, res, next) => {
   api.getOrdBetweenDates(req, res, next);
 });
 
-router.post('/saveUserSetting', (req, res, next) => {
-  api.saveUserSetting(req, res, next);
+router.post('/saveMonthTotalToUserSetting', (req, res, next) => {
+  api.saveMonthTotalToUserSetting(req, res, next);
 });
 
 router.get('/getUserSetting', (req, res, next) => {
   api.getUserSetting(req, res, next);
 });
 
-router.get('/addMonthColToUserConfig', (req, res, next) => {
-  api.addMonthColToUserConfig(req, res, next);
-});
 
 module.exports = router;
