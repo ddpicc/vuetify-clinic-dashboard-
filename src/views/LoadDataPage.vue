@@ -108,23 +108,14 @@
           }
         }).then(response => {
           if (response.data[0][columnName] == 0){
-            this.saveLastMonthTotalToDb(columnName);
+            this.saveLastMonthTotalToDb(columnName, lastMonth, thisMonth);
           }
         })
       },
 
-      saveLastMonthTotalToDb: function(columnName){
-        let date = new Date();
+      saveLastMonthTotalToDb: function(columnName, lastMonth, thisMonthm){
         let _todayIncome = 0;
         let _totalProfit = 0;
-        let lastMonth = date.getMonth();
-        if (lastMonth >= 1 && lastMonth <= 9) {
-          lastMonth = "0" + lastMonth;
-        }
-        let thisMonth = date.getMonth()+1;
-        if (thisMonth >= 1 && thisMonth <= 9) {
-          thisMonth = "0" + thisMonth;
-        }
         
         this.$http.get('/api/getChartInfoFromOrder',{
           params: {
