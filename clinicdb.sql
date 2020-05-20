@@ -128,7 +128,6 @@ CREATE TABLE `myDbs_user` (
   `token` varchar(50) NOT NULL,
   `role` varchar(20) NOT NULL,
   `dbs_prefix` varchar(20),
-  `canDeletePOrder` smallint(5) NOT NULL DEFAULT 0,
   `notDisplayYaowan` smallint(5) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
@@ -141,6 +140,7 @@ DROP TABLE IF EXISTS `myDbs_userconfig`;
 CREATE TABLE `myDbs_userconfig` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `userid` smallint(5) unsigned,
+  `notDisplayYaowan` smallint(5) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 

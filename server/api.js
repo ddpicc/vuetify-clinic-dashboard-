@@ -70,6 +70,7 @@ module.exports = {
   },
 
   insertOrd(req, res, next) {
+    console.log('api - insertOrd');
     var dbs = req.body.dbs;
     var patient = req.body.patient,patient_id = req.body.patient_id;
     var symptom = req.body.symptom,order_comment = req.body.order_comment;
@@ -79,7 +80,8 @@ module.exports = {
     pool.getConnection((err, connection) => {
       var sql = sqlMap.insertOrd;
       connection.query(sql, [dbs,patient,patient_id,symptom,order_comment,medtype,dose,medarray,total,totalprofit,date], (err, result) => {
-        console.log(err);  
+        if(err)
+          console.log(err);  
         res.json(result);
           connection.release();
       })

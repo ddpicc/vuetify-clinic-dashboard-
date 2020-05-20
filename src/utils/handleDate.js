@@ -180,7 +180,7 @@ export function parseTime(time, cFormat) {
     var date = new Date();
     let sep = "-";
     var year = date.getFullYear();  //年
-    var month = date.getMonth() + 1;   //月
+    var month = date.getMonth()+1;   //月
     var strDate = date.getDate();   //日
     if (month >= 1 && month <= 9) {
       month = "0" + month;

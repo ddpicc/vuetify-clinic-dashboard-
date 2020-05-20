@@ -506,7 +506,7 @@
                     dose : this.orderCount,
                     medarray : this.medString,
                     total : parseFloat(this.total),
-                    totalprofit : (parseFloat(this.total) - parseFloat((this.perOrdBase * this.dose).toFixed(2))).toFixed(2),
+                    totalprofit : (parseFloat(this.total) - parseFloat((this.perOrdBase * this.orderCount).toFixed(2))).toFixed(2),
                     date : getNowFormatDate(),
               }).then( (resord) => {   
                 //{"id":1,"patient":"我的天测试","medtype":"免煎","symptom":"啦啊","order_comment":"是非法","dose":1,"medarray":"{\"name1\":\"白术\",\"count1\":\"7袋\"}","total":266,"totalprofit":0,"date":"2020-02-13","sex":"女","age":13,"phone":"12525"}           
@@ -530,7 +530,7 @@
                 dose : this.orderCount,
                 medarray : this.medString,
                 total : parseFloat(this.total),
-                totalprofit : (parseFloat(this.total) - parseFloat((this.perOrdBase * this.dose).toFixed(2))).toFixed(2),
+                totalprofit : (parseFloat(this.total) - parseFloat((this.perOrdBase * this.orderCount).toFixed(2))).toFixed(2),
                 date : getNowFormatDate(),
           }).then( (resord) => {
             this.clearInfo();

@@ -89,7 +89,7 @@
 			},
 			
       //读取每月数据，用户配置存在本地
-      //生成column，如果数据库读到的是0,本地读取上个月的数据，把它替换掉，如果不是0,就算了
+      //生成column，如果数据库读到的是0,本地读取上个月的数据，把它替换掉，如果不是0,直接存到本地
 			loadUserConfig: function(){
         let date = new Date();
         let lastMonth = date.getMonth();
@@ -108,34 +108,39 @@
           }
         }).then(response => {
           if (response.data[0][columnName] == 0){
-            this.saveLastMonthTotalToDb(columnName, lastMonth, thisMonth);
+            this.saveLastMonthTotalToDb(response.data[0],columnName, lastMonth, thisMonth);
+          }else{
+            saveToLocal(1,'userSetting',response.data);
           }
         })
       },
 
-      saveLastMonthTotalToDb: function(columnName, lastMonth, thisMonthm){
-        let _todayIncome = 0;
-        let _totalProfit = 0;
+      saveLastMonthTotalToDb: function(UserSettingAry, columnName, lastMonth, thisMonth){
+        let _lastMonthIncome = 0;
+        let _lastMonthProfit = 0;
+        let start = new Date().getFullYear() + '-' + lastMonth + '-01';
+        let end = new Date().getFullYear() + '-' + thisMonth + '-01';
         
         this.$http.get('/api/getChartInfoFromOrder',{
           params: {
             dbs : this.$store.state.user.dbs_prefix+'ordlist',
-            startDate: lastMonth,
-            endDate: thisMonth
+            startDate: start,
+            endDate: end
           }
         }).then( (res) => {
           for(let item of res.data){
-            _todayIncome = parseFloat((_totalIncome + item.total).toFixed(2));
-            _totalProfit = parseFloat((_totalProfit + item.totalprofit).toFixed(2));
+            _lastMonthIncome = parseFloat((_lastMonthIncome + item.total).toFixed(2));
+            _lastMonthProfit = parseFloat((_lastMonthProfit + item.totalprofit).toFixed(2));
           }
-          if (_todayIncome == 0)
-            return ;
+          if (_lastMonthIncome == 0)
+            return;
           this.$http.post('/api/saveMonthTotalToUserSetting',{
             userid : this.$store.state.user.user_id,
             col : columnName,
-            lastMonthTotal: _todayIncome
+            lastMonthTotal: _lastMonthIncome
           }).then( (res) => {
-
+            UserSettingAry[columnName] = _lastMonthIncome;
+            saveToLocal(1,'userSetting',UserSettingAry);
           })
         })
         
@@ -148,7 +153,7 @@
     },
 
     mounted: function() {
-      //this.loadData();
+      this.loadData();
       this.loadUserConfig();
 			this.loadingData();
 		}
