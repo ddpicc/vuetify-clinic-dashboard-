@@ -78,5 +78,9 @@ router.get('/getUserSetting', (req, res, next) => {
   api.getUserSetting(req, res, next);
 });
 
+router.post('/updateUserSetting', (req, res, next) => {
+  api.updateUserSetting(req, res, next);
+});
+
 
 module.exports = router;

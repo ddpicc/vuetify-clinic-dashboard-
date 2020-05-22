@@ -287,5 +287,17 @@ module.exports = {
     })
   },
 
+  updateUserSetting(req, res, next) {
+    console.log('api - updateUserSetting');
+    var notDisplayYaowan = req.body.notDisplayYaowan, userid = req.body.userid;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.updateMedbyId;
+      connection.query(sql, [notDisplayYaowan,userid], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
   
 }

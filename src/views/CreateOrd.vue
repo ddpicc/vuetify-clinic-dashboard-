@@ -16,7 +16,7 @@
                       <v-radio label="草药" value="草药" color="grey darken-1"></v-radio>
                       <v-radio label="免煎" value="免煎" color="grey darken-1"></v-radio>
                       <v-radio label="西药" value="西药" color="grey darken-1"></v-radio>
-                      <v-radio label="药丸" value="药丸" color="grey darken-1"></v-radio>
+                      <v-radio v-if="enableYaowan" label="药丸" value="药丸" color="grey darken-1"></v-radio>
                     </v-radio-group>
                   </div>
                 </div>
@@ -244,6 +244,7 @@
   var xiyaoHeader=[{sortable: false,text: '名称', value: 'name1'}, {sortable: false,text: '数量', value: 'count1'}, {sortable: false,text: '用法', value: 'usage1'}];
   var yaowanHeader=[];
   import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate';
+  import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
 
   export default {
     data: () => ({
@@ -263,6 +264,7 @@
       total: '',
       howToUseOn: false,
       isYaowan: false,
+      enableYaowan: false,
       hotToUse: ['一天一次', '一天三次'],
       medRadio: '草药',
       cardColor: 'green',
@@ -659,7 +661,9 @@
     },
 
     mounted: function() {
-			this.getAll();
+      this.getAll();
+      let userSetting = loadFromLocal(1,'userSetting', []);
+      this.enableYaowan = userSetting[0]['notDisplayYaowan'];
     },
 
     

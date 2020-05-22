@@ -17,8 +17,9 @@
               <div class="py-12"></div>
               <material-piechart-card
                 :data="monthSalesChart.data"
-                color="orange"
                 v-if="reportDisplay"
+                color = "white"
+                :chartColor = "chartColor"
               >
                 <h4 class="title font-weight-light">
                   每月收入
@@ -228,8 +229,9 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
       totalIncome: 0,
       iconChange: 'mdi-check-bold',
       monthSalesChart: {
-          data: [['Blueberry', 44], ['Strawberry', 23]],
-        },
+        data: [['Blueberry', 44], ['Strawberry', 23]],
+      },
+      chartColor: ['#00bbbb', '#00bb5e'],
     }),
 
     methods: {

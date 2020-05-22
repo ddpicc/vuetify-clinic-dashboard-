@@ -117,12 +117,13 @@
               :items="clinicItems"
               label="诊所名称"
               v-model="clinicName"
+              @change="handleClinicChange"
               outlined
               dense
               ></v-select>
             </v-col>
           </v-row>
-          <baidu-map class="map" :center="center" :zoom="zoom" @ready="handler"  :scroll-wheel-zoom="true">
+          <baidu-map class="map" :center="center" :zoom="zoom" @ready="handler(112.578809,33.024595, 20)"  :scroll-wheel-zoom="true">
             <bm-marker :position="center" :dragging="true" animation="BMAP_ANIMATION_BOUNCE">
               <bm-city-list anchor="BMAP_ANCHOR_TOP_LEFT"></bm-city-list>
               <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
@@ -292,18 +293,23 @@
     </v-footer>
   </v-app>
  </div>
- </template>
+</template>
 
 <script>
   var wanchengItems = ['云杰诊所','惠济诊所'];
+  var wolongItems = [];
+  var mapLoc ={
+                '云杰诊所':{'lng':112.578809,'lat':33.024595,'zoom':20},
+                '惠济诊所':{'lng':112.585932,'lat':33.02125,'zoom':20}
+              };
   export default {
     data () {
       return {
         center: {lng: 0, lat: 0},
-        zoom: 3,
+        zoom: 20,
         districtItems: ['卧龙区','宛城区'],
         district: '宛城区',
-        clinicItems: ['云杰诊所'],
+        clinicItems: wanchengItems,
         clinicName: '云杰诊所',
         articles: [
           {
@@ -348,20 +354,27 @@
       }
     },
     methods: {
-      handler ({BMap, map}) {
-        this.center.lng = 112.578809
-        this.center.lat = 33.024595
-        this.zoom = 20
+      handler (_lng, _lat, _zoom) {
+        this.center.lng = _lng;
+        this.center.lat = _lat;
+        this.zoom = _zoom;
       },
 
       handleDistrictChange: function(){
         if(this.district == '宛城区'){
           this.clinicItems = wanchengItems;
-          this.clinicName = '云杰诊所';
+          this.clinicName = '';
         }else if(this.district == '卧龙区'){
-          this.clinicItems = ['云诊所'];
-          this.clinicName = '云诊所';
+          this.clinicItems = wolongItems;
+          this.clinicName = '';
         }
+      },
+
+      handleClinicChange: function(){
+        let _lng = mapLoc[this.clinicName]['lng'];
+        let _lat = mapLoc[this.clinicName]['lat'];
+        let _zoom = mapLoc[this.clinicName]['zoom'];
+        this.handler(_lng, _lat, _zoom);
       }
     }
   }

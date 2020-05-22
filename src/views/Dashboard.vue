@@ -87,6 +87,7 @@
           icon="mdi-store"
           title="当天收入"
           :value="todayIncome"
+          small-value="元"
           sub-icon="mdi-calendar"
           :sub-text="todayDate()"
         />
@@ -119,6 +120,7 @@
           icon="mdi-information-outline"
           title="月收入"
           :value="monthIncome"
+          small-value="元"
           sub-icon="mdi-tag"
           :sub-text="todayMonth()"
         />
@@ -424,6 +426,10 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
     data () {
       return {
         infocolor: ['#FFB677', '#436790'],
+        todayIncome: '0',
+        todayNum: '0',
+        monthIncome: '0',
+        monthNum: '0',
         dailySalesChart: {
           data: [],
         },
@@ -622,6 +628,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
 
       loadDataAndSetupChart: function(){
         let fromlocal = loadFromLocal(1,'cacheOrder',[]);
+        let monthTotalFromLocal = loadFromLocal(1,'userSetting', []);
         let data30Days = [];
 
         if(fromlocal.length == 0){
@@ -635,7 +642,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
               endDate: end
             }
           }).then( (res) => {
-            this.calculateData(res.data);
+            this.calculateData(res.data, monthTotalFromLocal);
           })
         }else{
           //get today
@@ -648,12 +655,12 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
           }).then( (res) => {
             data30Days = res.data;
             data30Days = data30Days.concat(fromlocal);
-            this.calculateData(data30Days);
+            this.calculateData(data30Days, monthTotalFromLocal);
           })
         }
       },
 
-      calculateData: function(data30Days){
+      calculateData: function(data30Days, monthTotalFromLocal){
         let index = 0;
         let curDate = '';
         var last30daysIncome = [];
@@ -662,6 +669,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         let _todayNum = 0;
         let _monthIncome = 0;
         let _monthNum = 0;
+        
         for(let item of data30Days){
           if(item.date == dateToString(new Date())){
             _todayIncome = parseFloat((_todayIncome + item.total).toFixed(2));
@@ -673,6 +681,9 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
           }
           if(item.date != curDate){
             index = parseInt((new Date() - stringToDate(item.date)) / (1000 * 60 * 60 * 24));
+            if(index > 30){
+              continue;
+            }
             curDate = item.date;
             last30daysIncome[index] = item.total;
             last30daysNum[index] = 1;
@@ -680,9 +691,6 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
           else{
             last30daysIncome[index] = parseFloat((last30daysIncome[index] + item.total).toFixed(2));
             last30daysNum[index] = last30daysNum[index] + 1;
-          }
-          if(index > 30){
-            break;
           }
         }
         this.todayIncome = _todayIncome;
@@ -693,12 +701,41 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
           this.dailySalesChart.data.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysIncome[i]]);
           this.dailyNmPeopleChart.data.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysNum[i]]);
         }
+        this.setMonthChart(monthTotalFromLocal, _monthIncome);
+      },
+
+      setMonthChart: function(monthTotalArry, thisMonthInfo){
+        //start from 0, 也就是当前月
+        for(let monthOffset=0; monthOffset<12; monthOffset++){
+          let date = new Date();
+          let month = date.getMonth()+1;
+          let year = date.getFullYear();
+          month = month - monthOffset;
+          if(month <= 0){
+            month = month + 12;
+            year = year-1;
+          }
+          if (month >= 1 && month <= 9) {
+            month = "0" + month;
+          }
+
+          if(monthOffset ==0){
+            this.monthSalesChart.data.push([year + '-' + month, thisMonthInfo]);
+            continue;
+          }          
+          let columnName = 'month' + year + month;
+
+          if(!monthTotalArry[0][columnName])
+            monthTotalArry[0][columnName] = 0;
+          this.monthSalesChart.data.push([year + '-' + month, monthTotalArry[0][columnName]]);
+        }
       }
 
     },
 
     mounted: function() {
-			this.loadDataAndSetupChart();
+      this.loadDataAndSetupChart();
+      //this.loadMonth();
 		}
   }
 </script>

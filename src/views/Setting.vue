@@ -80,44 +80,20 @@
               multiple
               active-class=""
             >
-              <v-list-item>
-                <template v-slot:default="{  }">
-                  <v-list-item-action>
-                    <v-checkbox v-model="active1"></v-checkbox>
-                  </v-list-item-action>
-
-                  <v-list-item-content>
-                    <v-list-item-title>删除处方</v-list-item-title>
-                    <v-list-item-subtitle>是否允许删除以前的处方</v-list-item-subtitle>
-                  </v-list-item-content>
-                </template>
-              </v-list-item>
 
               <v-list-item>
                 <template v-slot:default="{  }">
                   <v-list-item-action>
-                    <v-checkbox v-model="active2"></v-checkbox>
+                    <v-checkbox v-model="yaowanActive"></v-checkbox>
                   </v-list-item-action>
 
                   <v-list-item-content>
-                    <v-list-item-title>输入药丸</v-list-item-title>
+                    <v-list-item-title>隐藏药丸</v-list-item-title>
                     <v-list-item-subtitle>是否隐藏输入药丸选项</v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
               </v-list-item>
 
-              <v-list-item>
-                <template v-slot:default="{  }">
-                  <v-list-item-action>
-                    <v-checkbox v-model="active3"></v-checkbox>
-                  </v-list-item-action>
-
-                  <v-list-item-content>
-                    <v-list-item-title>Auto-add widgets</v-list-item-title>
-                    <v-list-item-subtitle>Automatically add home screen widgets when downloads complete</v-list-item-subtitle>
-                  </v-list-item-content>
-                </template>
-              </v-list-item>
             </v-list-item-group>
           </v-list>
           <v-btn color="blue" @click="submit">
@@ -138,8 +114,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         canEdit: true,
         canEditPass: true,
         show: false,
-        active1: true,
-        active2: true,
+        yaowanActive: true,
         clinicName: "云杰诊所",
         password: 'Password',
         rules: {
@@ -154,7 +129,15 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
 
     methods: {
       submit: function() {
-        
+        this.$http.post('/api/updateMedbyId',{   
+
+          userid: this.dialogMedId            
+        }).then( (res) => {
+          this.snackbar = true;
+          this.notification = '修改成功';
+          this.snackbarColor = 'green';
+          this.getAll();
+        })
       },
 
       getSetting: function() {
