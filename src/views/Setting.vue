@@ -98,7 +98,30 @@
           </v-list>
           <v-btn color="blue" @click="submit">
               保存
+          </v-btn>
+          <v-snackbar
+            v-model="snackbar"
+            :color="snackbarColor"
+            :timeout="3000"
+            top
+            dark
+          >
+            <v-icon
+              color="white"
+              class="mr-3"
+            >
+              mdi-bell-plus
+            </v-icon>
+            {{notification}}
+            <v-btn
+              icon
+              @click="snackbar = false"
+            >
+              <v-icon>
+                mdi-close-circle
+              </v-icon>
             </v-btn>
+          </v-snackbar>
         </material-card>
       </v-col>
     </v-row>
@@ -113,6 +136,9 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         settings: [],
         canEdit: true,
         canEditPass: true,
+        snackbar: false,
+        snackbarColor: '',
+        notification: '',
         show: false,
         yaowanActive: true,
         clinicName: "云杰诊所",
@@ -129,19 +155,28 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
 
     methods: {
       submit: function() {
-        this.$http.post('/api/updateMedbyId',{   
-
-          userid: this.dialogMedId            
+        this.$http.post('/api/updateUserSetting',{   
+          notDisplayYaowan: this.yaowanActive? 1:0,
+          userid: this.$store.state.user.user_id           
         }).then( (res) => {
+          let userSetting = loadFromLocal(1,'userSetting', []);
+          userSetting[0]['notDisplayYaowan'] = this.yaowanActive? 1:0;
+          saveToLocal(1,'userSetting',userSetting);
           this.snackbar = true;
           this.notification = '修改成功';
           this.snackbarColor = 'green';
-          this.getAll();
+          this.getSetting();
         })
       },
 
       getSetting: function() {
-        let userid = this.$store.state.user.user_id;
+        this.$http.get('/api/getUserSetting', {
+          params: {
+						userid : this.$store.state.user.user_id
+          }
+        }).then(res => {
+          this.yaowanActive = res.data[0].notDisplayYaowan;
+        })
       }
     },
 
