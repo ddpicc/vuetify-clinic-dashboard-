@@ -82,17 +82,10 @@
             single-expand
             :expanded.sync="expanded"
             :items-per-page="15"
-            :custom-filter="filterText"
             loading="loading"
           >
           <template v-slot:item.action="{ item }">
-            <v-icon
-              small
-              class="mr-2"
-              @click="reuse(item)"
-            >
-              mdi-pencil
-            </v-icon>
+            <v-btn small @click.stop="reuse(item.id)" text color="green">重用</v-btn>
           </template>
           <template v-slot:expanded-item="{ item }">
             <td :colspan="8">
@@ -189,7 +182,8 @@
           value: 'action',
         }
       ],
-      items: []
+      items: [],
+      expanded: []
     }),
 
     methods: {
@@ -218,10 +212,15 @@
             patient_id: this.patientId
             }
           }).then( (res) => {
-            alert(JSON.stringify(res.data));
+            this.items = res.data;
+            alert(JSON.stringify(this.items));
           })
         })
       },
+
+      reuse(id){
+        alert(id);
+      }
     },
 
     mounted: function() {
