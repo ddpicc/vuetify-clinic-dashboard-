@@ -24,8 +24,9 @@
             <v-text-field v-model="searchStr" label="搜索..." class="mx-4"></v-text-field>
           </template>
           <template v-slot:item.action="{ item }">
-            <v-btn @click.stop="jumpDetail(item.id)" text color="green">
-      		    <v-icon left>mdi-account-card-details</v-icon> 详情
+            <v-btn @click.stop="jumpDetail(item.id)" text color="green">详情
+    			  </v-btn>
+            <v-btn @click.stop="deletePatient(item.id)" text color="green">删除
     			  </v-btn>
           </template>
           </v-data-table>
@@ -92,7 +93,7 @@
         this.loading = true;
         this.$http.get('/api/getAllPatient',{
           params: {
-            dbs : 'qcui_patient'
+            dbs : this.$store.state.user.dbs_prefix+'patient',
 					}
         }).then( (res) => {
           this.items = res.data;
@@ -107,7 +108,21 @@
 			
 			jumpDetail: function(id){
         this.$router.push({name: 'Patient Profile', params: {pt_id: id}});
-			}
+      },
+      
+      deletePatient: function(id){
+        this.$http.delete('/api/deletePatientbyId',{
+          params: {
+            dbs : this.$store.state.user.dbs_prefix+'patient',
+						id : id
+					}
+        }).then( (res) => {
+          this.snackbar = true;
+          this.notification = '删除成功';
+          this.snackbarColor = 'green';
+          this.getAll();
+        })
+      }
     },
 
     mounted: function() {

@@ -82,5 +82,15 @@ router.post('/updateUserSetting', (req, res, next) => {
   api.updateUserSetting(req, res, next);
 });
 
+router.delete('/deletePatientbyId', (req, res, next) => {
+  api.deletePatientbyId(req, res, next);
+});
+
+router.get('/selectOrdByPatientId', (req, res, next) => {
+  api.selectOrdByPatientId(req, res, next);
+});
+
+
+
 
 module.exports = router;

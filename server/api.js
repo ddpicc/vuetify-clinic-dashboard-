@@ -299,5 +299,33 @@ module.exports = {
     })
   },
 
+  deletePatientbyId(req, res, next) {
+    console.log('api - deletePatientbyId');
+    var dbs = req.query.dbs;
+    var id = req.query.patient_id;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.deletePatientbyId;
+      connection.query(sql, [dbs,id], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
+  selectOrdByPatientId(req, res, next) {
+    console.log('api - selectOrdByPatientId');
+    var dbs_a = req.query.dbs_a,dbs_b = req.query.dbs_b;
+    var patient_id = req.query.patient_id;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.selectOrdByPatientId;
+      connection.query(sql, [dbs_a, dbs_b, patient_id], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
+  
+
   
 }

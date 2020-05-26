@@ -6,7 +6,7 @@
     <v-row justify="center">
       <v-col
         cols="12"
-        md="8"
+        md="7"
       >
         <material-card
           color="green"
@@ -71,36 +71,78 @@
       </v-col>
       <v-col
         cols="12"
-        md="4"
+        md="5"
       >
         <material-card class="v-card-profile">
-          <v-avatar
-            slot="offset"
-            class="mx-auto d-block elevation-6"
-            size="130"
+          <v-data-table
+            :headers="headers"
+            :items="items"
+            item-key="id"
+            show-expand
+            single-expand
+            :expanded.sync="expanded"
+            :items-per-page="15"
+            :custom-filter="filterText"
+            loading="loading"
           >
-            <img
-              src="https://demos.creative-tim.com/vue-material-dashboard/img/marc.aba54d65.jpg"
+          <template v-slot:item.action="{ item }">
+            <v-icon
+              small
+              class="mr-2"
+              @click="reuse(item)"
             >
-          </v-avatar>
-          <v-card-text class="text-center">
-            <h6 class="overline mb-3">
-              CEO / CO-FOUNDER
-            </h6>
-
-            <h4 class="font-weight-light">
-              Alec Thompson
-            </h4>
-
-            <p class="font-weight-light">
-              Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...
-            </p>
-
-            <v-btn color="success">
-              Follow
-            </v-btn>
-          </v-card-text>
-          <line-chart :data="chartData"></line-chart>
+              mdi-pencil
+            </v-icon>
+          </template>
+          <template v-slot:expanded-item="{ item }">
+            <td :colspan="8">
+              <v-btn text small color="green">打印</v-btn>
+              <div>
+                <h4 style="text-align:center;">处  方</h4>
+                <br>
+                <hr style="height:1px;border:none;border-top:1px solid #555555;" />
+                 <v-simple-table>
+                  <template v-slot:default>
+                    <tbody>
+                      <tr>
+                        <td :colspan="2"><p>姓名： {{item.patient}}</p></td>
+                        <td :colspan="2"><p>年龄： {{item.age}}</p></td>
+                        <td :colspan="2"><p>性别： {{item.sex}}</p></td>
+                        <td :colspan="2"><p>电话:  {{item.phone}}</p></td>
+                      </tr>
+                      <tr>
+                        <td  :colspan="6" style="border-bottom:1px solid"><p>症状： {{item.symptom}}</p></td>
+                        <td  :colspan="2" style="border-bottom:1px solid"><p>备注： {{item.order_comment}}</p></td>
+                      </tr>
+                      <tr v-for="element in item.medarray" :key="element.name">
+                        <td>{{ JSON.parse(element).name1 }}</td>
+                        <td>{{ JSON.parse(element).count1 }}</td>
+                        <td>{{ JSON.parse(element).name2 }}</td>
+                        <td>{{ JSON.parse(element).count2 }}</td>
+                        <td>{{ JSON.parse(element).name3 }}</td>
+                        <td>{{ JSON.parse(element).count3 }}</td>
+                        <td>{{ JSON.parse(element).name4 }}</td>
+                        <td>{{ JSON.parse(element).count4 }}</td>
+                      </tr>
+                      <tr>
+                        <td :colspan="6"></td>
+                        <td :colspan="2"><p>{{item.dose}}付</p></td>
+                      </tr>
+                      <tr>
+                        <td :colspan="6" style="border-bottom:1px solid"></td>
+                        <td :colspan="2" style="border-bottom:1px solid"><p>价钱： {{item.total}}元</p></td>
+                      </tr>
+                      <tr>
+                        <td :colspan="6"><p>处方医师：  崔云杰</p></td>
+                        <td :colspan="2"><p>日期： {{item.date}}</p></td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+              </div>
+            </td>              
+          </template>
+          </v-data-table>
         </material-card>
       </v-col>
     </v-row>
@@ -119,7 +161,35 @@
       patientWechat: '',
       patienAddress: '',
       patientComment: '',
-      chartData: [['Jan', 44], ['Feb', 27], ['Mar', 60], ['Apr', 55], ['May', 37], ['Jun', 40], ['Jul', 69], ['Aug', 33], ['Sept', 76], ['Oct', 90], ['Nov', 34], ['Dec', 22]]
+      headers: [
+        { text: '', value: 'data-table-expand' },
+        {
+          sortable: false,
+          text: '类型',
+          value: 'medtype'
+        },
+        {
+          sortable: false,
+          text: '数量',
+          value: 'dose'
+        },
+        {
+          sortable: false,
+          text: '总价',
+          value: 'total',
+        },
+        {
+          sortable: true,
+          text: '日期',
+          value: 'date',
+        },
+        {
+          sortable: false,
+          text: '操作',
+          value: 'action',
+        }
+      ],
+      items: []
     }),
 
     methods: {
@@ -128,14 +198,12 @@
       },
 
       getAll: function() {
-        this.loading = true;
         this.$http.get('/api/getPatientInfo',{
           params: {
             dbs : this.$store.state.user.dbs_prefix+'patient',
 						patient_id : this.patientId
 					}
         }).then( (res) => {
-          alert(JSON.stringify(res.data));
           this.patientName = res.data[0].name;
           this.patientAge = res.data[0].age;
           this.patientSex = res.data[0].sex;
@@ -143,7 +211,15 @@
           this.patientWechat = res.data[0].wechat;
           this.patienAddress = res.data[0].address;
           this.patientComment = res.data[0].comment;
-          this.loading = false;
+          this.$http.get('/api/selectOrdByPatientId',{
+          params: {
+            dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
+            dbs_b : this.$store.state.user.dbs_prefix+'patient',
+            patient_id: this.patientId
+            }
+          }).then( (res) => {
+            alert(JSON.stringify(res.data));
+          })
         })
       },
     },
