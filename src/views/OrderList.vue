@@ -50,7 +50,7 @@
               class="mr-2"
               @click="reuse(item)"
             >
-              mdi-pencil
+              mdi-reply-all-outline
             </v-icon>
             <v-icon v-if="canDelete(item)"
               small
@@ -255,8 +255,11 @@
         else return 'green'
       },
 
-      reuse: function(){
-
+      reuse: function(selectedItem){
+        //alert(JSON.stringify(selectedItem));
+        //this.$store.dispatch('order/setOrderToVuex', selectedItem);
+        //this.$router.push({path: '/orderCreate'});
+        this.$router.push({name: '生成处方', params: {ord_item: selectedItem}});
       },
 
       deleteItem(ordId){

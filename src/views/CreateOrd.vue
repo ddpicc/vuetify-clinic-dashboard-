@@ -279,6 +279,7 @@
       selectPatientDialog: false,
       cacheFindedPatient: [],
       notzero: v=> v > 0 || '不能是0',
+      reuseOrd: [],
       findPatientHeader: [
         {
           text: '姓名',
@@ -631,6 +632,96 @@
 
       jumpToPDetail: function(id){
         this.$router.push({name: 'User Profile', params: {pt_id: id}});
+      },
+
+      unpackOrdFromOutside: function(ordItem){
+        this.medRadio = ordItem.medtype;
+        this.patientName = ordItem.patient;
+				this.patientAge = ordItem.age;
+        this.patientSex = ordItem.sex;
+        this.patientSymptom = ordItem.symptom;
+        this.orderComment = ordItem.order_Comment;
+        this.patient_id = ordItem.id;
+        this.orderCount = ordItem.dose;
+        this.radioChanged();
+        this.$http.get('/api/getAllMedbyType',{
+          params: {
+            dbs : this.$store.state.user.dbs_prefix+'medlist',
+						medtype : this.medRadio
+					}
+        }).then( (res) => {
+          this.cacheMedData = res.data;
+          for(let item of ordItem.medarray) {
+            item = JSON.parse(item);
+            if(typeof(item.name1) == 'undefined')
+              break;
+            else{
+              var existInDb = this.cacheMedData.find(function(p){
+              return p.medname === item.name1;
+              })
+              if(typeof(existInDb) != 'undefined'){
+                this.orderMed1PerObj.push({
+                name: item.name1,
+                count: item.count1,
+                spec: existInDb.spec,
+                baseprice: existInDb.baseprice,
+                sellprice: existInDb.sellprice
+                })
+              }
+            }
+            if(typeof(item.name2) == 'undefined')
+              break;
+            else{
+              var existInDb = this.cacheMedData.find(function(p){
+              return p.medname === item.name2;
+              })
+              if(typeof(existInDb) != 'undefined'){
+                this.orderMed1PerObj.push({
+                name: item.name2,
+                count: item.count2,
+                spec: existInDb.spec,
+                baseprice: existInDb.baseprice,
+                sellprice: existInDb.sellprice
+                })
+              }
+            }
+            if(typeof(item.name3) == 'undefined')
+              break;
+            else{
+              var existInDb = this.cacheMedData.find(function(p){
+              return p.medname === item.name3;
+              })
+              if(typeof(existInDb) != 'undefined'){
+                this.orderMed1PerObj.push({
+                name: item.name3,
+                count: item.count3,
+                spec: existInDb.spec,
+                baseprice: existInDb.baseprice,
+                sellprice: existInDb.sellprice
+                })
+              }
+            }
+            if(typeof(item.name4) == 'undefined')
+              break;
+            else{
+              var existInDb = this.cacheMedData.find(function(p){
+              return p.medname === item.name4;
+              })
+              if(typeof(existInDb) != 'undefined'){
+                this.orderMed1PerObj.push({
+                name: item.name4,
+                count: item.count4,
+                spec: existInDb.spec,
+                baseprice: existInDb.baseprice,
+                sellprice: existInDb.sellprice
+                })
+              }
+            }
+          }
+          this.disPlayToTb();
+        })
+        
+
       }
     },
 
@@ -661,10 +752,18 @@
     },
 
     mounted: function() {
-      this.getAll();
+      if(this.reuseOrd.length != 0){
+        this.unpackOrdFromOutside(this.reuseOrd);
+      }else{
+        this.getAll();
+      }
       let userSetting = loadFromLocal(1,'userSetting', []);
       this.enableYaowan = userSetting[0]['notDisplayYaowan'];
     },
+
+    created() {
+      this.reuseOrd = this.$route.params.ord_item;
+    }
 
     
   }

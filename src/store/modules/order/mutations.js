@@ -1,5 +1,5 @@
 export default {
-    add(state){
-        state.post_order = state.post_order+1;
+    setOrder: (state, _order) => {
+        state.post_order = _order;
     }
   }

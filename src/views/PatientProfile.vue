@@ -6,7 +6,7 @@
     <v-row justify="center">
       <v-col
         cols="12"
-        md="7"
+        md="5"
       >
         <material-card
           color="green"
@@ -71,7 +71,7 @@
       </v-col>
       <v-col
         cols="12"
-        md="5"
+        md="7"
       >
         <material-card class="v-card-profile">
           <v-data-table
@@ -211,9 +211,11 @@
             dbs_b : this.$store.state.user.dbs_prefix+'patient',
             patient_id: this.patientId
             }
-          }).then( (res) => {
-            this.items = res.data;
-            alert(JSON.stringify(this.items));
+          }).then( (respond) => {
+            this.items = respond.data;
+            for(let element of respond.data) {
+              element.medarray = element.medarray.split(";");
+            }
           })
         })
       },

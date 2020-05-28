@@ -114,7 +114,7 @@
         this.$http.delete('/api/deletePatientbyId',{
           params: {
             dbs : this.$store.state.user.dbs_prefix+'patient',
-						id : id
+						patient_id : id
 					}
         }).then( (res) => {
           this.snackbar = true;
