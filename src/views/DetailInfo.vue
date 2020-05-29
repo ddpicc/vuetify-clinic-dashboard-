@@ -22,7 +22,7 @@
                 :chartColor = "chartColor"
               >
                 <h4 class="title font-weight-light">
-                  每月收入
+                  收入组成
                 </h4>
               </material-piechart-card>
             </v-col>
@@ -229,9 +229,9 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
       totalIncome: 0,
       iconChange: 'mdi-check-bold',
       monthSalesChart: {
-        data: [['Blueberry', 44], ['Strawberry', 23]],
+        data: [],
       },
-      chartColor: ['#00bbbb', '#00bb5e'],
+      chartColor: ['#00bbbb', '#00bb5e','#bb5e2f','#cccc00'],
     }),
 
     methods: {
@@ -341,7 +341,12 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
         this.gt20Patient = _gt20Patient;
         this.lt20Patient = _lt20Patient;
         //其它
-        this.jianyaoTimes = _jianyaoTimes; 
+        this.jianyaoTimes = _jianyaoTimes;
+        this.monthSalesChart.data.push(['免煎', this.incomeMianjian]);
+        this.monthSalesChart.data.push(['草药', this.incomeCaoyao]);
+        this.monthSalesChart.data.push(['西药', this.incomeXiyao]);
+        this.monthSalesChart.data.push(['药丸', this.incomeYaowan]);
+
       },
     },
     

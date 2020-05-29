@@ -589,42 +589,6 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         var monthNow=month + "月";
         return monthNow;
       },
-      
-
-      loadMonth: function(){
-        var end = dateToString(new Date(new Date().setDate(new Date().getDate()-1)));
-        var start = dateToString(new Date(new Date().setDate(new Date().getDate()-30)));
-        var last30daysIncome = [];
-        var last30daysNum = [];
-        this.$http.get('/api/getChartInfoFromOrder', {
-          params: {
-            dbs : this.$store.state.user.dbs_prefix+'ordlist',
-            startDate: start,
-            endDate: end
-          }
-        }).then(response => {
-          this.$nextTick( () => {
-            let index = 0;
-            let curDate = '';            
-            for(let item of response.data){
-              if(item.date != curDate){
-                index = parseInt((new Date() - stringToDate(item.date)) / (1000 * 60 * 60 * 24));
-                curDate = item.date;
-                last30daysIncome[index] = item.total;
-                last30daysNum[index] = 1;
-              }
-              else{
-                last30daysIncome[index] = parseFloat((last30daysIncome[index] + item.total).toFixed(2));
-                last30daysNum[index] = last30daysNum[index] + 1;
-              }
-            }
-            for(var i = 1;i<=30;i++) {
-              this.dailySalesChart.data.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysIncome[i]]);
-              this.dailyNmPeopleChart.data.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysNum[i]]);
-            }
-          })
-        })
-      },
 
       loadDataAndSetupChart: function(){
         let fromlocal = loadFromLocal(1,'cacheOrder',[]);
@@ -702,6 +666,8 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
           this.dailyNmPeopleChart.data.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysNum[i]]);
         }
         this.setMonthChart(monthTotalFromLocal, _monthIncome);
+        //this.dailySalesChart.data.push({name: 'Workout', data: {'2017-01-01': 3, '2017-01-02': 4}});
+        //this.dailySalesChart.data.push({name: 'Call parents', data: {'2017-01-01': 5, '2017-01-02': 3}});
       },
 
       setMonthChart: function(monthTotalArry, thisMonthInfo){

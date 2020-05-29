@@ -80,16 +80,28 @@
               multiple
               active-class=""
             >
+              <v-list-item>
+                <template v-slot:default="{  }">
+                  <v-list-item-action>
+                    <v-checkbox v-model="displayYaowan"></v-checkbox>
+                  </v-list-item-action>
+
+                  <v-list-item-content>
+                    <v-list-item-title>显示药丸</v-list-item-title>
+                    <v-list-item-subtitle>在生成处方页面是否显示药丸</v-list-item-subtitle>
+                  </v-list-item-content>
+                </template>
+              </v-list-item>
 
               <v-list-item>
                 <template v-slot:default="{  }">
                   <v-list-item-action>
-                    <v-checkbox v-model="yaowanActive"></v-checkbox>
+                    <v-checkbox v-model="displayProfit"></v-checkbox>
                   </v-list-item-action>
 
                   <v-list-item-content>
-                    <v-list-item-title>隐藏药丸</v-list-item-title>
-                    <v-list-item-subtitle>是否隐藏输入药丸选项</v-list-item-subtitle>
+                    <v-list-item-title>显示利润</v-list-item-title>
+                    <v-list-item-subtitle>是否在首页和详情页显示利润</v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
               </v-list-item>
@@ -141,6 +153,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         notification: '',
         show: false,
         yaowanActive: true,
+        displayProfit: true,
         clinicName: "云杰诊所",
         password: 'Password',
         rules: {
@@ -156,11 +169,13 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
     methods: {
       submit: function() {
         this.$http.post('/api/updateUserSetting',{   
-          notDisplayYaowan: this.yaowanActive? 1:0,
+          displayYaowan: this.displayYaowan? 1:0,
+          displayProfit: this.displayProfit? 1:0,
           userid: this.$store.state.user.user_id           
         }).then( (res) => {
           let userSetting = loadFromLocal(1,'userSetting', []);
-          userSetting[0]['notDisplayYaowan'] = this.yaowanActive? 1:0;
+          userSetting[0]['displayYaowan'] = this.displayYaowan? 1:0;
+          userSetting[0]['displayProfit'] = this.displayProfit? 1:0;
           saveToLocal(1,'userSetting',userSetting);
           this.snackbar = true;
           this.notification = '修改成功';
@@ -175,7 +190,8 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
 						userid : this.$store.state.user.user_id
           }
         }).then(res => {
-          this.yaowanActive = res.data[0].notDisplayYaowan;
+          this.displayYaowan = res.data[0].displayYaowan;
+          this.displayProfit = res.data[0].displayProfit;
         })
       }
     },
