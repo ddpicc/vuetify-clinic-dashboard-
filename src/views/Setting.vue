@@ -106,6 +106,19 @@
                 </template>
               </v-list-item>
 
+              <v-list-item>
+                <template v-slot:default="{  }">
+                  <v-list-item-action>
+                    <v-checkbox v-model="displayTime"></v-checkbox>
+                  </v-list-item-action>
+
+                  <v-list-item-content>
+                    <v-list-item-title>显示时间</v-list-item-title>
+                    <v-list-item-subtitle>是否在订单页显示具体时间</v-list-item-subtitle>
+                  </v-list-item-content>
+                </template>
+              </v-list-item>
+
             </v-list-item-group>
           </v-list>
           <v-btn color="blue" @click="submit">
@@ -152,8 +165,9 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         snackbarColor: '',
         notification: '',
         show: false,
-        yaowanActive: true,
+        displayYaowan: true,
         displayProfit: true,
+        displayTime: true,
         clinicName: "云杰诊所",
         password: 'Password',
         rules: {

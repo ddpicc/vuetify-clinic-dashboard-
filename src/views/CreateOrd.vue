@@ -133,6 +133,7 @@
                   label="剂量"
                   dense
                   ref="mark2"
+                  @keyup.enter.native="postToTb"
                   @focus="focus($event)"
                 ></v-text-field>
               </v-col>
@@ -243,6 +244,7 @@
 
   var xiyaoHeader=[{sortable: false,text: '名称', value: 'name1'}, {sortable: false,text: '数量', value: 'count1'}, {sortable: false,text: '用法', value: 'usage1'}];
   var yaowanHeader=[];
+  var reuseOrd=[];
   import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate';
   import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
 
@@ -279,7 +281,6 @@
       selectPatientDialog: false,
       cacheFindedPatient: [],
       notzero: v=> v > 0 || '不能是0',
-      reuseOrd: [],
       findPatientHeader: [
         {
           text: '姓名',
@@ -487,6 +488,7 @@
         }
         if(this.medRadio == '药丸' && this.total != 0){
           this.orderCount = 1;
+          alert(parseFloat(this.total));
         }
         if(!this.patient_id){
           this.$http.post('/api/insertPatientOrderPage',{
@@ -752,17 +754,18 @@
     },
 
     mounted: function() {
-      if(this.reuseOrd.length != 0){
-        this.unpackOrdFromOutside(this.reuseOrd);
+      if(reuseOrd != undefined){
+        alert("sfs");
+        this.unpackOrdFromOutside(reuseOrd);
       }else{
         this.getAll();
       }
       let userSetting = loadFromLocal(1,'userSetting', []);
-      this.enableYaowan = userSetting[0]['notDisplayYaowan'];
+      this.enableYaowan = userSetting[0]['displayYaowan'];
     },
 
     created() {
-      this.reuseOrd = this.$route.params.ord_item;
+      reuseOrd = this.$route.params.ord_item;
     }
 
     

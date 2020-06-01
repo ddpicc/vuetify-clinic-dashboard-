@@ -289,10 +289,11 @@ module.exports = {
 
   updateUserSetting(req, res, next) {
     console.log('api - updateUserSetting');
-    var notDisplayYaowan = req.body.notDisplayYaowan, userid = req.body.userid;
+    var displayYaowan = req.body.displayYaowan, displayProfit = req.body.displayProfit;
+    var userid = req.body.userid;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.updateUserSetting;
-      connection.query(sql, [notDisplayYaowan,userid], (err, result) => {
+      connection.query(sql, [displayYaowan,displayProfit, userid], (err, result) => {
           res.json(result);
           connection.release();
       })

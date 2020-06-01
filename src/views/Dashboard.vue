@@ -7,8 +7,8 @@
       >
         <material-linechart-card
           :data="dailySalesChart.data"
-          color="grey"
-          :chartColor="['#FFB677', '#666']"
+          color="white"
+          :chartColor = "infocolor"
         >
           <h5 class="title font-weight-light">
             每天收入
@@ -34,6 +34,7 @@
         <material-linechart-card
           :data="monthSalesChart.data"
           color="white"
+          :chartColor="['#FFB677']"
         >
           <h4 class="title font-weight-light">
             每月收入
@@ -57,7 +58,7 @@
       >
         <material-linechart-card
           :data="dailyNmPeopleChart.data"
-          color="green"
+          color="white"
           :chartColor="['#FFB677', '#666']"
         >
           <h4 class="title font-weight-light">
@@ -426,6 +427,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
     data () {
       return {
         infocolor: ['#FFB677', '#436790'],
+        displayProfit: false,
         todayIncome: '0',
         todayNum: '0',
         monthIncome: '0',
@@ -628,6 +630,9 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         let index = 0;
         let curDate = '';
         var last30daysIncome = [];
+        var last30daysProfit = [];
+        var incomeData = [];
+        var profitData = [];
         var last30daysNum = [];
         let _todayIncome = 0;
         let _todayNum = 0;
@@ -650,24 +655,28 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
             }
             curDate = item.date;
             last30daysIncome[index] = item.total;
+            last30daysProfit[index] = item.totalprofit;
             last30daysNum[index] = 1;
           }
           else{
             last30daysIncome[index] = parseFloat((last30daysIncome[index] + item.total).toFixed(2));
+            last30daysProfit[index] = parseFloat((last30daysProfit[index] + item.totalprofit).toFixed(2));
             last30daysNum[index] = last30daysNum[index] + 1;
           }
         }
-        this.todayIncome = _todayIncome;
-        this.monthIncome = _monthIncome;
-        this.todayNum = _todayNum;
-        this.monthNum = _monthNum;
+        this.todayIncome = _todayIncome.toString();
+        this.monthIncome = _monthIncome.toString();
+        this.todayNum = _todayNum.toString();
+        this.monthNum = _monthNum.toString();
         for(var i=0;i<30;i++) {
-          this.dailySalesChart.data.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysIncome[i]]);
+          incomeData.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysIncome[i]]);
+          profitData.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysProfit[i]]);
           this.dailyNmPeopleChart.data.push([dateToString(new Date(new Date().setDate(new Date().getDate()-i))),last30daysNum[i]]);
         }
+        this.dailySalesChart.data.push({name: '收入', data: incomeData});
+        if(this.displayProfit)
+          this.dailySalesChart.data.push({name: '利润', data: profitData});
         this.setMonthChart(monthTotalFromLocal, _monthIncome);
-        //this.dailySalesChart.data.push({name: 'Workout', data: {'2017-01-01': 3, '2017-01-02': 4}});
-        //this.dailySalesChart.data.push({name: 'Call parents', data: {'2017-01-01': 5, '2017-01-02': 3}});
       },
 
       setMonthChart: function(monthTotalArry, thisMonthInfo){
@@ -700,8 +709,9 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
     },
 
     mounted: function() {
-      this.loadDataAndSetupChart();
-      //this.loadMonth();
+      let userSetting = loadFromLocal(1,'userSetting', []);
+      this.displayProfit = userSetting[0]['displayProfit'];
+      this.loadDataAndSetupChart();      
 		}
   }
 </script>

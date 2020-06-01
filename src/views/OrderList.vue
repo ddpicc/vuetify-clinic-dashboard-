@@ -148,6 +148,7 @@
     data: () => ({
       searchStr: '',
       deleteEnabled: false,
+      displayYaowan: false,
       loading: false,
       expanded: [],
       snackbar: false,
@@ -207,6 +208,8 @@
         this.loading = true;
         let idStartFrom = 0;
         let fromlocal = loadFromLocal(1,'cacheOrder',[]);
+        let userSetting = loadFromLocal(1,'userSetting', []);
+        this.displayYaowan = userSetting[0]['displayYaowan'];
 
         if(fromlocal.length == 0){
           this.$http.get('/api/getAllOrd',{
@@ -215,6 +218,9 @@
               dbs_b : this.$store.state.user.dbs_prefix+'patient',
             }
           }).then( (res) => {
+            if(!this.displayYaowan){
+              res.data = res.data.filter(function (e) { return e.medtype != '药丸'; });
+            }
             for(let element of res.data) {
               element.medarray = element.medarray.split(";");
               idStartFrom = idStartFrom + 1;
@@ -231,10 +237,14 @@
               dateBy: dateToString(new Date())
             }
           }).then( (res) => {
+            if(!this.displayYaowan){
+              res.data = res.data.filter(function (e) { return e.medtype != '药丸'; });
+              fromlocal = fromlocal.filter(function (e) { return e.medtype != '药丸'; });
+            }
             for(let element of res.data) {
               element.medarray = element.medarray.split(";");
               idStartFrom = idStartFrom + 1;
-              element.pid = idStartFrom;
+              element.pid = idStartFrom;              
             }
             for(let ele of fromlocal){
               ele.medarray = ele.medarray.split(";");

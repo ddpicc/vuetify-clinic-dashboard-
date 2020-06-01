@@ -34,6 +34,7 @@ schedule.scheduleJob('0 0 0 1 * *',()=>{
 			database : 'myDbs',
 			port: '3306',
 			dateStrings: true,
+			multipleStatements: true
 		});
 	var  sql = 'ALTER TABLE myDbs_userconfig ADD ' + column +  " float (50) NOT NULL DEFAULT '0'";
 	connection.connect();       
