@@ -21,47 +21,54 @@
                     class="purple-input"
                     label="姓名"
                     v-model="patientName"
+                    :readonly="isReadonly"
                   />
                 </v-col>
                 <v-col cols="12" md="4">
                   <v-select v-model="patientSex"
                     :items="sexItems"
                     label="性别"
+                    :readonly="isReadonly"
                   ></v-select>
                 </v-col>
                 <v-col cols="12" md="4">
                   <v-text-field v-model="patientAge"
                     class="purple-input"
                     label="年龄"
+                    :readonly="isReadonly"
                   />
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-text-field v-model="patientPhone"
                     label="电  话"
                     class="purple-input"
+                    :readonly="isReadonly"
                   />
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-text-field v-model="patientWechat"
                     label="微  信"
                     class="purple-input"
+                    :readonly="isReadonly"
                   />
                 </v-col>
                 <v-col cols="12">
                   <v-text-field v-model="patienAddress"
                     label="城  市"
                     class="purple-input"
+                    :readonly="isReadonly"
                   />
                 </v-col>
                 <v-col cols="12">
                   <v-text-field v-model="patientComment"
                     class="purple-input"
                     label="备  注"
+                    :readonly="isReadonly"
                   />
                 </v-col>
                 <v-col cols="12" class="text-right">
                   <v-btn color="blue" @click.stop="onClick">
-                    Update Profiled
+                    {{btnName}}
                   </v-btn>
                 </v-col>
               </v-row>
@@ -154,6 +161,8 @@
       patientWechat: '',
       patienAddress: '',
       patientComment: '',
+      btnName: '更新',
+      isReadonly: true,
       headers: [
         { text: '', value: 'data-table-expand' },
         {
@@ -188,7 +197,14 @@
 
     methods: {
       onClick () {
-        
+        if(this.btnName === '更新'){
+          this.btnName = '保存';
+          this.isReadonly = false;
+        }else{
+          //todo
+          //update patient profile
+          this.btnName = '更新';
+        }
       },
 
       getAll: function() {
