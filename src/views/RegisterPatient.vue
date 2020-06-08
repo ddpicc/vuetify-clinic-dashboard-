@@ -1,0 +1,155 @@
+<template>
+  <div id="app">
+   <v-app light>
+    <v-app-bar
+      app
+      color="white"
+      height="50"
+    >
+      <v-avatar
+        class="mr-3"
+        color="grey lighten-5"
+        size="50"
+      >
+        <v-img
+          contain
+          max-height="100%"
+          src="../assets/logo1.png"
+          @click.stop="jumpHome"
+        ></v-img>
+      </v-avatar>
+		</v-app-bar>
+
+    <v-content>
+			<v-container
+				fill-height
+				fluid
+				grid-list-xl
+			>
+				<v-row justify="center">
+					<v-col cols="12" md="6">
+						<material-card
+							color="green"
+							title="Edit Profile"
+							text="Complete your profile"
+						>
+							<v-form>
+								<v-container class="py-0">
+									<v-row>
+										<v-col cols="12" md="4">
+											<v-text-field
+												class="purple-input"
+												label="姓名"
+												v-model="patientName"
+											/>
+										</v-col>
+										<v-col cols="12" md="4">
+											<v-select v-model="patientSex"
+												:items="sexItems"
+												label="性别"
+											></v-select>
+										</v-col>
+										<v-col cols="12" md="4">
+											<v-text-field v-model="patientAge"
+												class="purple-input"
+												label="年龄"
+											/>
+										</v-col>
+										<v-col cols="12" md="12">
+											<v-text-field v-model="patientPhone"
+												label="电  话"
+												class="purple-input"
+											/>
+										</v-col>
+										<v-col cols="12" class="text-right">
+											<v-btn color="blue" @click.stop="onSubmit">
+												提交
+											</v-btn>
+										</v-col>
+									</v-row>
+								</v-container>
+							</v-form>
+						</material-card>
+					</v-col>
+				</v-row>
+			</v-container>
+    </v-content>
+  </v-app>
+  </div>
+</template>
+
+<script>
+	let socket;
+  export default {
+    data () {
+      return {
+				patientName: '',
+      	patientAge: '',
+      	sexItems: ['男', '女'],
+      	patientSex: '',
+      	patientPhone: ''
+      }
+    },
+
+    methods: {
+			jumpHome: function(){
+        this.$router.push({ path: '/' });
+			},
+
+      createWebSocket() {
+				try {
+						// 创建Web Socket 连接
+						socket = new WebSocket("ws://127.0.0.1:8081");
+						// 初始化事件
+						this.initEventHandle(socket);
+				} catch (e) {
+						// 出错时重新连接
+						this.reconnect("ws://127.0.0.1:8081");
+				}
+			},
+			
+      initEventHandle(socket) {
+				// 连接关闭时触发
+				socket.onclose = () => {
+						console.log("连接关闭");
+				};
+				// 通信发生错误时触发
+				socket.onerror = () => {
+						// 重新创建长连接
+						this.reconnect();
+				};
+				// 连接建立时触发
+				socket.onopen = () => {
+						console.log("连接成功");
+				};
+				// 客户端接收服务端数据时触发
+				socket.onmessage = msg => {
+						// 业务逻辑处理
+						console.log(msg.data, "ws:data");
+				};
+			},
+			reconnect() {
+				if (this.lockReconnect) {
+						return;
+				}
+				this.lockReconnect = true;
+
+				// 没连接上会一直重连，设置延迟避免请求过多
+				setTimeout(() => {
+						this.lockReconnect = false;
+						this.createWebSocket("ws://127.0.0.1:8081");
+				}, 2000);
+			},
+			onSubmit() {
+				// 给服务器发送一个字符串:
+				// ws.send("Hello!");
+				socket.send("Hello!");
+			}
+    },
+
+    mounted: function() {
+      this.createWebSocket();
+      
+		}
+  }
+</script>

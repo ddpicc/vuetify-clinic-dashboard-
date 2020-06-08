@@ -4,6 +4,7 @@ const bodyParser = require("body-parser")
 const schedule = require("node-schedule");
 const app = express();
 const mysql = require('mysql');
+const WebSocket = require('ws');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -48,5 +49,32 @@ schedule.scheduleJob('0 0 0 1 * *',()=>{
 app.listen(3000,() => {
     console.log('app listening on port 3000.')
 })
+
+
+
+// 引用Server类:
+const WebSocketServer = WebSocket.Server;
+
+// 实例化:
+const wss = new WebSocketServer({
+    port: 8081
+});
+
+wss.on('connection', function (ws) {
+    ws.on('message', function (message) {
+        console.log(`[SERVER] Received: ${message}`);
+        /* ws.send(`kkkkkkk`, (err) => {
+            if (err) {
+                console.log(`[SERVER] error: ${err}`);
+            }
+		}); */
+		wss.clients.forEach(function each(client) {
+			if (client.readyState === WebSocket.OPEN) {
+			  client.send('afafa');
+			}
+		})
+    })
+});
+
 
 
