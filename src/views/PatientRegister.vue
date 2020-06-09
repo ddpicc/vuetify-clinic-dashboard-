@@ -69,6 +69,29 @@
 									</v-row>
 								</v-container>
 							</v-form>
+							<v-snackbar
+								v-model="snackbar"
+								:color="snackbarColor"
+								:timeout="3000"
+								top
+								dark
+							>
+								<v-icon
+									color="white"
+									class="mr-3"
+								>
+									mdi-bell-plus
+								</v-icon>
+								{{notification}}
+								<v-btn
+									icon
+									@click="snackbar = false"
+								>
+									<v-icon>
+										mdi-close-circle
+									</v-icon>
+								</v-btn>
+							</v-snackbar>
 						</material-card>
 					</v-col>
 				</v-row>
@@ -79,7 +102,7 @@
 </template>
 
 <script>
-	let socket;
+	import { getTime, getNowFormatDate} from '../utils/handleDate';
   export default {
     data () {
       return {
@@ -87,7 +110,10 @@
       	patientAge: '',
       	sexItems: ['男', '女'],
       	patientSex: '',
-      	patientPhone: ''
+				patientPhone: '',
+				snackbar: false,
+      	snackbarColor: '',
+      	notification: '',
       }
     },
 
@@ -96,59 +122,38 @@
         this.$router.push({ path: '/' });
 			},
 
-      createWebSocket() {
-				try {
-						// 创建Web Socket 连接
-						socket = new WebSocket("ws://127.0.0.1:8081");
-						// 初始化事件
-						this.initEventHandle(socket);
-				} catch (e) {
-						// 出错时重新连接
-						this.reconnect("ws://127.0.0.1:8081");
-				}
-			},
-			
-      initEventHandle(socket) {
-				// 连接关闭时触发
-				socket.onclose = () => {
-						console.log("连接关闭");
-				};
-				// 通信发生错误时触发
-				socket.onerror = () => {
-						// 重新创建长连接
-						this.reconnect();
-				};
-				// 连接建立时触发
-				socket.onopen = () => {
-						console.log("连接成功");
-				};
-				// 客户端接收服务端数据时触发
-				socket.onmessage = msg => {
-						// 业务逻辑处理
-						console.log(msg.data, "ws:data");
-				};
-			},
-			reconnect() {
-				if (this.lockReconnect) {
-						return;
-				}
-				this.lockReconnect = true;
+			onSubmit: function(){				
+        if(this.patientName == ''){
+          alert('姓名不能为空');
+          return;
+        }
 
-				// 没连接上会一直重连，设置延迟避免请求过多
-				setTimeout(() => {
-						this.lockReconnect = false;
-						this.createWebSocket("ws://127.0.0.1:8081");
-				}, 2000);
-			},
-			onSubmit() {
-				// 给服务器发送一个字符串:
-				// ws.send("Hello!");
-				socket.send("Hello!");
+				this.$http.post('/api/registerPatient',{
+					dbs : 'qcui_registerPatient',
+					name : this.patientName,
+					sex : this.patientSex,
+					age : !this.patientAge? 0 : parseFloat(this.patientAge),
+					phone : !this.patientPhone? 0 : parseInt(this.patientPhone),
+					date : getNowFormatDate(),
+					time : getTime()
+				}).then( (res) => {
+					this.snackbar = true;
+          this.notification = '排号成功';
+					this.snackbarColor = 'green';
+					
+					//clear
+					this.patientName = '';
+        	this.patientSex = '';
+        	this.patientAge = '';
+        	this.patientPhone = '';
+				}).catch( (err) =>{
+          alert(err);
+        })
 			}
     },
 
     mounted: function() {
-      this.createWebSocket();
+      
       
 		}
   }

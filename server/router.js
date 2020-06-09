@@ -90,6 +90,18 @@ router.get('/selectOrdByPatientId', (req, res, next) => {
   api.selectOrdByPatientId(req, res, next);
 });
 
+router.post('/registerPatient', (req, res, next) => {
+  api.registerPatient(req, res, next);
+});
+
+router.get('/getAllPatientNotFinished', (req, res, next) => {
+  api.getAllPatientNotFinished(req, res, next);
+});
+
+router.post('/setPatientFinished', (req, res, next) => {
+  api.setPatientFinished(req, res, next);
+});
+
 
 
 

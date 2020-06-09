@@ -633,7 +633,7 @@
       },
 
       jumpToPDetail: function(id){
-        this.$router.push({name: 'User Profile', params: {pt_id: id}});
+        this.$router.push({name: 'Patient Profile', params: {pt_id: id}});
       },
 
       unpackOrdFromOutside: function(ordItem){

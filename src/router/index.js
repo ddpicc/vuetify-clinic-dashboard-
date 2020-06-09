@@ -14,7 +14,8 @@ import Meta from 'vue-meta'
 import Homepage from '../views/HomePage'
 import Login from '../views/Login'
 import LoadDataPage from '../views/LoadDataPage'
-import RegisterP from '../views/RegisterPatient'
+import RegisterP from '../views/PatientRegister'
+import DisplayP from '../views/DisplayTodayPatient'
 
 
 //不理解，但是是为了解决 next()的时候路由导航钩子时出现"uncaught (in promise) undefined 
@@ -30,7 +31,8 @@ export const constantRouterMap = [
   { path: '', component: Homepage, hidden: true},
   { path: '/login', component: Login, hidden: true },
   { path: '/loading', component: LoadDataPage, hidden: true },
-  { path: '/registerp', component: RegisterP, hidden: true }
+  { path: '/registerp', component: RegisterP, hidden: true },
+  { path: '/displayp', component: DisplayP, hidden: true }
 ]
 // Create a new router
 const router = new Router({
@@ -61,6 +63,7 @@ export const asyncRouterMap = [
       {path: '/patient-list', name: '病人管理', component: () => import('../views/PatientList.vue')},
       {path: '/detail-info', name: '详细账单', component: () => import('../views/DetailInfo.vue')},
       {path: '/settings', component: () => import('../views/Setting.vue')},
+      {path: '/today-patient', name: '今日病人', component: () => import('../views/CheckTodayPatient.vue')},
       { path: '*', redirect: '/' }
     ]
   }

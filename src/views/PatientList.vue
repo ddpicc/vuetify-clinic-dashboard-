@@ -88,7 +88,7 @@
           value.toString().indexOf(search) !== -1
       },
 
-      // 根据类型获取药品数据
+      // 获取系统中所有病人
       getAll: function() {
         this.loading = true;
         this.$http.get('/api/getAllPatient',{

@@ -228,12 +228,9 @@ export function parseTime(time, cFormat) {
    
    export const tryconst = 55555
  
-  export function getTime(type) {
-    if (type === 'start') {
-      return new Date().getTime() - 3600 * 1000 * 24 * 90
-    } else {
-      return new Date(new Date().toDateString())
-    }
+  export function getTime() {
+    var date = new Date();
+    return date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
   }
  
   export function debounce(func, wait, immediate) {

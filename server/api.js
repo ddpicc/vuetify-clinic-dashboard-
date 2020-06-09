@@ -113,6 +113,17 @@ module.exports = {
     })
   },
 
+  getAllPatientNotFinished(req, res, next) {
+    var dbs = req.query.dbs;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.getAllPatientNotFinished;
+      connection.query(sql, [dbs], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
   insertPatientOrderPage(req, res, next) {
     var dbs = req.body.dbs;
     var name = req.body.name,sex = req.body.sex;
@@ -320,6 +331,35 @@ module.exports = {
     pool.getConnection((err, connection) => {
       var sql = sqlMap.selectOrdByPatientId;
       connection.query(sql, [dbs_a, dbs_b, patient_id], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
+  registerPatient(req, res, next) {
+    var dbs = req.body.dbs;
+    var name = req.body.name,sex = req.body.sex;
+    var age = req.body.age, date = req.body.date;
+    var time = req.body.time
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.registerPatient;
+      connection.query(sql, [dbs,name,sex,age,date,time], (err, result) => {
+        if(err)
+          console.log(err);
+        res.json(result);
+        connection.release();
+      })
+    })
+  },
+
+  setPatientFinished(req, res, next) {
+    console.log('api - setPatientFinished');
+    var dbs = req.body.dbs; isFinished = req.body.isFinished;
+    var patient_id = req.body.patient_id;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.setPatientFinished;
+      connection.query(sql, [dbs,isFinished, patient_id], (err, result) => {
           res.json(result);
           connection.release();
       })

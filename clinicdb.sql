@@ -146,6 +146,22 @@ CREATE TABLE `myDbs_userconfig` (
 
 insert into `myDbs_userconfig`(`userid`) values (1);
 
+/* 创建myDbs_userconfig表 */
+DROP TABLE IF EXISTS `qcui_registerPatient`;
+
+CREATE TABLE `qcui_registerPatient` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `sex` varchar(5) NOT NULL DEFAULT '男',
+  `age` float(5) NOT NULL DEFAULT 0,
+  `phone` varchar(20),
+  `date` date,
+  `time` time,
+  `isFinished` smallint(5) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+
 /* 创建user表 */
 DROP TABLE IF EXISTS `myDbs_clinicOverall`;
 
