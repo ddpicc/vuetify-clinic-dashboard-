@@ -30,8 +30,8 @@
 						<v-col cols="12" md="6">
 							<material-card
 								color="green"
-								title="Edit Profile"
-								text="Complete your profile"
+								title="当前候诊"
+								:text="getText()"
 							> 
 								<v-data-table
 									:headers="headers"
@@ -67,22 +67,30 @@
 					value: 'time',
         }
       ],
-      items: []
+			items: [],
+			lockReconnect: false
     }),
 
     methods: {
+			getText: function(){
+				var myDate = new Date();     //获取当前年份(2位)
+        var month=myDate.getMonth();       //获取当前月份(0-11,0代表1月)
+        var day=myDate.getDate();        //获取当前日(1-31)
+        var dayNow=(month+1)+"月"+day+"日";
+        return '云杰诊所' + dayNow;
+			},
 
       // 获取系统中所有病人
       getAll: function() {
         this.$http.get('/api/getAllPatientNotFinished',{
           params: {
-            dbs : 'qcui_registerPatient',
+						dbs : 'qcui_registerPatient',
+						isFinished : 0,
 					}
         }).then( (res) => {
           this.items = res.data;
         })
       },
-
 			
 			createWebSocket() {
 				try {

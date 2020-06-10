@@ -91,6 +91,11 @@
           text: '首页'
         },
         {
+          to: '/today-patient',
+          icon: 'mdi-clipboard-outline',
+          text: '今日病人'
+        },
+        {
           to: '/create-ord',
           icon: 'mdi-format-font',
           text: '生成处方'
@@ -99,12 +104,7 @@
           to: '/ord-list',
           icon: 'mdi-clipboard-outline',
           text: '处方管理'
-        },
-        {
-          to: '/today-patient',
-          icon: 'mdi-clipboard-outline',
-          text: '今日病人'
-        },        
+        },              
         {
           to: '/med-list',
           icon: 'mdi-pill',

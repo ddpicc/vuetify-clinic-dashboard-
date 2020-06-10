@@ -6,7 +6,8 @@ var sqlMap = {
     insertOrd: 'INSERT INTO ?? (patient,patient_id,symptom,order_comment,medtype,dose,medarray,total,totalprofit,date) VALUES(?,?,?,?,?,?,?,?,?,?)',
     deleteOrdbyId: 'DELETE FROM ?? where id=?',
     getAllPatient: 'SELECT * FROM ??',
-    getAllPatientNotFinished: 'SELECT * FROM ?? WHERE isFinished = 0',
+    getAllPatientNotFinished: 'SELECT * FROM ?? WHERE isFinished = ?',
+    selectPatientByNameAndNotFinished: 'SELECT * FROM ?? WHERE isFinished = 0 AND name = ?',
     deletePatientbyId: 'DELETE FROM ?? where id=?',
     insertPatientOrderPage: 'INSERT INTO ??(name,name_pinyin,sex,age,phone,lastVisit) VALUES(?,?,?,?,?,?)',
     insertPatientDetailPage: 'INSERT INTO ??(name,sex,age,address,phone,wechat,lastVisit,comment) VALUES(?,?,?,?,?,?,?,?)',
@@ -22,6 +23,7 @@ var sqlMap = {
     getAllOrd: 'SELECT a.id,a.patient,a.medtype,a.symptom,a.order_comment,a.dose,a.medarray,a.total,a.totalprofit,a.date,b.sex,b.age,b.phone FROM ?? a INNER JOIN ?? b ON a.patient_id = b.id order by id desc',
     getOrdBetweenDates: 'SELECT a.id,a.patient,a.medtype,a.symptom,a.order_comment,a.dose,a.medarray,a.total,a.totalprofit,a.date,b.sex,b.age,b.phone FROM ?? a INNER JOIN ?? b ON a.patient_id = b.id where date between ? and ? order by id desc',
     selectOrdByPatientId: 'SELECT a.id,a.patient,a.medtype,a.symptom,a.order_comment,a.dose,a.medarray,a.total,a.totalprofit,a.date,b.sex,b.age,b.phone FROM ?? a INNER JOIN ?? b ON a.patient_id = b.id where patient_id = ?',
+    selectOrdByPatientName: 'SELECT a.id,a.patient,a.medtype,a.symptom,a.order_comment,a.dose,a.medarray,a.total,a.totalprofit,a.date,b.sex,b.age,b.phone FROM ?? a INNER JOIN ?? b ON a.patient_id = b.id where patient = ?',
     registerPatient: 'INSERT INTO ??(name,sex,age,date,time) VALUES(?,?,?,?,?)',
     setPatientFinished: 'UPDATE ?? SET isFinished = ? WHERE id = ?',
   }

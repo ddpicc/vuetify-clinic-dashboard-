@@ -92,7 +92,7 @@
             loading="loading"
           >
           <template v-slot:item.action="{ item }">
-            <v-btn small @click.stop="reuse(item.id)" text color="green">重用</v-btn>
+            <v-btn small @click.stop="reuse(item)" text color="green">重用</v-btn>
           </template>
           <template v-slot:expanded-item="{ item }">
             <td :colspan="8">
@@ -227,18 +227,18 @@
             dbs_b : this.$store.state.user.dbs_prefix+'patient',
             patient_id: this.patientId
             }
-          }).then( (respond) => {
-            this.items = respond.data;
+          }).then( (respond) => {            
             for(let element of respond.data) {
               element.medarray = element.medarray.split(";");
             }
+            this.items = respond.data;
           })
         })
       },
 
-      reuse(id){
-        alert(id);
-      }
+      reuse: function(selectedItem){
+        this.$router.push({name: '生成处方', params: {ord_item: selectedItem}});
+      },
     },
 
     mounted: function() {

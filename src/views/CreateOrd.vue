@@ -230,7 +230,7 @@
                 </v-container>
               </v-card-text>
             </v-card>
-          </v-dialog>          
+          </v-dialog>
         </material-card>
       </v-col>
     </v-row>
@@ -312,7 +312,6 @@
 
       // 根据类型获取药品数据
       getAll: function() {
-        this.loading = true;
         this.$http.get('/api/getAllMedbyType',{
           params: {
             dbs : this.$store.state.user.dbs_prefix+'medlist',
@@ -320,7 +319,6 @@
 					}
         }).then( (res) => {
           this.cacheMedData = res.data;
-          this.loading = false;
         })
       },
 
@@ -643,6 +641,7 @@
         this.patientSex = ordItem.sex;
         this.patientSymptom = ordItem.symptom;
         this.orderComment = ordItem.order_Comment;
+        this.patientPhone = ordItem.phone;
         this.patient_id = ordItem.id;
         this.orderCount = ordItem.dose;
         this.radioChanged();
@@ -722,8 +721,6 @@
           }
           this.disPlayToTb();
         })
-        
-
       }
     },
 
@@ -755,8 +752,15 @@
 
     mounted: function() {
       if(reuseOrd != undefined){
-        alert("sfs");
-        this.unpackOrdFromOutside(reuseOrd);
+        if(Object.keys(reuseOrd).length < 10){
+          this.patientName = reuseOrd.patient;
+          this.patientAge = reuseOrd.age;
+          this.patientSex = reuseOrd.sex;
+          this.patientPhone = reuseOrd.phone;
+          //this.getAll();
+        }else{
+          this.unpackOrdFromOutside(reuseOrd);
+        }        
       }else{
         this.getAll();
       }

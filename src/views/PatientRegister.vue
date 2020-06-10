@@ -30,8 +30,8 @@
 					<v-col cols="12" md="6">
 						<material-card
 							color="green"
-							title="Edit Profile"
-							text="Complete your profile"
+							title="排号"
+							text="云杰诊所"
 						>
 							<v-form>
 								<v-container class="py-0">
@@ -62,7 +62,7 @@
 											/>
 										</v-col>
 										<v-col cols="12" class="text-right">
-											<v-btn color="blue" @click.stop="onSubmit">
+											<v-btn color="blue" @click.stop="registerP">
 												提交
 											</v-btn>
 										</v-col>
@@ -72,7 +72,7 @@
 							<v-snackbar
 								v-model="snackbar"
 								:color="snackbarColor"
-								:timeout="3000"
+								:timeout="8000"
 								top
 								dark
 							>
@@ -103,17 +103,19 @@
 
 <script>
 	import { getTime, getNowFormatDate} from '../utils/handleDate';
+	let socket;
   export default {
     data () {
       return {
 				patientName: '',
       	patientAge: '',
       	sexItems: ['男', '女'],
-      	patientSex: '',
+      	patientSex: '男',
 				patientPhone: '',
 				snackbar: false,
       	snackbarColor: '',
-      	notification: '',
+				notification: '',
+				lockReconnect: false
       }
     },
 
@@ -122,39 +124,106 @@
         this.$router.push({ path: '/' });
 			},
 
-			onSubmit: function(){				
+			registerP: function(){				
         if(this.patientName == ''){
           alert('姓名不能为空');
           return;
-        }
+				}
+				
+				this.$http.get('/api/getAllPatientNotFinished',{
+          params: {
+						dbs : 'qcui_registerPatient',
+						isFinished : 1,
+					}
+        }).then( (res) => {
+					let pNmFinished = res.data.length;
+					this.$http.get('/api/selectPatientByNameAndNotFinished',{
+						params: {
+							dbs : 'qcui_registerPatient',
+							name : this.patientName,
+						}
+        	}).then( (respond) => {
+						if(respond.data.length === 0){
+							this.$http.post('/api/registerPatient',{
+								dbs : 'qcui_registerPatient',
+								name : this.patientName,
+								sex : this.patientSex,
+								age : !this.patientAge? 0 : parseFloat(this.patientAge),
+								phone : !this.patientPhone? 0 : parseInt(this.patientPhone),
+								date : getNowFormatDate(),
+								time : getTime()
+							}).then( (resk) => {
+								let pNmBefore = resk.data.insertId - pNmFinished;
+								this.snackbar = true;
+								this.notification = '排号成功,当前号码是第' + resk.data.insertId + '号, 前面还有' + pNmBefore + '人';
+								this.snackbarColor = 'green';
+								this.onSubmit();
+								//clear
+								this.patientName = '';
+								this.patientSex = '男';
+								this.patientAge = '';
+								this.patientPhone = '';
+							}).catch( (err) =>{
+								alert(err);
+							})
+						}else{
+							let pNmBefore = respond.data[0].id - pNmFinished - 1;
+							this.snackbar = true;
+							this.notification = '您已经取过号了，你的号码是第' + respond.data[0].id + '号, 前面还有' + pNmBefore + '人';
+							this.snackbarColor = 'green';
+						}					
+					})
+				})
+			},
 
-				this.$http.post('/api/registerPatient',{
-					dbs : 'qcui_registerPatient',
-					name : this.patientName,
-					sex : this.patientSex,
-					age : !this.patientAge? 0 : parseFloat(this.patientAge),
-					phone : !this.patientPhone? 0 : parseInt(this.patientPhone),
-					date : getNowFormatDate(),
-					time : getTime()
-				}).then( (res) => {
-					this.snackbar = true;
-          this.notification = '排号成功';
-					this.snackbarColor = 'green';
-					
-					//clear
-					this.patientName = '';
-        	this.patientSex = '';
-        	this.patientAge = '';
-        	this.patientPhone = '';
-				}).catch( (err) =>{
-          alert(err);
-        })
+			createWebSocket() {
+				try {
+						// 创建Web Socket 连接
+						socket = new WebSocket("ws://127.0.0.1:8081");
+						// 初始化事件
+						this.initEventHandle(socket);
+				} catch (e) {
+						// 出错时重新连接
+						this.reconnect("ws://127.0.0.1:8081");
+				}
+			},
+			
+      initEventHandle(socket) {
+				// 连接关闭时触发
+				socket.onclose = () => {
+						console.log("连接关闭");
+				};
+				// 通信发生错误时触发
+				socket.onerror = () => {
+						// 重新创建长连接
+						this.reconnect();
+				};
+				// 连接建立时触发
+				socket.onopen = () => {
+						console.log("连接成功");
+				};
+			},
+			reconnect() {
+				if (this.lockReconnect) {
+						return;
+				}
+				this.lockReconnect = true;
+
+				// 没连接上会一直重连，设置延迟避免请求过多
+				setTimeout(() => {
+						this.lockReconnect = false;
+						this.createWebSocket("ws://127.0.0.1:8081");
+				}, 2000);
+			},
+			onSubmit() {
+				// 给服务器发送一个字符串:
+				// ws.send("Hello!");
+				socket.send("reload");
 			}
     },
 
     mounted: function() {
-      
-      
+      this.createWebSocket();      
 		}
   }
 </script>

@@ -114,15 +114,29 @@ module.exports = {
   },
 
   getAllPatientNotFinished(req, res, next) {
-    var dbs = req.query.dbs;
+    var dbs = req.query.dbs,isFinished = req.query.isFinished;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.getAllPatientNotFinished;
-      connection.query(sql, [dbs], (err, result) => {
+      connection.query(sql, [dbs,isFinished], (err, result) => {
           res.json(result);
           connection.release();
       })
     })
   },
+
+  selectPatientByNameAndNotFinished(req, res, next) {
+    console.log('api - selectPatientByNameAndNotFinished');
+    var dbs = req.query.dbs, name = req.query.name;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.selectPatientByNameAndNotFinished;
+      connection.query(sql, [dbs,name], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },
+
+  
 
   insertPatientOrderPage(req, res, next) {
     var dbs = req.body.dbs;
@@ -336,6 +350,19 @@ module.exports = {
       })
     })
   },
+
+  selectOrdByPatientName(req, res, next) {
+    console.log('api - selectOrdByPatientName');
+    var dbs_a = req.query.dbs_a,dbs_b = req.query.dbs_b;
+    var patient_name = req.query.patient_name;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.selectOrdByPatientName;
+      connection.query(sql, [dbs_a, dbs_b, patient_name], (err, result) => {
+          res.json(result);
+          connection.release();
+      })
+    })
+  },  
 
   registerPatient(req, res, next) {
     var dbs = req.body.dbs;

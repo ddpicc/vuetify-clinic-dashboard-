@@ -159,7 +159,7 @@
         { text: '序号', value: 'pid' },
         {
           sortable: false,
-          text: '名字',
+          text: '姓名',
           value: 'patient'
         },
         {
