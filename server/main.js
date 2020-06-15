@@ -38,7 +38,7 @@ schedule.scheduleJob('0 0 0 1 * *',()=>{
 			multipleStatements: true
 		});
 	var  sql = 'ALTER TABLE myDbs_userconfig ADD ' + column +  " float (50) NOT NULL DEFAULT '0'";
-	connection.connect();       
+	connection.connect();
 	connection.query(sql, function (error, result) {
 		if (error) throw error;
 		console.log(result);
