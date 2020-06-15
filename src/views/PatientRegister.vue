@@ -21,6 +21,9 @@
 		</v-app-bar>
 
     <v-content>
+			<v-banner>
+				<h4 style="text-align:center;">当前等待人数 ： {{waitingPatient}} 人</h4>				
+			</v-banner>
 			<v-container
 				fill-height
 				fluid
@@ -115,7 +118,8 @@
 				snackbar: false,
       	snackbarColor: '',
 				notification: '',
-				lockReconnect: false
+				lockReconnect: false,
+				waitingPatient: 0
       }
     },
 
@@ -124,55 +128,56 @@
         this.$router.push({ path: '/' });
 			},
 
+			getWaitingPatient: function(){
+				this.$http.get('/api/getAllPatientNotFinished',{
+          params: {
+						dbs : 'qcui_registerPatient',
+						isFinished : 0,
+					}
+        }).then( (res) => {
+					this.waitingPatient = res.data.length;
+				})
+			},
+
 			registerP: function(){				
         if(this.patientName == ''){
           alert('姓名不能为空');
           return;
 				}
 				
-				this.$http.get('/api/getAllPatientNotFinished',{
-          params: {
+				this.$http.get('/api/selectPatientByNameAndNotFinished',{
+					params: {
 						dbs : 'qcui_registerPatient',
-						isFinished : 1,
+						name : this.patientName,
 					}
-        }).then( (res) => {
-					let pNmFinished = res.data.length;
-					this.$http.get('/api/selectPatientByNameAndNotFinished',{
-						params: {
+				}).then( (respond) => {
+					if(respond.data.length === 0){
+						this.$http.post('/api/registerPatient',{
 							dbs : 'qcui_registerPatient',
 							name : this.patientName,
-						}
-        	}).then( (respond) => {
-						if(respond.data.length === 0){
-							this.$http.post('/api/registerPatient',{
-								dbs : 'qcui_registerPatient',
-								name : this.patientName,
-								sex : this.patientSex,
-								age : !this.patientAge? 0 : parseFloat(this.patientAge),
-								phone : !this.patientPhone? 0 : parseInt(this.patientPhone),
-								date : getNowFormatDate(),
-								time : getTime()
-							}).then( (resk) => {
-								let pNmBefore = resk.data.insertId - pNmFinished;
-								this.snackbar = true;
-								this.notification = '排号成功,当前号码是第' + resk.data.insertId + '号, 前面还有' + pNmBefore + '人';
-								this.snackbarColor = 'green';
-								this.onSubmit();
-								//clear
-								this.patientName = '';
-								this.patientSex = '男';
-								this.patientAge = '';
-								this.patientPhone = '';
-							}).catch( (err) =>{
-								alert(err);
-							})
-						}else{
-							let pNmBefore = respond.data[0].id - pNmFinished - 1;
+							sex : this.patientSex,
+							age : !this.patientAge? 0 : parseFloat(this.patientAge),
+							phone : !this.patientPhone? 0 : parseInt(this.patientPhone),
+							date : getNowFormatDate(),
+							time : getTime()
+						}).then( (resk) => {
 							this.snackbar = true;
-							this.notification = '您已经取过号了，你的号码是第' + respond.data[0].id + '号, 前面还有' + pNmBefore + '人';
+							this.notification = '排号成功,你的号码是第' + resk.data.insertId + '号';
 							this.snackbarColor = 'green';
-						}					
-					})
+							this.onSubmit();
+							//clear
+							this.patientName = '';
+							this.patientSex = '男';
+							this.patientAge = '';
+							this.patientPhone = '';
+						}).catch( (err) =>{
+							alert(err);
+						})
+					}else{
+						this.snackbar = true;
+						this.notification = '您已经取过号了，你的号码是第' + respond.data[0].id + '号';
+						this.snackbarColor = 'green';
+					}					
 				})
 			},
 
@@ -202,6 +207,12 @@
 				socket.onopen = () => {
 						console.log("连接成功");
 				};
+				// 客户端接收服务端数据时触发
+				socket.onmessage = msg => {
+						// 业务逻辑处理
+						console.log(msg.data, "ws:data");
+						this.getWaitingPatient();
+				};
 			},
 			reconnect() {
 				if (this.lockReconnect) {
@@ -223,7 +234,8 @@
     },
 
     mounted: function() {
-      this.createWebSocket();      
+			this.createWebSocket();
+			this.getWaitingPatient();   
 		}
   }
 </script>
