@@ -46,11 +46,29 @@ schedule.scheduleJob('0 0 0 1 * *',()=>{
 	});	
 });
 
+schedule.scheduleJob('0 0 0 * * *',()=>{
+	var connection = mysql.createConnection({
+			host     : 'localhost',
+			user     : 'root',
+			password : 'cnaiq1988',
+			database : 'myDbs',
+			port: '3306',
+			dateStrings: true,
+			multipleStatements: true
+		});
+	var  sql = 'TRUNCATE TABLE qcui_registerPatient';
+	connection.connect();       
+	connection.query(sql, function (error, result) {
+		if (error) throw error;
+		console.log(result);
+		connection.end();
+	});
+	//todo 遍历当天免煎处方，修改药品
+});
+
 app.listen(3000,() => {
     console.log('app listening on port 3000.')
 })
-
-
 
 // 引用Server类:
 const WebSocketServer = WebSocket.Server;
