@@ -144,14 +144,26 @@
           alert('姓名不能为空');
           return;
 				}
-				
-				this.$http.get('/api/selectPatientByNameAndNotFinished',{
-					params: {
+				let that = this;
+				this.$http.get('/api/getAllPatientNotFinished',{
+          params: {
 						dbs : 'qcui_registerPatient',
-						name : this.patientName,
+						isFinished : 0,
 					}
-				}).then( (respond) => {
-					if(respond.data.length === 0){
+        }).then( (res) => {
+					let existInWaitingList = res.data.find(function(p){
+            return p.name === that.patientName;
+					});
+					if(typeof(existInWaitingList)!="undefined"){
+						this.snackbar = true;
+						this.notification = '您已经取过号了，你的号码是第' + existInWaitingList.id + '号, 你前面有' + res.data.indexOf(existInWaitingList) + '人在等待';
+						this.snackbarColor = 'green';
+						//clear
+						this.patientName = '';
+						this.patientSex = '男';
+						this.patientAge = '';
+						this.patientPhone = '';
+					}else{
 						this.$http.post('/api/registerPatient',{
 							dbs : 'qcui_registerPatient',
 							name : this.patientName,
@@ -173,11 +185,7 @@
 						}).catch( (err) =>{
 							alert(err);
 						})
-					}else{
-						this.snackbar = true;
-						this.notification = '您已经取过号了，你的号码是第' + respond.data[0].id + '号';
-						this.snackbarColor = 'green';
-					}					
+					}
 				})
 			},
 
