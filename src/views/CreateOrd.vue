@@ -168,6 +168,63 @@
               </template>
             </v-edit-dialog>
           </template>
+          <template v-slot:item.count2="props">
+            <v-edit-dialog
+              :return-value.sync="props.item.count2"
+              large
+              persistent
+              @save="save(props.item.count2, props.item.name2)"
+              @cancel="cancel"
+            >
+              <div>{{ props.item.count2 }}</div>
+              <template v-slot:input>
+                <v-text-field
+                  v-model="props.item.count2"
+                  :rules="[notzero]"
+                  label="Edit"
+                  single-line
+                ></v-text-field>
+              </template>
+            </v-edit-dialog>
+          </template>
+          <template v-slot:item.count3="props">
+            <v-edit-dialog
+              :return-value.sync="props.item.count3"
+              large
+              persistent
+              @save="save(props.item.count3, props.item.name3)"
+              @cancel="cancel"
+            >
+              <div>{{ props.item.count3 }}</div>
+              <template v-slot:input>
+                <v-text-field
+                  v-model="props.item.count3"
+                  :rules="[notzero]"
+                  label="Edit"
+                  single-line
+                ></v-text-field>
+              </template>
+            </v-edit-dialog>
+          </template>
+          <template v-slot:item.count4="props">
+            <v-edit-dialog
+              :return-value.sync="props.item.count4"
+              large
+              persistent
+              @save="save(props.item.count4, props.item.name4)"
+              @cancel="cancel"
+            >
+              <div>{{ props.item.count4 }}</div>
+              <template v-slot:input>
+                <v-text-field
+                  v-model="props.item.count4"
+                  :rules="[notzero]"
+                  label="Edit"
+                  single-line
+                ></v-text-field>
+              </template>
+            </v-edit-dialog>
+          </template>
           <template v-slot:body.append="{ headers }">
             <tr>
               <td :colspan="headers.length-2">
@@ -200,7 +257,7 @@
               </v-col>
               <v-col sm="1" md="1">
                 <v-text-field dense v-if="!isYaowan" v-model="orderCount"
-                  label="几付" suffix="付" placeholder=" "
+                  label="几付" suffix="付" placeholder=" " @focus="focus($event)"
                 ></v-text-field>
               </v-col>
               <v-col sm="1" md="1">
@@ -412,7 +469,8 @@
 						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + parseInt(this.orderMed1PerObj[i].count) + '盒","' + tempStrMedComment + '":"' + this.orderMed1PerObj[i].medComment + '",';
 					if(i>0 && (i+1) % carry == 0){
 						emptyStr = emptyStr.substr(0,emptyStr.length-1);
-						emptyStr = emptyStr + '}';
+            emptyStr = emptyStr + '}';
+            alert(emptyStr);
             let tempObj = JSON.parse(emptyStr);
             medStringTmepArray.push(emptyStr);
 						this.items.push(tempObj);
@@ -472,6 +530,7 @@
       },
 
       postOrdToDbSure:function() {
+        let ordProfit = '';
         if(this.items.length == 0 && this.medRadio!='药丸'){
           alert('订单为空');
           return;
@@ -486,7 +545,11 @@
         }
         if(this.medRadio == '药丸' && this.total != 0){
           this.orderCount = 1;
-          alert(parseFloat(this.total));
+        }
+        if(this.medRadio == '药丸'){
+          ordProfit = this.total * 0.75;
+        }else{
+          ordProfit = (parseFloat(this.total) - parseFloat((this.perOrdBase * this.orderCount).toFixed(2))).toFixed(2);
         }
         if(!this.patient_id){
           this.$http.post('/api/insertPatientOrderPage',{
@@ -509,7 +572,7 @@
                     dose : this.orderCount,
                     medarray : this.medString,
                     total : parseFloat(this.total),
-                    totalprofit : (parseFloat(this.total) - parseFloat((this.perOrdBase * this.orderCount).toFixed(2))).toFixed(2),
+                    totalprofit : ordProfit,
                     date : getNowFormatDate(),
               }).then( (resord) => {   
                 this.consumeMed();
@@ -523,6 +586,7 @@
               console.log(err);
             })
         }else{
+          //update lastvistit
           this.$http.post('/api/insertOrd',{
                 dbs : this.$store.state.user.dbs_prefix+'ordlist',
                 patient : this.patientName,
@@ -533,7 +597,7 @@
                 dose : this.orderCount,
                 medarray : this.medString,
                 total : parseFloat(this.total),
-                totalprofit : (parseFloat(this.total) - parseFloat((this.perOrdBase * this.orderCount).toFixed(2))).toFixed(2),
+                totalprofit : ordProfit,
                 date : getNowFormatDate(),
           }).then( (resord) => {
             this.consumeMed();
@@ -546,7 +610,8 @@
       },
 
       consumeMed: function(){
-        alert(JSON.stringify(this.orderMed1PerObj));
+        //改变数据库药品
+        //alert(JSON.stringify(this.orderMed1PerObj));
       },
 
       clearInfo: function(){
@@ -648,7 +713,7 @@
         this.patientSymptom = ordItem.symptom;
         this.orderComment = ordItem.order_Comment;
         this.patientPhone = ordItem.phone;
-        this.patient_id = ordItem.id;
+        this.patient_id = ordItem.patient_id;
         this.orderCount = ordItem.dose;
         this.radioChanged();
         this.$http.get('/api/getAllMedbyType',{

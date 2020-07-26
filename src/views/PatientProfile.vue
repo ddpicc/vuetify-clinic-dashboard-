@@ -8,11 +8,27 @@
         cols="12"
         md="5"
       >
-        <material-card
-          color="green"
-          title="Edit Profile"
-          text="Complete your profile"
-        >
+        <material-card flat color="green">
+          <template v-slot:header>
+            <div class="px-3">
+              <div class="title font-weight-light mb-2">
+                &nbsp;&nbsp;&nbsp;&nbsp;详&nbsp;&nbsp;&nbsp;&nbsp;情
+              </div>
+            </div>
+						<v-spacer />   
+
+						<v-btn
+              absolute
+              dark
+              fab
+              top
+              right
+              color="amber"
+              @click="returnPtList"
+            >
+              <v-icon>mdi-keyboard-return</v-icon>
+            </v-btn>
+          </template>
           <v-form>
             <v-container class="py-0">
               <v-row>
@@ -204,8 +220,17 @@
           //todo
           //update patient profile
           this.btnName = '更新';
+          this.isReadonly = true;
         }
       },
+
+      cancel: function(){
+
+      },
+
+      returnPtList: function(){
+        this.$router.push({ path: '/patient-list' });
+      },      
 
       getAll: function() {
         this.$http.get('/api/getPatientInfo',{

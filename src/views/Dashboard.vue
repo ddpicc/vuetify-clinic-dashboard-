@@ -607,7 +607,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
               startDate: start,
               endDate: end
             }
-          }).then( (res) => {
+          }).then( (res) => {            
             this.calculateData(res.data, monthTotalFromLocal);
           })
         }else{

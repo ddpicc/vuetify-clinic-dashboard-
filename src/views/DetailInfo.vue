@@ -25,6 +25,16 @@
                   收入组成
                 </h4>
               </material-piechart-card>
+              <material-piechart-card
+                :data="monthProfitChart.data"
+                v-if="reportDisplay"
+                color = "white"
+                :chartColor = "chartColor"
+              >
+                <h4 class="title font-weight-light">
+                  利润组成
+                </h4>
+              </material-piechart-card>
             </v-col>
             <v-col cols="12" sm="12" lg="8" md="8">
               <v-chip
@@ -231,6 +241,9 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
       monthSalesChart: {
         data: [],
       },
+      monthProfitChart: {
+        data: [],
+      },
       chartColor: ['#00bbbb', '#00bb5e','#bb5e2f','#cccc00'],
     }),
 
@@ -259,6 +272,7 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
       },
 
       actionGenerate: function(){
+        this.monthSalesChart.data = [];
         if(this.reportDisplay != true){
           this.reportDisplay = true;
           this.iconChange = 'mdi-close';
@@ -303,6 +317,10 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
             _incomeXiyao = parseFloat((_incomeXiyao + item.total).toFixed(2));
             _profitXiyao = parseFloat((_profitXiyao + item.totalprofit).toFixed(2));
           }
+          else if(item.medtype == '药丸'){
+            _incomeYaowan = parseFloat((_incomeYaowan + item.total).toFixed(2));
+            _profitYaowan = parseFloat((_profitYaowan + item.totalprofit).toFixed(2)); 
+          }
           _totalIncome = parseFloat((_totalIncome + item.total).toFixed(2));
           _totalProfit = parseFloat((_totalProfit + item.totalprofit).toFixed(2));
           _taotalPatient = _taotalPatient + 1;
@@ -346,6 +364,11 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
         this.monthSalesChart.data.push(['草药', this.incomeCaoyao]);
         this.monthSalesChart.data.push(['西药', this.incomeXiyao]);
         this.monthSalesChart.data.push(['药丸', this.incomeYaowan]);
+
+        this.monthProfitChart.data.push(['免煎', this.profitMianjian]);
+        this.monthProfitChart.data.push(['草药', this.profitCaoyao]);
+        this.monthProfitChart.data.push(['西药', this.profitXiyao]);
+        this.monthProfitChart.data.push(['药丸', this.profitYaowan]);
 
       },
     },

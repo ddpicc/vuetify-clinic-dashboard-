@@ -111,6 +111,9 @@
             </td>              
           </template>
           </v-data-table>
+          <div class="text-center pt-2">
+            <v-btn block color=green dark class="mr-2" @click="loadAll">读取全部</v-btn>
+          </div>
           <v-snackbar
             v-model="snackbar"
             :color="snackbarColor"
@@ -256,6 +259,31 @@
             this.loading = false;
           })
         }
+      },
+
+      loadAll: function(){
+        //load all
+        this.loading = true;
+        let idStartFrom = 0;
+        let userSetting = loadFromLocal(1,'userSetting', []);
+        this.displayYaowan = userSetting[0]['displayYaowan'];
+        this.$http.get('/api/getAllOrd',{
+          params: {
+            dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
+            dbs_b : this.$store.state.user.dbs_prefix+'patient',
+          }
+        }).then( (res) => {
+          if(!this.displayYaowan){
+            res.data = res.data.filter(function (e) { return e.medtype != '药丸'; });
+          }
+          for(let element of res.data) {
+            element.medarray = element.medarray.split(";");
+            idStartFrom = idStartFrom + 1;
+            element.pid = idStartFrom;
+          }
+          this.items = res.data;
+          this.loading = false;
+        })
       },
 
       getColor (medtype) {

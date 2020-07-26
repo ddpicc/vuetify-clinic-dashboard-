@@ -15,7 +15,7 @@
             :headers="headers"
             :items="items"
             item-key="name"
-            :items-per-page="5"
+            :items-per-page="15"
             :search="searchStr"
             :custom-filter="filterText"
             loading="loading"
