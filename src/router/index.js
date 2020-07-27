@@ -36,7 +36,7 @@ export const constantRouterMap = [
 ]
 // Create a new router
 const router = new Router({
-  mode: 'history',
+  mode: 'hash',
   routes: constantRouterMap,
   
   scrollBehavior (to, from, savedPosition) {

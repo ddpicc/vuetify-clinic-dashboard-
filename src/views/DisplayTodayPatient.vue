@@ -52,6 +52,8 @@
 
 <script>
 	let socket;
+	var connectUrl = 'ws://127.0.0.1:8081';
+	//"ws://49.233.152.15:8081"
   export default {
     data: () => ({
       headers: [
@@ -95,12 +97,12 @@
 			createWebSocket() {
 				try {
 						// 创建Web Socket 连接
-						socket = new WebSocket("ws://127.0.0.1:8081");
+						socket = new WebSocket(connectUrl);
 						// 初始化事件
 						this.initEventHandle(socket);
 				} catch (e) {
 						// 出错时重新连接
-						this.reconnect("ws://127.0.0.1:8081");
+						this.reconnect(connectUrl);
 				}
 			},
 			
@@ -134,7 +136,7 @@
 				// 没连接上会一直重连，设置延迟避免请求过多
 				setTimeout(() => {
 						this.lockReconnect = false;
-						this.createWebSocket("ws://127.0.0.1:8081");
+						this.createWebSocket(connectUrl);
 				}, 2000);
 			},
     },
