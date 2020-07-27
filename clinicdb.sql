@@ -141,10 +141,16 @@ CREATE TABLE `myDbs_userconfig` (
   `userid` smallint(5) unsigned,
   `displayYaowan` smallint(5) NOT NULL DEFAULT 0,
   `displayProfit` smallint(5) NOT NULL DEFAULT 0,
+  `total202003` float(50) NOT NULL DEFAULT 0,
+  `profit202003` float(50) NOT NULL DEFAULT 0,
+  `total202004` float(50) NOT NULL DEFAULT 0,
+  `profit202004` float(50) NOT NULL DEFAULT 0,
+  `total202005` float(50) NOT NULL DEFAULT 0,
+  `profit202005` float(50) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
-insert into `myDbs_userconfig`(`userid`) values (1);
+insert into `myDbs_userconfig`(`userid`,`total202003`,`profit202003`,`total202004`,`profit202004`,`total202005`,`profit202005`) values (1,95350.25,62427.62,148482.44,103695.55,158565.34,108657.86);
 
 /* 创建myDbs_userconfig表 */
 DROP TABLE IF EXISTS `qcui_registerPatient`;

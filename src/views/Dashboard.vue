@@ -34,7 +34,7 @@
         <material-linechart-card
           :data="monthSalesChart.data"
           color="white"
-          :chartColor="['#FFB677']"
+          :chartColor = "infocolor"
         >
           <h4 class="title font-weight-light">
             每月收入
@@ -151,9 +151,9 @@
           color="green"
           icon="mdi-store"
           title="全年收入"
-          value="$34,245"
+          :value="yearIncome"
           sub-icon="mdi-calendar"
-          :sub-text="todayDate()"
+          :sub-text="todayYear()"
         />
       </v-col>
       <v-col
@@ -164,9 +164,9 @@
           color="green"
           icon="mdi-store"
           title="总收入"
-          value="$34,245"
+          :value="overallIncome"
           sub-icon="mdi-calendar"
-          :sub-text="todayDate()"
+          sub-text="从19年6月至今"
         />
       </v-col>
 
@@ -432,6 +432,8 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         todayNum: '0',
         monthIncome: '0',
         monthNum: '0',
+        yearIncome: '0',
+        overallIncome: '0',
         dailySalesChart: {
           data: [],
         },
@@ -592,6 +594,13 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         return monthNow;
       },
 
+      todayYear: function(){
+        var myDate = new Date();
+        var year=myDate.getFullYear();
+        year = year + '年';
+        return year;
+      },
+
       loadDataAndSetupChart: function(){
         let fromlocal = loadFromLocal(1,'cacheOrder',[]);
         let monthTotalFromLocal = loadFromLocal(1,'userSetting', []);
@@ -637,6 +646,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         let _todayIncome = 0;
         let _todayNum = 0;
         let _monthIncome = 0;
+        let _monthProfit = 0;
         let _monthNum = 0;
         
         for(let item of data30Days){
@@ -646,6 +656,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
           }
           if(item.date.substring(0,7) == dateToString(new Date()).substring(0,7)){
             _monthIncome = parseFloat((_monthIncome + item.total).toFixed(2));
+            _monthProfit = parseFloat((_monthProfit + item.totalprofit).toFixed(2));
             _monthNum = _monthNum + 1;
           }
           if(item.date != curDate){
@@ -676,34 +687,58 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         this.dailySalesChart.data.push({name: '收入', data: incomeData});
         if(this.displayProfit)
           this.dailySalesChart.data.push({name: '利润', data: profitData});
-        this.setMonthChart(monthTotalFromLocal, _monthIncome);
+        this.setMonthChart(monthTotalFromLocal, _monthIncome, _monthProfit);
       },
 
-      setMonthChart: function(monthTotalArry, thisMonthInfo){
+      setMonthChart: function(monthTotalArry, _monthIncome, _monthProfit){
+        var incomeMonth = [];
+        var profitMonth = [];
+        for (var key in monthTotalArry[0]){
+          if(key.indexOf('total') != -1){
+            this.overallIncome = parseFloat(this.overallIncome + parseFloat(monthTotalArry[0][key]));
+          }
+        }
+        this.overallIncome = this.overallIncome + _monthIncome;
+        
         //start from 0, 也就是当前月
         for(let monthOffset=0; monthOffset<12; monthOffset++){
           let date = new Date();
           let month = date.getMonth()+1;
           let year = date.getFullYear();
           month = month - monthOffset;
+          
           if(month <= 0){
             month = month + 12;
             year = year-1;
-          }
-          if (month >= 1 && month <= 9) {
-            month = "0" + month;
+          }else if(month > 0 && monthOffset != 0){
+            if (month >= 1 && month <= 9) {
+              month = "0" + month;
+            }
+            let columnTotal = 'total' + year + month;
+            if(!monthTotalArry[0][columnTotal])
+              monthTotalArry[0][columnTotal] = 0;
+            this.yearIncome = parseFloat(this.yearIncome + parseFloat(monthTotalArry[0][columnTotal]));
           }
 
           if(monthOffset ==0){
-            this.monthSalesChart.data.push([year + '-' + month, thisMonthInfo]);
+            incomeMonth.push([year + '-' + month, _monthIncome]);
+            profitMonth.push([year + '-' + month, _monthProfit]);
             continue;
           }          
-          let columnName = 'month' + year + month;
+          let columnTotal = 'total' + year + month;
+          let columnProfit = 'profit' + year + month;
 
-          if(!monthTotalArry[0][columnName])
-            monthTotalArry[0][columnName] = 0;
-          this.monthSalesChart.data.push([year + '-' + month, monthTotalArry[0][columnName]]);
+          if(!monthTotalArry[0][columnTotal])
+            monthTotalArry[0][columnTotal] = 0;
+          if(!monthTotalArry[0][columnProfit])
+            monthTotalArry[0][columnProfit] = 0;
+          incomeMonth.push([year + '-' + month, monthTotalArry[0][columnTotal]]);
+          profitMonth.push([year + '-' + month, monthTotalArry[0][columnProfit]]);
         }
+        this.monthSalesChart.data.push({name: '收入', data: incomeMonth});
+          if(this.displayProfit)
+            this.monthSalesChart.data.push({name: '利润', data: profitMonth});
+        this.yearIncome = this.yearIncome + _monthIncome;
       }
 
     },

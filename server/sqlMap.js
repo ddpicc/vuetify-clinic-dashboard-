@@ -17,7 +17,7 @@ var sqlMap = {
     getUserInfo: 'SELECT * FROM myDbs_user WHERE token = ?',
     getUserSetting: 'SELECT * FROM myDbs_userconfig WHERE userid = ?',
     updateUserSetting: 'UPDATE myDbs_userconfig SET displayYaowan = ?, displayProfit = ? WHERE userid = ?',
-    saveMonthTotalToUserSetting: 'UPDATE myDbs_userconfig SET ?? = ? WHERE userid = ?',
+    saveMonthTotalToUserSetting: 'UPDATE myDbs_userconfig SET ?? = ?, ?? = ? WHERE userid = ?',
     getChartInfoFromOrder: 'SELECT total,totalprofit,date from ?? where date between ? and ?',
     getOrdByDate: 'SELECT a.id,a.patient,a.medtype,a.symptom,a.order_comment,a.dose,a.medarray,a.total,a.totalprofit,a.date,b.sex,b.age,b.phone FROM ?? a INNER JOIN ?? b ON a.patient_id = b.id where date = ? order by id desc',
     getAllOrd: 'SELECT a.id,a.patient,a.patient_id,a.medtype,a.symptom,a.order_comment,a.dose,a.medarray,a.total,a.totalprofit,a.date,b.sex,b.age,b.phone FROM ?? a INNER JOIN ?? b ON a.patient_id = b.id order by id desc',

@@ -26,7 +26,8 @@ let lastMonth = date.getMonth();
 if (lastMonth >= 1 && lastMonth <= 9) {
 	lastMonth = "0" + lastMonth;
 }
-column = 'month' + date.getFullYear() + lastMonth;
+let columnTotal = 'total' + date.getFullYear() + lastMonth;
+let columnProfit = 'profit' + date.getFullYear() + lastMonth;
 schedule.scheduleJob('0 0 0 1 * *',()=>{
 	var connection = mysql.createConnection({
 			host     : 'localhost',
@@ -37,13 +38,20 @@ schedule.scheduleJob('0 0 0 1 * *',()=>{
 			dateStrings: true,
 			multipleStatements: true
 		});
-	var  sql = 'ALTER TABLE myDbs_userconfig ADD ' + column +  " float (50) NOT NULL DEFAULT '0'";
+	var  sql = 'ALTER TABLE myDbs_userconfig ADD ' + columnTotal +  " float (50) NOT NULL DEFAULT '0'";
 	connection.connect();
 	connection.query(sql, function (error, result) {
 		if (error) throw error;
 		console.log(result);
 		connection.end();
-	});	
+	});
+	sql = 'ALTER TABLE myDbs_userconfig ADD ' + columnProfit +  " float (50) NOT NULL DEFAULT '0'";
+	connection.connect();
+	connection.query(sql, function (error, result) {
+		if (error) throw error;
+		console.log(result);
+		connection.end();
+	});
 });
 
 schedule.scheduleJob('0 0 0 * * *',()=>{

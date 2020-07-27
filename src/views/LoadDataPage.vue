@@ -100,22 +100,24 @@
         if (thisMonth >= 1 && thisMonth <= 9) {
           thisMonth = "0" + thisMonth;
         }
-        let columnName = 'month' + date.getFullYear() + lastMonth;
+        let columnTotal = 'total' + date.getFullYear() + lastMonth;
+        let columnProfit = 'profit' + date.getFullYear() + lastMonth;
 
         this.$http.get('/api/getUserSetting', {
           params: {
 						userid : this.$store.state.user.user_id
           }
         }).then(response => {
-          if (response.data[0][columnName] == 0){
-            this.saveLastMonthTotalToDb(response.data[0],columnName, lastMonth, thisMonth);
+          //看上个月是否有数据
+          if (response.data[0][columnTotal] == 0){
+            this.saveLastMonthTotalToDb(response.data[0], columnTotal, columnProfit, lastMonth, thisMonth);
           }else{
             saveToLocal(1,'userSetting',response.data);
           }
         })
       },
 
-      saveLastMonthTotalToDb: function(UserSettingAry, columnName, lastMonth, thisMonth){
+      saveLastMonthTotalToDb: function(UserSettingAry, columnTotal, columnProfit, lastMonth, thisMonth){
         let _lastMonthIncome = 0;
         let _lastMonthProfit = 0;
         let start = new Date().getFullYear() + '-' + lastMonth + '-01';
@@ -136,10 +138,13 @@
             return;
           this.$http.post('/api/saveMonthTotalToUserSetting',{
             userid : this.$store.state.user.user_id,
-            col : columnName,
-            lastMonthTotal: _lastMonthIncome
+            colTotal : columnTotal,
+            lastMonthTotal: _lastMonthIncome,
+            colProfit : columnProfit,
+            lastMonthProfit : _lastMonthProfit
           }).then( (res) => {
-            UserSettingAry[columnName] = _lastMonthIncome;
+            UserSettingAry[columnTotal] = _lastMonthIncome;
+            UserSettingAry[columnProfit] = _lastMonthProfit;
             saveToLocal(1,'userSetting',UserSettingAry);
           })
         })

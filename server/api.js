@@ -284,12 +284,13 @@ module.exports = {
   saveMonthTotalToUserSetting(req, res, next) {
     console.log('api - saveMonthTotalToUserSetting');
     var id = req.body.userid;
-    var col = req.body.col,data = req.body.lastMonthTotal;
+    var colTotal = req.body.col, total = req.body.lastMonthTotal;
+    var colProfit = req.body.col, profit = req.body.lastMonthProfit;
     pool.getConnection((err, connection) => {
       if(err)
         console.log(err);
       var sql = sqlMap.saveMonthTotalToUserSetting;
-      connection.query(sql, [col,data,id], (err, result) => {
+      connection.query(sql, [colTotal,total,colProfit,profit,id], (err, result) => {
           res.json(result);
           connection.release();
       })

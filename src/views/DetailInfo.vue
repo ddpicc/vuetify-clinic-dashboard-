@@ -273,6 +273,7 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
 
       actionGenerate: function(){
         this.monthSalesChart.data = [];
+        this.monthProfitChart.data = [];
         if(this.reportDisplay != true){
           this.reportDisplay = true;
           this.iconChange = 'mdi-close';
