@@ -107,7 +107,7 @@
 <script>
 	import { getTime, getNowFormatDate} from '../utils/handleDate';
 	let socket;
-	var connectUrl = 'ws://127.0.0.1:8081';
+	var connectUrl = 'ws://49.233.152.15:8081';
 	//"ws://49.233.152.15:8081"
   export default {
     data () {
