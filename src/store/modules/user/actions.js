@@ -13,7 +13,7 @@ export default {
 					}
 				}).then(response => {
 				const data = response.data;
-				Cookies.set('Admin-Token', data[0].token);
+				Cookies.set('Admin-Token', data[0].token,{expires: 3});
 				commit('SET_TOKEN', data[0].token);
 				resolve();
 			}).catch(error =>{
@@ -76,7 +76,6 @@ export default {
 		return new Promise(resolve => {
 			commit('SET_TOKEN', '');
 			Cookies.remove('Admin-Token');
-			alert("has logout");
 			resolve();
 		});
 	},

@@ -1,7 +1,6 @@
 import Cookies from 'js-cookie';
 export default {
-    //token: Cookies.get('Admin-Token'),
-    token: '',
+    token: Cookies.get('Admin-Token'),
     name: '',
     avatar: '',
     dbs_prefix: '',

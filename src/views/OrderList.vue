@@ -64,8 +64,8 @@
           </template>
           <template v-slot:expanded-item="{ item }">
             <td :colspan="8">
-              <v-btn text small color="green">打印</v-btn>
-              <div>
+              <v-btn text small color="green" @click="startPrint">打印</v-btn>
+              <div ref="print">
                 <h4 style="text-align:center;">处  方</h4>
                 <br>
                 <hr style="height:1px;border:none;border-top:1px solid #555555;" />
@@ -323,7 +323,11 @@
         }
         else
           return false;
-      }
+      },
+
+      startPrint: function(){
+					this.$print(this.$refs.print);
+				}
     },
 
 

@@ -6,12 +6,14 @@ import './plugins'
 import './login.js'
 import vuetify from './plugins/vuetify'
 import { sync } from 'vuex-router-sync'
+import Print from './utils/print'
 
 
 
 sync(store, router)
 
 Vue.config.productionTip = false
+Vue.use(Print);
 
 new Vue({
   router,

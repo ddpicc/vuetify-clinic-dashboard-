@@ -77,7 +77,7 @@
         </v-menu>
 
         <v-btn
-          to="/"
+          @click="logout"
           icon
         >
           <v-icon color="tertiary">
@@ -133,8 +133,17 @@
         } else {
           this.responsive = false
         }
+      },
+
+      logout: function(e){
+        e.preventDefault();
+        this.$store.dispatch('user/FedLogOut').then(() => {
+          this.$router.push({ path: '/login' });
+        }).catch(err => {
+          this.$message.error(err);
+        });
       }
-    }
+    },
   }
 </script>
 
