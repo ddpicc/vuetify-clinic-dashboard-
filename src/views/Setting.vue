@@ -119,6 +119,19 @@
                 </template>
               </v-list-item>
 
+              <v-list-item>
+                <template v-slot:default="{  }">
+                  <v-list-item-action>
+                    <v-checkbox v-model="displayLessMenu"></v-checkbox>
+                  </v-list-item-action>
+
+                  <v-list-item-content>
+                    <v-list-item-title>隐藏菜单</v-list-item-title>
+                    <v-list-item-subtitle>是否隐藏除了处方管理和生成处方之外的其他菜单项</v-list-item-subtitle>
+                  </v-list-item-content>
+                </template>
+              </v-list-item>
+
             </v-list-item-group>
           </v-list>
           <v-btn color="blue" @click="submit">
@@ -156,6 +169,7 @@
 <script>
 import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
   export default {
+    inject: ['reload'],
     data () {
       return {
         settings: [],
@@ -168,6 +182,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         displayYaowan: true,
         displayProfit: true,
         displayTime: true,
+        displayLessMenu: true,
         clinicName: "云杰诊所",
         password: 'Password',
         rules: {
@@ -185,16 +200,19 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         this.$http.post('/api/updateUserSetting',{   
           displayYaowan: this.displayYaowan? 1:0,
           displayProfit: this.displayProfit? 1:0,
+          displayLessMenu: this.displayLessMenu? 1:0,
           userid: this.$store.state.user.user_id           
         }).then( (res) => {
           let userSetting = loadFromLocal(1,'userSetting', []);
           userSetting[0]['displayYaowan'] = this.displayYaowan? 1:0;
           userSetting[0]['displayProfit'] = this.displayProfit? 1:0;
+          userSetting[0]['displayLessMenu'] = this.displayLessMenu? 1:0;
           saveToLocal(1,'userSetting',userSetting);
           this.snackbar = true;
           this.notification = '修改成功';
           this.snackbarColor = 'green';
           this.getSetting();
+          this.reload();
         })
       },
 
@@ -206,6 +224,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         }).then(res => {
           this.displayYaowan = res.data[0].displayYaowan;
           this.displayProfit = res.data[0].displayProfit;
+          this.displayLessMenu = res.data[0].displayLessMenu;
         })
       }
     },

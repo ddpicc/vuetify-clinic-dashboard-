@@ -288,6 +288,53 @@
               </v-card-text>
             </v-card>
           </v-dialog>
+          <v-dialog v-model="printOrderDialog">
+            <v-card>
+              <div ref="print">
+                <h4 style="text-align:center;">处  方</h4>
+                <br>
+                <hr style="height:1px;border:none;border-top:1px solid #555555;" />
+                  <v-simple-table>
+                  <template v-slot:default>
+                    <tbody>
+                      <tr>
+                        <td :colspan="2"><p>姓名： {{patientName}}</p></td>
+                        <td :colspan="2"><p>年龄： {{patientAge}}</p></td>
+                        <td :colspan="2"><p>性别： {{patientSex}}</p></td>
+                        <td :colspan="2"><p>电话:  {{patientPhone}}</p></td>
+                      </tr>
+                      <tr>
+                        <td  :colspan="6" style="border-bottom:1px solid"><p>症状： {{patientSymptom}}</p></td>
+                        <td  :colspan="2" style="border-bottom:1px solid"><p>备注： {{orderComment}}</p></td>
+                      </tr>
+                      <tr v-for="element in medString.split(';')" :key="element.name">
+                        <td>{{ JSON.parse(element).name1 }}</td>
+                        <td>{{ JSON.parse(element).count1 }}</td>
+                        <td>{{ JSON.parse(element).name2 }}</td>
+                        <td>{{ JSON.parse(element).count2 }}</td>
+                        <td>{{ JSON.parse(element).name3 }}</td>
+                        <td>{{ JSON.parse(element).count3 }}</td>
+                        <td>{{ JSON.parse(element).name4 }}</td>
+                        <td>{{ JSON.parse(element).count4 }}</td>
+                      </tr>
+                      <tr>
+                        <td :colspan="6"></td>
+                        <td :colspan="2"><p>{{inputDose}}付</p></td>
+                      </tr>
+                      <tr>
+                        <td :colspan="6" style="border-bottom:1px solid"></td>
+                        <td :colspan="2" style="border-bottom:1px solid"><p>价钱： {{total}}元</p></td>
+                      </tr>
+                      <tr>
+                        <td :colspan="6"><p>处方医师：  崔云杰</p></td>
+                        <td :colspan="2"><p>日期： </p></td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+              </div>
+            </V-card>
+          </v-dialog>
         </material-card>
       </v-col>
     </v-row>
@@ -306,6 +353,7 @@
   import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
 
   export default {
+    inject: ['reload'],
     data: () => ({
       fab: false,
       searchStr: '',
@@ -336,6 +384,7 @@
       inputDose: '',
       medString: '',
       selectPatientDialog: false,
+      printOrderDialog: false,
       cacheFindedPatient: [],
       notzero: v=> v > 0 || '不能是0',
       findPatientHeader: [
@@ -530,7 +579,9 @@
       },
 
       postOrdToDbSure:function() {
-        let ordProfit = '';
+        this.printOrderDialog = true;
+        this.reload();
+        /* let ordProfit = '';
         if(this.items.length == 0 && this.medRadio!='药丸'){
           alert('订单为空');
           return;
@@ -606,7 +657,7 @@
           .catch( (err) =>{
             console.log(err);
           })
-        }
+        } */
       },
 
       consumeMed: function(){

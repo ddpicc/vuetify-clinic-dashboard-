@@ -39,7 +39,7 @@
             :items-per-page="15"
             :search="searchStr"
             :custom-filter="filterText"
-            loading="loading"
+            :loading="loading"
           >
           <template v-slot:top>
             <v-text-field v-model="searchStr" label="搜索..." class="mx-4"></v-text-field>

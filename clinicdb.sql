@@ -141,6 +141,7 @@ CREATE TABLE `myDbs_userconfig` (
   `userid` smallint(5) unsigned,
   `displayYaowan` smallint(5) NOT NULL DEFAULT 0,
   `displayProfit` smallint(5) NOT NULL DEFAULT 0,
+  `displayLessMenu` smallint(5) NOT NULL DEFAULT 0,
   `total201906` float(50) NOT NULL DEFAULT 0,
   `profit201906` float(50) NOT NULL DEFAULT 0,
   `total201907` float(50) NOT NULL DEFAULT 0,

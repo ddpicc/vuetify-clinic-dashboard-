@@ -16,7 +16,7 @@
             :items="items"
             item-key="name"
             :items-per-page="15"
-            loading="loading"
+            :loading="loading"
           >
           <template v-slot:item.action="{ item }">
 						<v-btn @click.stop="selectPatient(item)" text color="green">选择</v-btn>

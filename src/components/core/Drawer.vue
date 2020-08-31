@@ -70,12 +70,63 @@
 </template>
 
 <script>
+  import { saveToLocal, loadFromLocal} from '../../utils/handleLocalStorage';
 // Utilities
   import {
     mapMutations,
     mapState
   } from 'vuex'
 
+  var moreLinks = [
+    {
+      to: '/dashboard',
+      icon: 'mdi-view-dashboard',
+      text: '首页'
+    },
+    {
+      to: '/today-patient',
+      icon: 'mdi-clipboard-outline',
+      text: '今日病人'
+    },
+    {
+      to: '/create-ord',
+      icon: 'mdi-format-font',
+      text: '生成处方'
+    },        
+    {
+      to: '/ord-list',
+      icon: 'mdi-clipboard-outline',
+      text: '处方管理'
+    },              
+    {
+      to: '/med-list',
+      icon: 'mdi-pill',
+      text: '药品管理'
+    },
+    {
+      to: '/patient-list',
+      icon: 'mdi-human-male-female',
+      text: '病人管理'
+    },
+    {
+      to: '/detail-info',
+      icon: 'mdi-receipt',
+      text: '详细账单'
+    }
+  ];
+
+  var lessLinks = [
+    {
+      to: '/create-ord',
+      icon: 'mdi-format-font',
+      text: '生成处方'
+    },        
+    {
+      to: '/ord-list',
+      icon: 'mdi-clipboard-outline',
+      text: '处方管理'
+    }, 
+  ]
   export default {
     props: {
       opened: {
@@ -84,43 +135,7 @@
       }
     },
     data: () => ({
-      links: [
-        {
-          to: '/dashboard',
-          icon: 'mdi-view-dashboard',
-          text: '首页'
-        },
-        {
-          to: '/today-patient',
-          icon: 'mdi-clipboard-outline',
-          text: '今日病人'
-        },
-        {
-          to: '/create-ord',
-          icon: 'mdi-format-font',
-          text: '生成处方'
-        },        
-        {
-          to: '/ord-list',
-          icon: 'mdi-clipboard-outline',
-          text: '处方管理'
-        },              
-        {
-          to: '/med-list',
-          icon: 'mdi-pill',
-          text: '药品管理'
-        },
-        {
-          to: '/patient-list',
-          icon: 'mdi-human-male-female',
-          text: '病人管理'
-        },
-        {
-          to: '/detail-info',
-          icon: 'mdi-receipt',
-          text: '详细账单'
-        }
-      ]
+      links: [],
     }),
 
     computed: {
@@ -137,6 +152,32 @@
 
     methods: {
       ...mapMutations('app', ['setDrawer', 'toggleDrawer'])
-    }
+    },
+
+    mounted: function() {
+      console.log('drawer init');
+      let userSetting = loadFromLocal(1,'userSetting', []);
+      let displayLessMenu = userSetting[0]['displayLessMenu'];
+      let childrenPath = this.$store.state.permission.addRouters[0].children;
+      if(displayLessMenu){
+        childrenPath.forEach(element => {
+          var findLinks = lessLinks.find(function(p){
+            return p.to === element.path;
+          })
+          if(typeof(findLinks) != 'undefined'){
+            this.links.push(findLinks);
+          }
+        });
+      }else{
+        childrenPath.forEach(element => {
+          var findLinks = moreLinks.find(function(p){
+            return p.to === element.path;
+          })
+          if(typeof(findLinks) != 'undefined'){
+            this.links.push(findLinks);
+          }
+        });
+      }      
+		}
   }
 </script>

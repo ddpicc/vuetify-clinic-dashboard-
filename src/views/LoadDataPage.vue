@@ -68,7 +68,20 @@
         setTimeout( () => {this.e6 = 2;},1200);
 				setTimeout( () => {this.e6 = 3;},2400);
         setTimeout( () => {this.$router.push({ path: '/dashboard' });},7600);
-			},
+      },
+      
+      //if the date saved in the localstorate is not today, load and set all data, otherwise directly jump to dashboard
+      checkDate: function() {
+        let updated_date = loadFromLocal(1,'updated_date',[]);
+        if(updated_date != new Date().toDateString() || updated_date.length == 0){
+          saveToLocal(1,'updated_date', new Date().toDateString());
+          this.loadData();
+          this.loadUserConfig();
+			    this.loadingData();
+        }else{
+          this.$router.push({ path: '/dashboard' });
+        }
+      },
 
 			//读取最近90天的订单数据存在本地
 			loadData: function(){
@@ -158,9 +171,7 @@
     },
 
     mounted: function() {
-      this.loadData();
-      this.loadUserConfig();
-			this.loadingData();
+      this.checkDate();
 		}
   }
 </script>

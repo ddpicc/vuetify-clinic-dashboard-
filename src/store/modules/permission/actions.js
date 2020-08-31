@@ -2,7 +2,7 @@ import { asyncRouterMap, constantRouterMap } from '../../../router/index';
 
 function hasPermission(roles, route) {
     if (route.meta && route.meta.role) {
-      return roles.some(role => route.meta.role.indexOf(role) >= 0)
+      return route.meta.role.indexOf(roles) >= 0;
     } else {
       return true;
     }

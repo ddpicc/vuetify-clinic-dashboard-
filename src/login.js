@@ -5,7 +5,7 @@ import store from './store'
 function hasPermission(roles, permissionRoles) {
 	if (roles.indexOf('admin') >= 0) return true // admin权限 直接通过
 	if (!permissionRoles) return true
-	return roles.some(role => permissionRoles.indexOf(role) >= 0)
+	return permissionRoles.indexOf(roles) >= 0
 }
 
 const whiteList = ['/login','/','/registerp','/displayp']// 不重定向白名单
