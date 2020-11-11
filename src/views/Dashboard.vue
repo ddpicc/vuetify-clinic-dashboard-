@@ -13,17 +13,6 @@
           <h5 class="title font-weight-light">
             每天收入
           </h5>
-
-          <p class="category d-inline-flex font-weight-light">
-            <v-icon
-              color="green"
-              small
-            >
-              mdi-arrow-up
-            </v-icon>
-            <span class="green--text">55%</span>&nbsp;
-            昨天收入提高
-          </p>
         </material-linechart-card>
       </v-col>
 
@@ -39,16 +28,6 @@
           <h4 class="title font-weight-light">
             每月收入
           </h4>
-          <p class="category d-inline-flex font-weight-light">
-            <v-icon
-              color="green"
-              small
-            >
-              mdi-arrow-up
-            </v-icon>
-            <span class="green--text">55%</span>&nbsp;
-            此月收入提高
-          </p>
         </material-linechart-card>
       </v-col>
 
@@ -64,16 +43,6 @@
           <h4 class="title font-weight-light">
             每天病人
           </h4>
-          <p class="category d-inline-flex font-weight-light">
-            <v-icon
-              color="green"
-              small
-            >
-              mdi-arrow-up
-            </v-icon>
-            <span class="green--text">55%</span>&nbsp;
-            昨天人数提高
-          </p>
         </material-linechart-card>
       </v-col>
 
@@ -323,7 +292,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
             this.overallIncome = parseFloat(this.overallIncome + parseFloat(monthTotalArry[0][key]));
           }
         }
-        this.overallIncome = this.overallIncome + _monthIncome;
+        this.overallIncome = parseFloat(this.overallIncome + parseFloat(_monthIncome));
         
         //start from 0, 也就是当前月
         for(let monthOffset=0; monthOffset<12; monthOffset++){
@@ -363,7 +332,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         this.monthSalesChart.data.push({name: '收入', data: incomeMonth});
           if(this.displayProfit)
             this.monthSalesChart.data.push({name: '利润', data: profitMonth});
-        this.yearIncome = this.yearIncome + _monthIncome;
+        this.yearIncome = parseFloat(this.yearIncome + _monthIncome);
       }
 
     },

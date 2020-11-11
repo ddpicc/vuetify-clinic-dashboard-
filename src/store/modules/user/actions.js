@@ -13,7 +13,8 @@ export default {
 					}
 				}).then(response => {
 				const data = response.data;
-				Cookies.set('Admin-Token', data[0].token,{expires: 3});
+				//Cookies.set('Admin-Token', data[0].token,{expires: 1});
+				Cookies.set('Admin-Token', data[0].token);
 				commit('SET_TOKEN', data[0].token);
 				resolve();
 			}).catch(error =>{

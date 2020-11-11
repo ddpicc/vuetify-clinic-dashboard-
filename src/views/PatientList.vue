@@ -65,8 +65,8 @@
         },
         {
           sortable: false,
-          text: '最近一次诊断',
-					value: 'lastVisit',
+          text: '就医次数',
+					value: 'visitTimes',
 					width: '25%'
         },
         {

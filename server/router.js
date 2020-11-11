@@ -34,6 +34,10 @@ router.post('/insertPatientOrderPage', (req, res, next) => {
   api.insertPatientOrderPage(req, res, next);
 });
 
+router.post('/updatePatientTimes', (req, res, next) => {
+  api.updatePatientTimes(req, res, next);
+});
+
 router.post('/insertPatientDetailPage', (req, res, next) => {
   api.insertPatientDetailPage(req, res, next);
 });
@@ -110,6 +114,9 @@ router.post('/setPatientFinished', (req, res, next) => {
   api.setPatientFinished(req, res, next);
 });
 
+router.post('/updateMedInventory', (req, res, next) => {
+  api.updateMedInventory(req, res, next);
+});
 
 
 

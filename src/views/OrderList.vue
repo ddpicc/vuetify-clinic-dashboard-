@@ -54,7 +54,7 @@
             </v-icon>
             <v-icon v-if="canDelete(item)"
               small
-              @click="deleteItem(item.id)"
+              @click="deleteItem(item)"
             >
               mdi-close
             </v-icon>
@@ -66,7 +66,8 @@
             <td :colspan="8">
               <v-btn text small color="green" @click="startPrint">打印</v-btn>
               <div ref="print">
-                <h4 style="text-align:center;">处  方</h4>
+                <h4 style="text-align:center;">宛&nbsp;城&nbsp;云&nbsp;杰&nbsp;诊&nbsp;所</h4>
+                <h5 style="text-align:center;">处&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;方</h5>
                 <br>
                 <hr style="height:1px;border:none;border-top:1px solid #555555;" />
                  <v-simple-table>
@@ -74,13 +75,13 @@
                     <tbody>
                       <tr>
                         <td :colspan="2"><p>姓名： {{item.patient}}</p></td>
-                        <td :colspan="2"><p>年龄： {{item.age}}</p></td>
-                        <td :colspan="2"><p>性别： {{item.sex}}</p></td>
-                        <td :colspan="2"><p>电话:  {{item.phone}}</p></td>
+                        <td :colspan="1"><p>年龄： {{item.age}}</p></td>
+                        <td :colspan="1"><p>性别： {{item.sex}}</p></td>
+                        <td :colspan="4"><p>电话:  {{item.phone}}</p></td>
                       </tr>
                       <tr>
-                        <td  :colspan="6" style="border-bottom:1px solid"><p>症状： {{item.symptom}}</p></td>
-                        <td  :colspan="2" style="border-bottom:1px solid"><p>备注： {{item.order_comment}}</p></td>
+                        <td  :colspan="4" style="border-bottom:1px solid"><p>症状： {{item.symptom}}</p></td>
+                        <td  :colspan="4" style="border-bottom:1px solid"><p>备注： {{item.order_comment}}</p></td>
                       </tr>
                       <tr v-for="element in item.medarray" :key="element.name">
                         <td>{{ JSON.parse(element).name1 }}</td>
@@ -300,17 +301,92 @@
         this.$router.push({name: '生成处方', params: {ord_item: selectedItem}});
       },
 
-      deleteItem(ordId){
-        this.$http.delete('/api/deleteOrdbyId',{
-          params: {
-            dbs : this.$store.state.user.dbs_prefix+'ordlist',
-						id : ordId
-					}
+      deleteItem(oneOrder){
+        //update med inventory
+        var sqlStatement = '';
+        if(oneOrder.medtype == '免煎' || oneOrder.medtype == '西药'){
+          this.$http.get('/api/getAllMedbyType',{
+            params: {
+              dbs : this.$store.state.user.dbs_prefix+'medlist',
+              medtype : oneOrder.medtype
+            }
+          }).then( (res) => {
+            let cacheMedData = res.data;
+            for(let oneMed of oneOrder.medarray) {
+              oneMed = JSON.parse(oneMed);
+              if(typeof(oneMed.name1) == 'undefined')
+                break;
+              else{
+                var existInDb = cacheMedData.find(function(p){
+                return p.medname === oneMed.name1;
+                })
+                if(typeof(existInDb) != 'undefined'){
+                  let countCost = parseInt(oneMed.count1) * oneOrder.dose;
+                  let oneSqlString = 'UPDATE ' + this.$store.state.user.dbs_prefix+'medlist' +  ' SET inventoryNm = inventoryNm + ' + countCost + " WHERE medname = '" + oneMed.name1 + "';";
+                  sqlStatement = sqlStatement + oneSqlString;
+                }
+              }
+              if(typeof(oneMed.name2) == 'undefined')
+                break;
+              else{
+                var existInDb = cacheMedData.find(function(p){
+                return p.medname === oneMed.name2;
+                })
+                if(typeof(existInDb) != 'undefined'){
+                  let countCost = parseInt(oneMed.count2) * oneOrder.dose;
+                  let oneSqlString = 'UPDATE ' + this.$store.state.user.dbs_prefix+'medlist' +  ' SET inventoryNm = inventoryNm + ' + countCost + " WHERE medname = '" + oneMed.name2 + "';";
+                  sqlStatement = sqlStatement + oneSqlString;
+                }
+              }
+              if(typeof(oneMed.name3) == 'undefined')
+                break;
+              else{
+                var existInDb = cacheMedData.find(function(p){
+                return p.medname === oneMed.name3;
+                })
+                if(typeof(existInDb) != 'undefined'){
+                  let countCost = parseInt(oneMed.count3) * oneOrder.dose;
+                  let oneSqlString = 'UPDATE ' + this.$store.state.user.dbs_prefix+'medlist' +  ' SET inventoryNm = inventoryNm + ' + countCost + " WHERE medname = '" + oneMed.name3 + "';";
+                  sqlStatement = sqlStatement + oneSqlString;
+                }
+              }
+              if(typeof(oneMed.name4) == 'undefined')
+                break;
+              else{
+                var existInDb = cacheMedData.find(function(p){
+                return p.medname === oneMed.name4;
+                })
+                if(typeof(existInDb) != 'undefined'){
+                  let countCost = parseInt(oneMed.count4) * oneOrder.dose;
+                  let oneSqlString = 'UPDATE ' + this.$store.state.user.dbs_prefix+'medlist' +  ' SET inventoryNm = inventoryNm + ' + countCost + " WHERE medname = '" + oneMed.name4 + "';";
+                  sqlStatement = sqlStatement + oneSqlString;
+                }
+              }
+            }
+            this.$http.post('/api/updateMedInventory',{
+              sqlStatement : sqlStatement,
+            }).then( (res) => {
+              console.log('update med success');
+            })
+          })
+        }
+        
+        this.$http.post('/api/updatePatientTimes',{
+          dbs : this.$store.state.user.dbs_prefix+'patient',
+          patient_id: oneOrder.patient_id,
+          change: -1,
         }).then( (res) => {
-          this.snackbar = true;
-          this.notification = '删除成功';
-          this.snackbarColor = 'green';
-          this.getAll();
+          this.$http.delete('/api/deleteOrdbyId',{
+            params: {
+              dbs : this.$store.state.user.dbs_prefix+'ordlist',
+              id : oneOrder.id,
+            }
+          }).then( (res) => {            
+            this.snackbar = true;
+            this.notification = '删除成功';
+            this.snackbarColor = 'green';
+            this.getAll();
+          })
         })
       },
 

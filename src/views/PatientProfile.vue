@@ -262,6 +262,7 @@
       },
 
       reuse: function(selectedItem){
+        selectedItem.patient_id = this.patientId;
         this.$router.push({name: '生成处方', params: {ord_item: selectedItem}});
       },
     },

@@ -32,7 +32,7 @@ schedule.scheduleJob('0 0 0 1 * *',()=>{
 	var connection = mysql.createConnection({
 			host     : 'localhost',
 			user     : 'root',
-			password : 'cnaiq1988',
+			password : 'CuiQian1988',
 			database : 'myDbs',
 			port: '3306',
 			dateStrings: true,
@@ -54,11 +54,12 @@ schedule.scheduleJob('0 0 0 1 * *',()=>{
 	});
 });
 
-schedule.scheduleJob('0 0 0 * * *',()=>{
+//每天晚上清空当天录入的病人
+schedule.scheduleJob('0 30 23 * * *',()=>{
 	var connection = mysql.createConnection({
 			host     : 'localhost',
 			user     : 'root',
-			password : 'cnaiq1988',
+			password : 'CuiQian1988',
 			database : 'myDbs',
 			port: '3306',
 			dateStrings: true,
@@ -71,7 +72,8 @@ schedule.scheduleJob('0 0 0 * * *',()=>{
 		console.log(result);
 		connection.end();
 	});
-	//todo 遍历当天免煎处方，修改药品
+	
+	
 });
 
 app.listen(3000,() => {

@@ -141,6 +141,7 @@
                 <v-select
                   v-if="howToUseOn"
                   :items="hotToUse"
+                  v-model="useage"
                   dense
                   clearable
                   ref="mark3"
@@ -291,7 +292,8 @@
           <v-dialog v-model="printOrderDialog">
             <v-card>
               <div ref="print">
-                <h4 style="text-align:center;">处  方</h4>
+                <h4 style="text-align:center;">宛城云杰诊所</h4>
+                <h4 style="text-align:center;">处&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;方</h4>
                 <br>
                 <hr style="height:1px;border:none;border-top:1px solid #555555;" />
                   <v-simple-table>
@@ -299,13 +301,13 @@
                     <tbody>
                       <tr>
                         <td :colspan="2"><p>姓名： {{patientName}}</p></td>
-                        <td :colspan="2"><p>年龄： {{patientAge}}</p></td>
-                        <td :colspan="2"><p>性别： {{patientSex}}</p></td>
-                        <td :colspan="2"><p>电话:  {{patientPhone}}</p></td>
+                        <td :colspan="1"><p>年龄： {{patientAge}}</p></td>
+                        <td :colspan="1"><p>性别： {{patientSex}}</p></td>
+                        <td :colspan="4"><p>电话:  {{patientPhone}}</p></td>
                       </tr>
                       <tr>
-                        <td  :colspan="6" style="border-bottom:1px solid"><p>症状： {{patientSymptom}}</p></td>
-                        <td  :colspan="2" style="border-bottom:1px solid"><p>备注： {{orderComment}}</p></td>
+                        <td  :colspan="4" style="border-bottom:1px solid"><p>症状： {{patientSymptom}}</p></td>
+                        <td  :colspan="4" style="border-bottom:1px solid"><p>备注： {{orderComment}}</p></td>
                       </tr>
                       <tr v-for="element in medString.split(';')" :key="element.name">
                         <td>{{ JSON.parse(element).name1 }}</td>
@@ -319,7 +321,7 @@
                       </tr>
                       <tr>
                         <td :colspan="6"></td>
-                        <td :colspan="2"><p>{{inputDose}}付</p></td>
+                        <td :colspan="2"><p>{{orderCount}}付</p></td>
                       </tr>
                       <tr>
                         <td :colspan="6" style="border-bottom:1px solid"></td>
@@ -327,12 +329,16 @@
                       </tr>
                       <tr>
                         <td :colspan="6"><p>处方医师：  崔云杰</p></td>
-                        <td :colspan="2"><p>日期： </p></td>
+                        <td :colspan="2"><p>日期： {{todayDate}}</p></td>
                       </tr>
                     </tbody>
                   </template>
                 </v-simple-table>
               </div>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="printIt">打印</v-btn>
+              </v-card-actions>
             </V-card>
           </v-dialog>
         </material-card>
@@ -346,7 +352,7 @@
   var staticHeader=[{sortable: false, text: '名称', value: 'name1', width: '15%'}, {sortable: false,text: '数量', value: 'count1', width: '10%'}, {sortable: false,text: '名称', value: 'name2', width: '15%'}, {sortable: false,text: '数量', value: 'count2', width: '10%'}, 
                  {sortable: false,text: '名称', value: 'name3', width: '15%'}, {sortable: false,text: '数量', value: 'count3', width: '10%'}, {sortable: false,text: '名称', value: 'name4', width: '15%'}, {sortable: false,text: '数量', value: 'count4', width: '10%'}];
 
-  var xiyaoHeader=[{sortable: false,text: '名称', value: 'name1'}, {sortable: false,text: '数量', value: 'count1'}, {sortable: false,text: '用法', value: 'usage1'}];
+  var xiyaoHeader=[{sortable: false,text: '名称', value: 'name1'}, {sortable: false,text: '数量', value: 'count1'}, {sortable: false,text: '用法', value: 'medComment1'}];
   var yaowanHeader=[];
   var reuseOrd=[];
   import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate';
@@ -370,9 +376,11 @@
       orderCount: '',
       total: '',
       howToUseOn: false,
+      useage: '',
+      todayDate: getNowFormatDate(),
       isYaowan: false,
       enableYaowan: false,
-      hotToUse: ['一天一次', '一天三次'],
+      hotToUse: ['5ml tid.po', '半片 tid.po', '一片 tid.po', '2片 tid.po', '3片 tid.po', '半片 bid.po', '一片 bid.po', '2片 bid.po', '3片 bid.po'],
       medRadio: '草药',
       cardColor: 'green',
       components: [],
@@ -451,7 +459,7 @@
       },
 
       getColor (count) {
-        if (parseInt(count) === 1 && this.medRadio == "草药") return 'orange';
+        if (parseInt(count) === 1 && this.medRadio == "草药") return 'red';
       },
 
       searchChanged: function(queryText){
@@ -505,7 +513,7 @@
 				var emptyStr = "{";
 				var carry = 4;
 				if(this.medRadio == "西药")
-					carry = 2;
+					carry = 1;
 				for(var i=0; i < this.orderMed1PerObj.length; i++){
 					let tempStrName = "name" + (i%carry+1);
 					let tempStrNumber = 'count' + (i%carry+1);
@@ -515,11 +523,10 @@
 					else if(this.medRadio == "免煎")
 						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + this.orderMed1PerObj[i].count + this.orderMed1PerObj[i].spec + '",';
 					else if(this.medRadio == "西药")
-						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + parseInt(this.orderMed1PerObj[i].count) + '盒","' + tempStrMedComment + '":"' + this.orderMed1PerObj[i].medComment + '",';
-					if(i>0 && (i+1) % carry == 0){
+						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + parseInt(this.orderMed1PerObj[i].count) + this.orderMed1PerObj[i].spec + '","' + tempStrMedComment + '":"' + this.orderMed1PerObj[i].medComment + '",';
+					if(i>=0 && (i+1) % carry == 0){
 						emptyStr = emptyStr.substr(0,emptyStr.length-1);
             emptyStr = emptyStr + '}';
-            alert(emptyStr);
             let tempObj = JSON.parse(emptyStr);
             medStringTmepArray.push(emptyStr);
 						this.items.push(tempObj);
@@ -568,7 +575,8 @@
             count: this.inputDose,
             spec: existInDb.spec,
             baseprice: existInDb.baseprice,
-						sellprice: existInDb.sellprice
+            sellprice: existInDb.sellprice,
+            medComment: this.useage,
           })
         this.disPlayToTb();
         if(this.orderCount === '')
@@ -579,9 +587,6 @@
       },
 
       postOrdToDbSure:function() {
-        this.printOrderDialog = true;
-        this.reload();
-        /* let ordProfit = '';
         if(this.items.length == 0 && this.medRadio!='药丸'){
           alert('订单为空');
           return;
@@ -594,6 +599,13 @@
           alert('姓名不能为空');
           return;
         }
+        this.printOrderDialog = true;
+      },
+
+      printIt: function(){
+        this.printOrderDialog = false;
+        this.$print(this.$refs.print);
+        let ordProfit = '';
         if(this.medRadio == '药丸' && this.total != 0){
           this.orderCount = 1;
         }
@@ -602,31 +614,44 @@
         }else{
           ordProfit = (parseFloat(this.total) - parseFloat((this.perOrdBase * this.orderCount).toFixed(2))).toFixed(2);
         }
+        if(this.medRadio == '免煎' || this.medRadio == '西药'){
+          //如果是免煎药或者是西药，更新药品库存
+          let sqlStatement = '';
+          for(let oneMed of this.orderMed1PerObj){
+            let countCost = oneMed.count * this.orderCount;
+            let oneSqlString = 'UPDATE ' + this.$store.state.user.dbs_prefix+'medlist' +  ' SET inventoryNm = inventoryNm - ' + countCost + " WHERE medname = '" + oneMed.name + "';";
+            sqlStatement = sqlStatement + oneSqlString;
+          }
+          this.$http.post('/api/updateMedInventory',{
+            sqlStatement : sqlStatement,
+          }).then( (res) => {
+            console.log('update med success');
+          })
+        }
         if(!this.patient_id){
           this.$http.post('/api/insertPatientOrderPage',{
-                //搜索全拼相同，在得到的结果中找至少有一个字相同的名字,找到了就列出来，没找到就创建一个新的病人
-                dbs : this.$store.state.user.dbs_prefix+'patient',
-                name : this.patientName,
-                name_pinyin : pinyin(this.patientName,{style: pinyin.STYLE_NORMAL}).join(""),
-                sex : this.patientSex,
-                age : !this.patientAge? 0 : parseFloat(this.patientAge),
-                phone : !this.patientPhone? 0 : parseInt(this.patientPhone),
-                lastVisit : getNowFormatDate(),
+              //搜索全拼相同，在得到的结果中找至少有一个字相同的名字,找到了就列出来，没找到就创建一个新的病人
+              dbs : this.$store.state.user.dbs_prefix+'patient',
+              name : this.patientName,
+              name_pinyin : pinyin(this.patientName,{style: pinyin.STYLE_NORMAL}).join(""),
+              sex : this.patientSex,
+              age : !this.patientAge? 0 : parseFloat(this.patientAge),
+              phone : !this.patientPhone? 0 : parseInt(this.patientPhone),
+              lastVisit : getNowFormatDate(),
             }).then( (res) => {
               this.$http.post('/api/insertOrd',{
-                    dbs : this.$store.state.user.dbs_prefix+'ordlist',
-                    patient : this.patientName,
-                    patient_id : res.data.insertId,
-                    symptom : this.patientSymptom,
-                    order_comment : this.orderComment,
-                    medtype : this.medRadio,
-                    dose : this.orderCount,
-                    medarray : this.medString,
-                    total : parseFloat(this.total),
-                    totalprofit : ordProfit,
-                    date : getNowFormatDate(),
+                dbs : this.$store.state.user.dbs_prefix+'ordlist',
+                patient : this.patientName,
+                patient_id : res.data.insertId,
+                symptom : this.patientSymptom,
+                order_comment : this.orderComment,
+                medtype : this.medRadio,
+                dose : this.orderCount,
+                medarray : this.medString,
+                total : parseFloat(this.total),
+                totalprofit : ordProfit,
+                date : getNowFormatDate(),
               }).then( (resord) => {   
-                this.consumeMed();
                 this.clearInfo();
               })
               .catch( (err) =>{
@@ -638,7 +663,12 @@
             })
         }else{
           //update lastvistit
-          this.$http.post('/api/insertOrd',{
+          this.$http.post('/api/updatePatientTimes',{
+            dbs : this.$store.state.user.dbs_prefix+'patient',
+            patient_id: this.patient_id,
+            change: 1,
+          }).then( (res) => {
+            this.$http.post('/api/insertOrd',{
                 dbs : this.$store.state.user.dbs_prefix+'ordlist',
                 patient : this.patientName,
                 patient_id : this.patient_id,
@@ -650,19 +680,14 @@
                 total : parseFloat(this.total),
                 totalprofit : ordProfit,
                 date : getNowFormatDate(),
-          }).then( (resord) => {
-            this.consumeMed();
-            this.clearInfo();
-          })
-          .catch( (err) =>{
-            console.log(err);
-          })
-        } */
-      },
-
-      consumeMed: function(){
-        //改变数据库药品
-        //alert(JSON.stringify(this.orderMed1PerObj));
+            }).then( (resord) => {
+              this.clearInfo();
+            })
+            .catch( (err) =>{
+              console.log(err);
+            })
+          })          
+        }
       },
 
       clearInfo: function(){
@@ -679,6 +704,7 @@
         this.perOrdTotal = 0;
         this.perOrdBase = 0;
         this.inputDose = '';
+        this.useage = '';
         this.orderMed1PerObj = [];
       },
 
@@ -785,7 +811,7 @@
               if(typeof(existInDb) != 'undefined'){
                 this.orderMed1PerObj.push({
                 name: item.name1,
-                count: item.count1,
+                count: parseInt(item.count1),
                 spec: existInDb.spec,
                 baseprice: existInDb.baseprice,
                 sellprice: existInDb.sellprice
@@ -801,7 +827,7 @@
               if(typeof(existInDb) != 'undefined'){
                 this.orderMed1PerObj.push({
                 name: item.name2,
-                count: item.count2,
+                count: parseInt(item.count2),
                 spec: existInDb.spec,
                 baseprice: existInDb.baseprice,
                 sellprice: existInDb.sellprice
@@ -817,7 +843,7 @@
               if(typeof(existInDb) != 'undefined'){
                 this.orderMed1PerObj.push({
                 name: item.name3,
-                count: item.count3,
+                count: parseInt(item.count3),
                 spec: existInDb.spec,
                 baseprice: existInDb.baseprice,
                 sellprice: existInDb.sellprice
@@ -833,7 +859,7 @@
               if(typeof(existInDb) != 'undefined'){
                 this.orderMed1PerObj.push({
                 name: item.name4,
-                count: item.count4,
+                count: parseInt(item.count4),
                 spec: existInDb.spec,
                 baseprice: existInDb.baseprice,
                 sellprice: existInDb.sellprice
@@ -843,7 +869,8 @@
           }
           this.disPlayToTb();
         })
-      }
+      },
+
     },
 
     watch: {

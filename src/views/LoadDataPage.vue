@@ -70,7 +70,7 @@
         setTimeout( () => {this.$router.push({ path: '/dashboard' });},7600);
       },
       
-      //if the date saved in the localstorate is not today, load and set all data, otherwise directly jump to dashboard
+      //if the date saved in the localstorage is not today, load and set all data, otherwise directly jump to dashboard
       checkDate: function() {
         let updated_date = loadFromLocal(1,'updated_date',[]);
         if(updated_date != new Date().toDateString() || updated_date.length == 0){

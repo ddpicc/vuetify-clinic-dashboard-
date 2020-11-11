@@ -96,7 +96,7 @@ CREATE TABLE `qcui_patient` (
   `address` varchar(20),
   `phone` varchar(20),
   `wechat` varchar(20),
-  `lastVisit` date,
+  `visitTimes` smallint(5) NOT NULL DEFAULT 1,
   `comment` varchar(255),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
@@ -113,7 +113,7 @@ CREATE TABLE `test_patient` (
   `address` varchar(20),
   `phone` varchar(20),
   `wechat` varchar(20),
-  `lastVisit` date,
+  `visitTimes` smallint(5) NOT NULL DEFAULT 1,
   `comment` varchar(255),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;

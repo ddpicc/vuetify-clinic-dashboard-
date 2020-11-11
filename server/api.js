@@ -92,7 +92,6 @@ module.exports = {
     console.log('api - deleteOrdbyId');
     var dbs = req.query.dbs;
     var id = req.query.id;
-    console.log(id);
     pool.getConnection((err, connection) => {
       var sql = sqlMap.deleteOrdbyId;
       connection.query(sql, [dbs,id], (err, result) => {
@@ -139,13 +138,30 @@ module.exports = {
   
 
   insertPatientOrderPage(req, res, next) {
+    console.log('api - insertPatientOrderPage');
     var dbs = req.body.dbs;
     var name = req.body.name,sex = req.body.sex;
     var age = req.body.age, phone = req.body.phone;
-    var lastVisit = req.body.lastVisit, name_pinyin = req.body.name_pinyin
+    var name_pinyin = req.body.name_pinyin;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.insertPatientOrderPage;
-      connection.query(sql, [dbs,name,name_pinyin,sex,age,phone,lastVisit], (err, result) => {
+      connection.query(sql, [dbs,name,name_pinyin,sex,age,phone], (err, result) => {
+        if(err)
+          console.log(err);
+        res.json(result);
+        connection.release();
+      })
+    })
+  },
+  
+  updatePatientTimes(req, res, next) {
+    console.log('api - updatePatientTimes');
+    var dbs = req.body.dbs;
+    var id = req.body.patient_id;
+    var change = req.body.change;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.updatePatientTimes;
+      connection.query(sql, [dbs,change,id], (err, result) => {
         if(err)
           console.log(err);
         res.json(result);
@@ -394,6 +410,19 @@ module.exports = {
       })
     })
   },
+
+  updateMedInventory(req, res, next){
+    console.log('api - updateMedInventory');
+    pool.getConnection((err, connection) => {
+      var sql = req.body.sqlStatement;
+      connection.query(sql, (err, result) => {
+        if(err)
+          console.log(err);
+        res.json(result);
+        connection.release();
+      })
+    })
+  }
 
   
 
