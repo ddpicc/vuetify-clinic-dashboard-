@@ -64,20 +64,20 @@
 		},
 		
 		methods: {
-      loadingData: function() {
+/*       loadingData: function() {
         setTimeout( () => {this.e6 = 2;},1200);
 				setTimeout( () => {this.e6 = 3;},2400);
         setTimeout( () => {this.$router.push({ path: '/dashboard' });},7600);
-      },
+      }, */
       
       //if the date saved in the localstorage is not today, load and set all data, otherwise directly jump to dashboard
       checkDate: function() {
         let updated_date = loadFromLocal(1,'updated_date',[]);
         if(updated_date != new Date().toDateString() || updated_date.length == 0){
+          window.localStorage.removeItem('__clinicUser__');
           saveToLocal(1,'updated_date', new Date().toDateString());
           this.loadData();
-          this.loadUserConfig();
-			    this.loadingData();
+          this.loadUserConfig();		    
         }else{
           this.$router.push({ path: '/dashboard' });
         }
@@ -97,6 +97,8 @@
         }).then(response => {
           this.$nextTick( () => {
             saveToLocal(1,'cacheOrder',response.data);
+            this.e6 = 2;
+            setTimeout( () => {this.$router.push({ path: '/dashboard' });},2200);
           })
         })
 			},
@@ -127,6 +129,7 @@
           }else{
             saveToLocal(1,'userSetting',response.data);
           }
+          this.e6 = 3;
         })
       },
 

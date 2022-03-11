@@ -29,7 +29,7 @@
                 <v-container>
                   <v-row dense>
                     <v-col sm="4" md="4">
-                      <v-text-field v-model="patientName" @blur="nameLostFoucs"
+                      <v-text-field v-model="patientName" @blur="nameLostFoucs()"
                         label="姓名"
                       ></v-text-field>
                     </v-col>
@@ -84,7 +84,6 @@
             :search="searchStr"
             :custom-filter="filterText"
             hide-default-footer
-            v-if="!isYaowan"
           >
           <template v-slot:top>
             <v-row 
@@ -129,24 +128,24 @@
               </v-col>
               <v-col v-if="howToUseOn" sm="3" md="3">
                 <v-text-field
-                  v-model="inputDose"
-                  label="剂量"
+                  v-model="useage"
+                  label="用法用量"
                   dense
                   ref="mark2"
-                  @keyup.enter.native="postToTb"
+                  @keyup.enter.native="afterUseage"
                   @focus="focus($event)"
+                  @blur="useageLostFoucs"
                 ></v-text-field>
               </v-col>
               <v-col v-if="howToUseOn" sm="3" md="3">
-                <v-select
-                  v-if="howToUseOn"
-                  :items="hotToUse"
-                  v-model="useage"
+                <v-text-field
+                  v-model="inputDose"
+                  label="剂量"
                   dense
-                  clearable
                   ref="mark3"
-                  label="用法用量"
-                ></v-select>
+                  @keyup.enter.native="postToTb"
+                  @focus="focus($event)"
+                ></v-text-field>
               </v-col>
             </v-row>
           </template>
@@ -250,8 +249,15 @@
           </v-data-table>
           <div class="text-center pt-2">
             <v-row>
-              <v-col sm="5" md="6"></v-col>
-              <v-col sm="5" md="4">
+              <v-col sm="3" md="4"></v-col>
+              <v-col sm="2" md="2">
+                <v-select
+                  dense
+                  v-model="doctor"
+                  :items="doctorList"
+                ></v-select>
+              </v-col>
+              <v-col sm="4" md="3">
                 <v-text-field dense v-model="orderComment"
                   label="处方备注" placeholder="备注"
                 ></v-text-field>
@@ -261,9 +267,9 @@
                   label="几付" suffix="付" placeholder=" " @focus="focus($event)"
                 ></v-text-field>
               </v-col>
-              <v-col sm="1" md="1">
-                <v-text-field dense suffix="元" v-model="total"
-                label="总价" placeholder=" "
+              <v-col sm="2" md="2">
+                <v-text-field @focus="focus($event)" dense suffix="元" v-model="total"
+                label="总价" placeholder=" " append-icon="mdi-check" @click:append="addMoney"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -289,46 +295,68 @@
               </v-card-text>
             </v-card>
           </v-dialog>
-          <v-dialog v-model="printOrderDialog">
+          <v-dialog v-model="selectUseageDialog" scrollable max-width="300px">
             <v-card>
-              <div ref="print">
+              <v-card-title>
+                <span class="headline"></span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-data-table
+                    :headers="useageHeader"
+                    :items="useageList"
+                    hide-default-footer
+                  >
+                    <template v-slot:item.action="{ item }">
+                      <v-btn color="blue darken-1" text @click="chooseUseage(item)">选择</v-btn>
+                    </template>
+                  </v-data-table>
+                </v-container>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="printOrderDialog" max-width="1000">
+            <v-card>
+              <div ref="print" class="smallHeight">
                 <h4 style="text-align:center;">宛城云杰诊所</h4>
                 <h4 style="text-align:center;">处&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;方</h4>
-                <br>
-                <hr style="height:1px;border:none;border-top:1px solid #555555;" />
-                  <v-simple-table>
+                <hr style="margin-top:5px;height:1px;border:none;border-top:1px solid #555555;" />
+                  <v-simple-table v-if="medString != ''">
                   <template v-slot:default>
                     <tbody>
                       <tr>
-                        <td :colspan="2"><p>姓名： {{patientName}}</p></td>
-                        <td :colspan="1"><p>年龄： {{patientAge}}</p></td>
-                        <td :colspan="1"><p>性别： {{patientSex}}</p></td>
-                        <td :colspan="4"><p>电话:  {{patientPhone}}</p></td>
+                        <td :colspan="2"><p>姓名:{{patientName}} </p></td>
+                        <td :colspan="1"><p>性别:{{patientSex}}</p></td>
+                        <td :colspan="1"><p>年龄:{{patientAge}}</p></td>
                       </tr>
                       <tr>
-                        <td  :colspan="4" style="border-bottom:1px solid"><p>症状： {{patientSymptom}}</p></td>
-                        <td  :colspan="4" style="border-bottom:1px solid"><p>备注： {{orderComment}}</p></td>
+                        <td :colspan="4" ><p>症状:{{patientSymptom}}</p></td>
+                      </tr>
+                      <tr>
+                        <td :colspan="2" style="border-bottom:1px solid"><p>电话:{{patientPhone}}</p></td>
+                        <td :colspan="2" style="border-bottom:1px solid"><p>备注:{{orderComment}}</p></td>
                       </tr>
                       <tr v-for="element in medString.split(';')" :key="element.name">
-                        <td>{{ JSON.parse(element).name1 }}</td>
-                        <td>{{ JSON.parse(element).count1 }}</td>
-                        <td>{{ JSON.parse(element).name2 }}</td>
-                        <td>{{ JSON.parse(element).count2 }}</td>
-                        <td>{{ JSON.parse(element).name3 }}</td>
-                        <td>{{ JSON.parse(element).count3 }}</td>
-                        <td>{{ JSON.parse(element).name4 }}</td>
-                        <td>{{ JSON.parse(element).count4 }}</td>
+                        <td style="width:23%" v-if="!JSON.parse(element).medComment1">{{ JSON.parse(element).name1 }} {{ JSON.parse(element).count1 }}</td>
+                        <td style="width:50%" v-if="JSON.parse(element).medComment1">{{ JSON.parse(element).name1 }} {{ JSON.parse(element).count1 }}</td>
+                        <td style="width:30%" v-if="JSON.parse(element).medComment1">{{ JSON.parse(element).medComment1 }}</td>
+                        <td style="width:10%" v-if="JSON.parse(element).medComment1"></td> 
+                        <td style="width:10%" v-if="JSON.parse(element).medComment1"></td> 
+                        <td style="width:23%">{{ JSON.parse(element).name2 }} {{ JSON.parse(element).count2 }}</td>
+                        <td style="width:23%">{{ JSON.parse(element).name3 }} {{ JSON.parse(element).count3 }}</td>
+                        <td style="width:31%">{{ JSON.parse(element).name4 }} {{ JSON.parse(element).count4 }}</td>
+                      </tr>
+                      <tr><td></td></tr>
+                      <tr v-if="!isYaowan">
+                        <td :colspan="3"></td>
+                        <td :colspan="1"><p>{{orderCount}}付</p></td>
                       </tr>
                       <tr>
-                        <td :colspan="6"></td>
-                        <td :colspan="2"><p>{{orderCount}}付</p></td>
+                        <td :colspan="3" style="border-bottom:1px solid"></td>
+                        <td :colspan="1" style="border-bottom:1px solid"><p>价钱： {{total}}元</p></td>
                       </tr>
                       <tr>
-                        <td :colspan="6" style="border-bottom:1px solid"></td>
-                        <td :colspan="2" style="border-bottom:1px solid"><p>价钱： {{total}}元</p></td>
-                      </tr>
-                      <tr>
-                        <td :colspan="6"><p>处方医师：  崔云杰</p></td>
+                        <td :colspan="2"><p>处方医师：  {{doctor}}</p></td>
                         <td :colspan="2"><p>日期： {{todayDate}}</p></td>
                       </tr>
                     </tbody>
@@ -339,7 +367,7 @@
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="printIt">打印</v-btn>
               </v-card-actions>
-            </V-card>
+            </v-card>
           </v-dialog>
         </material-card>
       </v-col>
@@ -353,7 +381,9 @@
                  {sortable: false,text: '名称', value: 'name3', width: '15%'}, {sortable: false,text: '数量', value: 'count3', width: '10%'}, {sortable: false,text: '名称', value: 'name4', width: '15%'}, {sortable: false,text: '数量', value: 'count4', width: '10%'}];
 
   var xiyaoHeader=[{sortable: false,text: '名称', value: 'name1'}, {sortable: false,text: '数量', value: 'count1'}, {sortable: false,text: '用法', value: 'medComment1'}];
-  var yaowanHeader=[];
+    var useages = [{use: '5ml tid.po'}, {use: '半片 tid.po'}, {use: '一片 tid.po'}, {use: '2片 tid.po'}, {use: '3片 tid.po'},
+                  {use: '半片 bid.po'}, {use: '一片 bid.po'}, {use: '2片 bid.po'}, {use: '3片 bid.po'}];
+  var yaowanHeader=[{sortable: false,text: '名称', value: 'name1',width: '50%'}, {sortable: false,text: '数量', value: 'count1',width: '50%'}];
   var reuseOrd=[];
   import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate';
   import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
@@ -380,7 +410,6 @@
       todayDate: getNowFormatDate(),
       isYaowan: false,
       enableYaowan: false,
-      hotToUse: ['5ml tid.po', '半片 tid.po', '一片 tid.po', '2片 tid.po', '3片 tid.po', '半片 bid.po', '一片 bid.po', '2片 bid.po', '3片 bid.po'],
       medRadio: '草药',
       cardColor: 'green',
       components: [],
@@ -391,7 +420,10 @@
       inputMed: '',
       inputDose: '',
       medString: '',
+      doctor: '',
+      doctorList: ['崔云杰','谢双阳'],
       selectPatientDialog: false,
+      selectUseageDialog: false,
       printOrderDialog: false,
       cacheFindedPatient: [],
       notzero: v=> v > 0 || '不能是0',
@@ -407,7 +439,9 @@
         { text: '电话', value: 'phone' },
         { text: '最近一次', value: 'lastVisit' },
         { text: '操作', value: 'action' },
-      ]
+      ],
+      useageHeader: [{ text: '用法', value: 'use' },{ text: '操作', value: 'action' }],
+      useageList: useages,
     }),
 
     methods: {
@@ -505,6 +539,24 @@
 				this.$refs.mark2.$el.querySelector('input').focus();
       },
 
+      afterUseage: function(){
+        this.$refs.mark3.$el.querySelector('input').focus();
+      },
+
+      useageLostFoucs: function(){
+        this.selectUseageDialog = true;
+        this.useageList = useages.filter((e) => {
+          return e.use.indexOf(this.useage) !== -1;
+        });
+      },
+
+      chooseUseage: function(item){
+        this.useage = item.use;
+        this.useageList = useages;
+        this.selectUseageDialog = false;
+        this.$refs.mark3.$el.querySelector('input').focus();
+      },
+
       //medString = [{"name":"xx","count":"xx"},{"name":"xx","count":"xx"}....]
       disPlayToTb: function(){
         //this.orderMed1PerObj = JSON.parse(this.medString);
@@ -521,10 +573,12 @@
 					if(this.medRadio == "草药")
 						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + parseInt(this.orderMed1PerObj[i].count) + this.orderMed1PerObj[i].spec + '",';
 					else if(this.medRadio == "免煎")
-						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + this.orderMed1PerObj[i].count + this.orderMed1PerObj[i].spec + '",';
+						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + this.orderMed1PerObj[i].count + '",';
 					else if(this.medRadio == "西药")
 						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + parseInt(this.orderMed1PerObj[i].count) + this.orderMed1PerObj[i].spec + '","' + tempStrMedComment + '":"' + this.orderMed1PerObj[i].medComment + '",';
-					if(i>=0 && (i+1) % carry == 0){
+					else if(this.medRadio == "药丸")
+						emptyStr = emptyStr + '"' + tempStrName + '":"' + this.orderMed1PerObj[i].name + '","'  + tempStrNumber + '":"' + parseInt(this.orderMed1PerObj[i].count) + this.orderMed1PerObj[i].spec + '",';
+          if(i>=0 && (i+1) % carry == 0){
 						emptyStr = emptyStr.substr(0,emptyStr.length-1);
             emptyStr = emptyStr + '}';
             let tempObj = JSON.parse(emptyStr);
@@ -583,11 +637,12 @@
           this.orderCount = 1;
         this.inputDose = 1;
         this.inputMed = '';
+        this.useage = '';
         this.$refs.mark1.$el.querySelector('input').focus();
       },
 
       postOrdToDbSure:function() {
-        if(this.items.length == 0 && this.medRadio!='药丸'){
+        if(this.items.length == 0){
           alert('订单为空');
           return;
         }
@@ -602,6 +657,10 @@
         this.printOrderDialog = true;
       },
 
+      addMoney: function(){
+        this.total = (parseFloat(this.total) + 5).toFixed(2);
+      },
+
       printIt: function(){
         this.printOrderDialog = false;
         this.$print(this.$refs.print);
@@ -609,10 +668,11 @@
         if(this.medRadio == '药丸' && this.total != 0){
           this.orderCount = 1;
         }
+        ordProfit = (parseFloat(this.total) - parseFloat((this.perOrdBase * this.orderCount).toFixed(2))).toFixed(2);
         if(this.medRadio == '药丸'){
-          ordProfit = this.total * 0.75;
-        }else{
-          ordProfit = (parseFloat(this.total) - parseFloat((this.perOrdBase * this.orderCount).toFixed(2))).toFixed(2);
+          if(this.perOrdBase == 0)
+            ordProfit = this.total * 0.75;
+          var yaowanTotal = this.total;
         }
         if(this.medRadio == '免煎' || this.medRadio == '西药'){
           //如果是免煎药或者是西药，更新药品库存
@@ -648,11 +708,12 @@
                 medtype : this.medRadio,
                 dose : this.orderCount,
                 medarray : this.medString,
-                total : parseFloat(this.total),
+                total : this.medRadio == '药丸'? yaowanTotal : parseFloat(this.total),
                 totalprofit : ordProfit,
                 date : getNowFormatDate(),
               }).then( (resord) => {   
                 this.clearInfo();
+                this.radioChanged();
               })
               .catch( (err) =>{
                 console.log(err);
@@ -668,20 +729,28 @@
             patient_id: this.patient_id,
             change: 1,
           }).then( (res) => {
+            this.$http.post('/api/updatePatientOrderPage',{
+              dbs : this.$store.state.user.dbs_prefix+'patient',
+              sex : this.patientSex,
+              age : !this.patientAge? 0 : parseFloat(this.patientAge),
+              phone : !this.patientPhone? 0 : parseInt(this.patientPhone),
+              patient_id: this.patient_id,
+            })
             this.$http.post('/api/insertOrd',{
-                dbs : this.$store.state.user.dbs_prefix+'ordlist',
-                patient : this.patientName,
-                patient_id : this.patient_id,
-                symptom : this.patientSymptom,
-                order_comment : this.orderComment,
-                medtype : this.medRadio,
-                dose : this.orderCount,
-                medarray : this.medString,
-                total : parseFloat(this.total),
-                totalprofit : ordProfit,
-                date : getNowFormatDate(),
+              dbs : this.$store.state.user.dbs_prefix+'ordlist',
+              patient : this.patientName,
+              patient_id : this.patient_id,
+              symptom : this.patientSymptom,
+              order_comment : this.orderComment,
+              medtype : this.medRadio,
+              dose : this.orderCount,
+              medarray : this.medString,
+              total : this.medRadio == '药丸'? yaowanTotal : parseFloat(this.total),
+              totalprofit : ordProfit,
+              date : getNowFormatDate(),
             }).then( (resord) => {
               this.clearInfo();
+              this.radioChanged();
             })
             .catch( (err) =>{
               console.log(err);
@@ -706,6 +775,7 @@
         this.inputDose = '';
         this.useage = '';
         this.orderMed1PerObj = [];
+        this.medString = '';
       },
 
       save: function(count, name){
@@ -743,6 +813,7 @@
       },
 
       nameLostFoucs: function(){
+        console.log('lost focus')
         if(this.patientName == '' || this.patientName.length < 2)
           return;
         let p_name_pinyin = pinyin(this.patientName,{style: pinyin.STYLE_NORMAL}).join("");
@@ -768,7 +839,7 @@
           }
         })
       },
-
+      
       choosePatient: function(item){
         this.patient_id = item.id;
         this.patientName = item.name;
@@ -781,7 +852,6 @@
       jumpToPDetail: function(id){
         this.$router.push({name: 'Patient Profile', params: {pt_id: id}});
       },
-
       unpackOrdFromOutside: function(ordItem){
         this.medRadio = ordItem.medtype;
         this.patientName = ordItem.patient;
@@ -915,6 +985,7 @@
       }
       let userSetting = loadFromLocal(1,'userSetting', []);
       this.enableYaowan = userSetting[0]['displayYaowan'];
+      this.doctor = userSetting[0]['defaultDoctor'];
     },
 
     created() {
@@ -924,3 +995,9 @@
     
   }
 </script>
+<style scoped>
+  .smallHeight .v-data-table td{
+    height: 20px;
+    font-size: 14px;
+  }
+</style>

@@ -65,44 +65,46 @@
           <template v-slot:expanded-item="{ item }">
             <td :colspan="8">
               <v-btn text small color="green" @click="startPrint">打印</v-btn>
-              <div ref="print">
+              <div ref="print" class="smallHeight">
                 <h4 style="text-align:center;">宛&nbsp;城&nbsp;云&nbsp;杰&nbsp;诊&nbsp;所</h4>
                 <h5 style="text-align:center;">处&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;方</h5>
                 <br>
-                <hr style="height:1px;border:none;border-top:1px solid #555555;" />
+                <hr style="margin-top:5px;height:1px;border:none;border-top:1px solid #555555;" />
                  <v-simple-table>
                   <template v-slot:default>
                     <tbody>
                       <tr>
-                        <td :colspan="2"><p>姓名： {{item.patient}}</p></td>
-                        <td :colspan="1"><p>年龄： {{item.age}}</p></td>
-                        <td :colspan="1"><p>性别： {{item.sex}}</p></td>
-                        <td :colspan="4"><p>电话:  {{item.phone}}</p></td>
+                        <td :colspan="2"><p>姓名:{{item.patient}} </p></td>
+                        <td :colspan="1"><p>性别:{{item.sex}}</p></td>
+                        <td :colspan="1"><p>年龄:{{item.age}}</p></td>
                       </tr>
                       <tr>
-                        <td  :colspan="4" style="border-bottom:1px solid"><p>症状： {{item.symptom}}</p></td>
-                        <td  :colspan="4" style="border-bottom:1px solid"><p>备注： {{item.order_comment}}</p></td>
+                        <td :colspan="4" ><p>症状:{{item.symptom}}</p></td>
+                      </tr>
+                      <tr>
+                        <td :colspan="2" style="border-bottom:1px solid"><p>电话:{{item.phone}}</p></td>
+                        <td :colspan="2" style="border-bottom:1px solid"><p>备注:{{item.order_comment}}</p></td>
                       </tr>
                       <tr v-for="element in item.medarray" :key="element.name">
-                        <td>{{ JSON.parse(element).name1 }}</td>
-                        <td>{{ JSON.parse(element).count1 }}</td>
-                        <td>{{ JSON.parse(element).name2 }}</td>
-                        <td>{{ JSON.parse(element).count2 }}</td>
-                        <td>{{ JSON.parse(element).name3 }}</td>
-                        <td>{{ JSON.parse(element).count3 }}</td>
-                        <td>{{ JSON.parse(element).name4 }}</td>
-                        <td>{{ JSON.parse(element).count4 }}</td>
+                        <td style="width:23%" v-if="!JSON.parse(element).medComment1">{{ JSON.parse(element).name1 }} {{ JSON.parse(element).count1 }}</td>
+                        <td style="width:50%" v-if="JSON.parse(element).medComment1">{{ JSON.parse(element).name1 }} {{ JSON.parse(element).count1 }}</td>
+                        <td style="width:30%" v-if="JSON.parse(element).medComment1">{{ JSON.parse(element).medComment1 }}</td>
+                        <td style="width:10%" v-if="JSON.parse(element).medComment1"></td> 
+                        <td style="width:10%" v-if="JSON.parse(element).medComment1"></td> 
+                        <td style="width:23%">{{ JSON.parse(element).name2 }} {{ JSON.parse(element).count2 }}</td>
+                        <td style="width:23%">{{ JSON.parse(element).name3 }} {{ JSON.parse(element).count3 }}</td>
+                        <td style="width:31%">{{ JSON.parse(element).name4 }} {{ JSON.parse(element).count4 }}</td>
                       </tr>
                       <tr>
-                        <td :colspan="6"></td>
-                        <td :colspan="2"><p>{{item.dose}}付</p></td>
+                        <td :colspan="3"></td>
+                        <td :colspan="1"><p>{{item.dose}}付</p></td>
                       </tr>
                       <tr>
-                        <td :colspan="6" style="border-bottom:1px solid"></td>
-                        <td :colspan="2" style="border-bottom:1px solid"><p>价钱： {{item.total}}元</p></td>
+                        <td :colspan="3" style="border-bottom:1px solid"></td>
+                        <td :colspan="1" style="border-bottom:1px solid"><p>价钱： {{item.total}}元</p></td>
                       </tr>
                       <tr>
-                        <td :colspan="6"><p>处方医师：  崔云杰</p></td>
+                        <td :colspan="2"><p>处方医师：  崔云杰</p></td>
                         <td :colspan="2"><p>日期： {{item.date}}</p></td>
                       </tr>
                     </tbody>
@@ -410,7 +412,11 @@
     mounted: function() {
       this.getAll();      
 		}
-
-    
   }
 </script>
+<style scoped>
+  .smallHeight .v-data-table td{
+    height: 20px;
+    font-size: 14px;
+  }
+</style>

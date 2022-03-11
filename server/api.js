@@ -14,6 +14,7 @@ const pool = mysql.createPool({
 
 module.exports = {
   getAllMedbyType(req, res, next) {
+    console.log('api - getAllMedbyType');
     var dbs = req.query.dbs;
     var medtype = req.query.medtype;
     pool.getConnection((err, connection) => {
@@ -71,12 +72,14 @@ module.exports = {
 
   insertOrd(req, res, next) {
     console.log('api - insertOrd');
+    
     var dbs = req.body.dbs;
     var patient = req.body.patient,patient_id = req.body.patient_id;
     var symptom = req.body.symptom,order_comment = req.body.order_comment;
     var medtype = req.body.medtype, dose = req.body.dose;
     var medarray = req.body.medarray, total = req.body.total;
     var totalprofit = req.body.totalprofit, date = req.body.date;
+    console.log(total);
     pool.getConnection((err, connection) => {
       var sql = sqlMap.insertOrd;
       connection.query(sql, [dbs,patient,patient_id,symptom,order_comment,medtype,dose,medarray,total,totalprofit,date], (err, result) => {
@@ -133,9 +136,7 @@ module.exports = {
           connection.release();
       })
     })
-  },
-
-  
+  },  
 
   insertPatientOrderPage(req, res, next) {
     console.log('api - insertPatientOrderPage');
@@ -146,6 +147,23 @@ module.exports = {
     pool.getConnection((err, connection) => {
       var sql = sqlMap.insertPatientOrderPage;
       connection.query(sql, [dbs,name,name_pinyin,sex,age,phone], (err, result) => {
+        if(err)
+          console.log(err);
+        res.json(result);
+        connection.release();
+      })
+    })
+  },
+
+  updatePatientOrderPage(req, res, next) {
+    console.log('api - updatePatientOrderPage');
+    var dbs = req.body.dbs;
+    var sex = req.body.sex;
+    var age = req.body.age, phone = req.body.phone;
+    var id = req.body.patient_id;
+    pool.getConnection((err, connection) => {
+      var sql = sqlMap.updatePatientOrderPage;
+      connection.query(sql, [dbs,sex,age,phone,id], (err, result) => {
         if(err)
           console.log(err);
         res.json(result);
@@ -332,11 +350,11 @@ module.exports = {
   updateUserSetting(req, res, next) {
     console.log('api - updateUserSetting');
     var displayYaowan = req.body.displayYaowan, displayProfit = req.body.displayProfit;
-    var displayLessMenu = req.body.displayLessMenu;
+    var displayLessMenu = req.body.displayLessMenu, defaultDoctor = req.body.defaultDoctor;
     var userid = req.body.userid;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.updateUserSetting;
-      connection.query(sql, [displayYaowan,displayProfit,displayLessMenu, userid], (err, result) => {
+      connection.query(sql, [displayYaowan,displayProfit,displayLessMenu,defaultDoctor, userid], (err, result) => {
           res.json(result);
           connection.release();
       })

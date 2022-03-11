@@ -285,14 +285,15 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
       },
 
       setMonthChart: function(monthTotalArry, _monthIncome, _monthProfit){
+        //alert(JSON.stringify(monthTotalArry));
         var incomeMonth = [];
         var profitMonth = [];
         for (var key in monthTotalArry[0]){
           if(key.indexOf('total') != -1){
-            this.overallIncome = parseFloat(this.overallIncome + parseFloat(monthTotalArry[0][key]));
+            this.overallIncome = parseFloat(parseFloat(this.overallIncome + parseFloat(monthTotalArry[0][key])).toFixed(2));
           }
         }
-        this.overallIncome = parseFloat(this.overallIncome + parseFloat(_monthIncome));
+        this.overallIncome = parseFloat(this.overallIncome + parseFloat(_monthIncome)).toFixed(2);
         
         //start from 0, 也就是当前月
         for(let monthOffset=0; monthOffset<12; monthOffset++){
@@ -304,14 +305,18 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
           if(month <= 0){
             month = month + 12;
             year = year-1;
+            if (month >= 1 && month <= 9) {
+              month = "0" + month;
+            }
           }else if(month > 0 && monthOffset != 0){
             if (month >= 1 && month <= 9) {
               month = "0" + month;
             }
+            
             let columnTotal = 'total' + year + month;
             if(!monthTotalArry[0][columnTotal])
               monthTotalArry[0][columnTotal] = 0;
-            this.yearIncome = parseFloat(this.yearIncome + parseFloat(monthTotalArry[0][columnTotal]));
+            this.yearIncome = parseFloat(parseFloat(this.yearIncome + parseFloat(monthTotalArry[0][columnTotal])).toFixed(2));
           }
 
           if(monthOffset ==0){
@@ -332,7 +337,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         this.monthSalesChart.data.push({name: '收入', data: incomeMonth});
           if(this.displayProfit)
             this.monthSalesChart.data.push({name: '利润', data: profitMonth});
-        this.yearIncome = parseFloat(this.yearIncome + _monthIncome);
+        this.yearIncome = parseFloat(this.yearIncome + _monthIncome).toFixed(2);
       }
 
     },

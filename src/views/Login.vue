@@ -53,9 +53,6 @@
                 <v-tab>
                   登录
                 </v-tab>
-                <v-tab>
-                  注册
-                </v-tab>
               </v-tabs>
               <v-tabs-items v-model="tab">
                 <v-tab-item>

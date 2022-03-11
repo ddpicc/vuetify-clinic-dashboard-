@@ -142,6 +142,7 @@ CREATE TABLE `myDbs_userconfig` (
   `displayYaowan` smallint(5) NOT NULL DEFAULT 0,
   `displayProfit` smallint(5) NOT NULL DEFAULT 0,
   `displayLessMenu` smallint(5) NOT NULL DEFAULT 0,
+  `defaultDoctor` varchar(20) NOT NULL DEFAULT '崔云杰',
   `total201906` float(50) NOT NULL DEFAULT 0,
   `profit201906` float(50) NOT NULL DEFAULT 0,
   `total201907` float(50) NOT NULL DEFAULT 0,

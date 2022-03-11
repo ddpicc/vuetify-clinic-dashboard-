@@ -14,6 +14,7 @@
                   <v-radio label="草药" value="草药" color="grey darken-1"></v-radio>
                   <v-radio label="免煎" value="免煎" color="grey darken-1"></v-radio>
                   <v-radio label="西药" value="西药" color="grey darken-1"></v-radio>
+                  <v-radio label="药丸" value="药丸" color="grey darken-1"></v-radio>
                 </v-radio-group>
               </div>
             </div>
@@ -146,7 +147,7 @@
     data: () => ({
       searchStr: '',
       medRadio: '草药',
-      medTypeItems: ['草药','免煎','西药'],
+      medTypeItems: ['草药','免煎','西药','药丸'],
       adddialog: false,
       loading: false,
       cardColor: 'green',
@@ -244,6 +245,8 @@
           this.cardColor = 'blue lighten-2';
 				}else if(this.medRadio == "免煎"){
           this.cardColor = 'lime darken-2';
+				}else if(this.medRadio == "药丸"){
+          this.cardColor = 'deep-purple lighten-2';
 				}else{
           this.cardColor = 'green';
         }					
@@ -319,10 +322,10 @@
               alias : this.dialogAlias,
               spec : this.dialogSpec,
               medtype : this.dialogMedRadio,
-              bagperbox : this.dialogBagPerBox,
-              inventoryNm : this.dialogInventoryNm,
-              baseprice : this.dialogBaseprice,
-              sellprice : this.dialogSellprice,
+              bagperbox : this.dialogBagPerBox? this.dialogBagPerBox : 0,
+              inventoryNm : this.dialogInventoryNm? this.dialogInventoryNm : 0,
+              baseprice : this.dialogBaseprice? this.dialogBaseprice : 0,
+              sellprice : this.dialogSellprice? this.dialogSellprice : 0,
               checked : this.dialogChecked,           
           }).then( (res) => {
             //alert(res.data.insertId);

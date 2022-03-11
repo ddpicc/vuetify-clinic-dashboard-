@@ -131,6 +131,21 @@
                   </v-list-item-content>
                 </template>
               </v-list-item>
+              
+              <v-divider></v-divider>
+
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>默认医师  </v-list-item-title>                
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-select
+                    dense
+                    v-model="doctor"
+                    :items="doctorList"
+                  ></v-select>
+                </v-list-item-action>
+              </v-list-item>
 
             </v-list-item-group>
           </v-list>
@@ -191,6 +206,8 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
           emailMatch: () => ('The email and password you entered don\'t match'),
           fileSize: value => !value || value.size < 2000000 || 'Avatar size should be less than 2 MB!',
         },
+        doctor: '崔云杰',
+        doctorList: ['崔云杰','谢双阳'],
       }
     },
 
@@ -201,12 +218,14 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
           displayYaowan: this.displayYaowan? 1:0,
           displayProfit: this.displayProfit? 1:0,
           displayLessMenu: this.displayLessMenu? 1:0,
+          defaultDoctor: this.doctor,
           userid: this.$store.state.user.user_id           
         }).then( (res) => {
           let userSetting = loadFromLocal(1,'userSetting', []);
           userSetting[0]['displayYaowan'] = this.displayYaowan? 1:0;
           userSetting[0]['displayProfit'] = this.displayProfit? 1:0;
           userSetting[0]['displayLessMenu'] = this.displayLessMenu? 1:0;
+          userSetting[0]['defaultDoctor'] = this.doctor;
           saveToLocal(1,'userSetting',userSetting);
           this.snackbar = true;
           this.notification = '修改成功';
@@ -225,6 +244,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
           this.displayYaowan = res.data[0].displayYaowan;
           this.displayProfit = res.data[0].displayProfit;
           this.displayLessMenu = res.data[0].displayLessMenu;
+          this.doctor = res.data[0].defaultDoctor;
         })
       }
     },

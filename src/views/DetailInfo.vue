@@ -9,8 +9,17 @@
         <material-card 
           flat
 					color="green"
-          title="详细统计"
         >
+          <template v-slot:header>
+            <h3 class="title ml-5 flex-grow-1">详细统计</h3>
+            <v-switch
+              class="mr-5"
+              v-model="yaowanActive"
+              label="分析药丸"
+              color="indigo darken-3"
+            ></v-switch>
+          </template>
+
           <v-row>
             <v-col cols="12" sm="12" lg="4" md="4">
               <v-date-picker full-width v-model="dates" range color="green"></v-date-picker>
@@ -61,6 +70,7 @@
               >
                 最近30天
               </v-chip>
+              
               <v-card
                 class="mx-auto"
               >
@@ -113,6 +123,8 @@
                           <v-list-item-title>{{incomeXiyao}}元</v-list-item-title>
                         </v-list-item-action>
                       </v-list-item>
+
+
                       <v-list-item>
                         <v-list-item-content>
                           <v-list-item-title>药丸</v-list-item-title>
@@ -121,6 +133,7 @@
                           <v-list-item-title>{{incomeYaowan}}元</v-list-item-title>
                         </v-list-item-action>
                       </v-list-item>
+                      
                       <v-list-item>
                         <v-list-item-content>
                           <v-list-item-title>平均每天</v-list-item-title>
@@ -215,7 +228,17 @@
                           <v-list-item-title>煎药次数</v-list-item-title>
                         </v-list-item-content>
                         <v-list-item-action>
-                          <v-list-item-title>{{jianyaoTimes}}元</v-list-item-title>
+                          <v-list-item-title>{{jianyaoTimes}}付</v-list-item-title>
+                        </v-list-item-action>
+                      </v-list-item>
+
+                      <v-subheader v-if="yaowanActive">药丸详情</v-subheader>
+                      <v-list-item v-for="(value, key) in yaowanDetail" :key="key">
+                        <v-list-item-content>
+                          <v-list-item-title>{{key}}</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-list-item-title>{{value}}份</v-list-item-title>
                         </v-list-item-action>
                       </v-list-item>
                     </v-list>
@@ -236,7 +259,6 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
     data: () => ({
       dates: [],
       reportDisplay: false,
-      totalIncome: 0,
       iconChange: 'mdi-check-bold',
       monthSalesChart: {
         data: [],
@@ -245,6 +267,27 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
         data: [],
       },
       chartColor: ['#00bbbb', '#00bb5e','#bb5e2f','#cccc00'],
+
+      yaowanActive: false,
+      totalIncome: 0,
+      totalProfit: 0,
+      incomeCaoyao: 0,
+      incomeMianjian: 0,
+      incomeXiyao: 0,
+      incomeYaowan: 0,
+      averageIncome: 0,
+      profitCaoyao: 0,
+      profitMianjian: 0,
+      profitXiyao: 0,
+      profitYaowan: 0,
+      averageProfit: 0,
+      totalPatient: 0,
+      averagePatient: 0,
+      lt20Patient: 0,
+      gt20Patient: 0,
+      jianyaoTimes: 0,
+
+      yaowanDetail: {},
     }),
 
     methods: {
@@ -294,7 +337,7 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
         }else{
           this.reportDisplay = false;
           this.iconChange = 'mdi-check-bold';
-          tjos.dates = [];
+          this.dates = [];
         }
       },
 
@@ -305,6 +348,8 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
         let _profitMianjian = 0, _profitXiyao = 0, _profitYaowan = 0, _profitCaoyao = 0;
         let _taotalPatient = 0, _averagePatient = 0, _gt20Patient = 0, _lt20Patient = 0;
         let _jianyaoTimes = 0;
+        let _yaowanDetail = {}
+        
         for(let item of orderObj){
           if(item.medtype == "免煎"){
             _incomeMianjian = parseFloat((_incomeMianjian + item.total).toFixed(2));
@@ -321,6 +366,42 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
           else if(item.medtype == '药丸'){
             _incomeYaowan = parseFloat((_incomeYaowan + item.total).toFixed(2));
             _profitYaowan = parseFloat((_profitYaowan + item.totalprofit).toFixed(2)); 
+            if(this.yaowanActive){
+              if(item.medarray){
+                item.medarray = item.medarray.split(";")
+                for(let element of item.medarray){
+                  let perobj = JSON.parse(element)
+                  if(perobj.name1){
+                    if(_yaowanDetail[perobj.name1]){
+                      _yaowanDetail[perobj.name1] = _yaowanDetail[perobj.name1] + parseInt(perobj.count1)
+                    }else{
+                      _yaowanDetail[perobj.name1] = parseInt(perobj.count1)
+                    }                  
+                  }
+                  if(perobj.name2){
+                    if(_yaowanDetail[perobj.name2]){
+                      _yaowanDetail[perobj.name2] = _yaowanDetail[perobj.name2] + parseInt(perobj.count2)
+                    }else{
+                      _yaowanDetail[perobj.name2] = parseInt(perobj.count2)
+                    }                  
+                  }
+                  if(perobj.name3){
+                    if(_yaowanDetail[perobj.name3]){
+                      _yaowanDetail[perobj.name3] = _yaowanDetail[perobj.name3] + parseInt(perobj.count3)
+                    }else{
+                      _yaowanDetail[perobj.name3] = parseInt(perobj.count3)
+                    }                  
+                  }
+                  if(perobj.name4){
+                    if(_yaowanDetail[perobj.name4]){
+                      _yaowanDetail[perobj.name4] = _yaowanDetail[perobj.name4] + parseInt(perobj.count4)
+                    }else{
+                      _yaowanDetail[perobj.name4] = parseInt(perobj.count4)
+                    }                  
+                  }
+                }
+              }              
+            }
           }
           _totalIncome = parseFloat((_totalIncome + item.total).toFixed(2));
           _totalProfit = parseFloat((_totalProfit + item.totalprofit).toFixed(2));
@@ -333,9 +414,12 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
           }
           let searchStr = JSON.stringify(item.medarray);
           if(searchStr.indexOf('煎药') != -1){
-            _jianyaoTimes = _jianyaoTimes + 1;
+            _jianyaoTimes = _jianyaoTimes + item.dose;
           }
         }
+        this.yaowanDetail = _yaowanDetail
+        //alert(JSON.stringify(this.yaowanDetail))
+
         _averageIncome = parseFloat((_totalIncome / days).toFixed(2));
         _averageProfit = parseFloat((_totalProfit / days).toFixed(2));
         _averagePatient = parseFloat((_taotalPatient / days).toFixed(2));

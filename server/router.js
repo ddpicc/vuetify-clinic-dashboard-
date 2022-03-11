@@ -38,6 +38,10 @@ router.post('/updatePatientTimes', (req, res, next) => {
   api.updatePatientTimes(req, res, next);
 });
 
+router.post('/updatePatientOrderPage', (req, res, next) => {
+  api.updatePatientOrderPage(req, res, next);
+});
+
 router.post('/insertPatientDetailPage', (req, res, next) => {
   api.insertPatientDetailPage(req, res, next);
 });
