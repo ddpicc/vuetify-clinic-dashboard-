@@ -118,7 +118,7 @@
             color="white"
             class="mr-3"
           >
-            mdi-bell-plus
+            fa-bell
           </v-icon>
           {{notification}}
           <v-btn
@@ -126,7 +126,7 @@
             @click="snackbar = false"
           >
             <v-icon>
-              mdi-close-circle
+              fa-close
             </v-icon>
           </v-btn>
         </v-snackbar>
@@ -181,6 +181,9 @@
       jumpHome: function(){
         this.$router.push({ path: '/' });
       }
-    }
+    },
+    mounted: function() {
+      this.$store.dispatch('user/FedLogOut')
+		}
   }
 </script>

@@ -18,7 +18,7 @@
               <div class="category">
                 Handcrafted by us with
                 <v-icon size="17">
-                  mdi-heart
+                  fa-heart
                 </v-icon>
               </div>
             </div>

@@ -24,8 +24,8 @@
               color="amber"
               @click="deleteEnabled = !deleteEnabled"
             >
-              <v-icon v-if="deleteEnabled">mdi-delete-off</v-icon>
-              <v-icon v-if="!deleteEnabled">mdi-delete</v-icon>
+              <v-icon v-if="deleteEnabled">fa-trash-o</v-icon>
+              <v-icon v-if="!deleteEnabled">fa-trash</v-icon>
             </v-btn>
           </template>
           <!--  need a key of id -->
@@ -50,13 +50,13 @@
               class="mr-2"
               @click="reuse(item)"
             >
-              mdi-reply-all-outline
+              fa-angle-double-left
             </v-icon>
             <v-icon v-if="canDelete(item)"
               small
               @click="deleteItem(item)"
             >
-              mdi-close
+              fa-close
             </v-icon>
           </template>
           <template v-slot:item.medtype="{ item }">
@@ -128,7 +128,7 @@
               color="white"
               class="mr-3"
             >
-              mdi-bell-plus
+              fa-bell
             </v-icon>
             {{notification}}
             <v-btn
@@ -136,7 +136,7 @@
               @click="snackbar = false"
             >
               <v-icon>
-                mdi-close-circle
+                fa-close
               </v-icon>
             </v-btn>
           </v-snackbar>
@@ -213,8 +213,8 @@
       getAll: function() {
         this.loading = true;
         let idStartFrom = 0;
-        let fromlocal = loadFromLocal(1,'cacheOrder',[]);
-        let userSetting = loadFromLocal(1,'userSetting', []);
+        let fromlocal = loadFromLocal(this.$store.state.user.user_id,'cacheOrder',[]);
+        let userSetting = loadFromLocal(this.$store.state.user.user_id,'userSetting', []);
         this.displayYaowan = userSetting[0]['displayYaowan'];
 
         if(fromlocal.length == 0){
@@ -268,7 +268,7 @@
         //load all
         this.loading = true;
         let idStartFrom = 0;
-        let userSetting = loadFromLocal(1,'userSetting', []);
+        let userSetting = loadFromLocal(this.$store.state.user.user_id,'userSetting', []);
         this.displayYaowan = userSetting[0]['displayYaowan'];
         this.$http.get('/api/getAllOrd',{
           params: {

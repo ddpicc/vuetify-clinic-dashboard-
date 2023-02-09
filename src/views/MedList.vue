@@ -30,7 +30,7 @@
               color="amber"
               @click="addMedShow"
             >
-              <v-icon>mdi-plus</v-icon>
+              <v-icon>fa-plus</v-icon>
             </v-btn>
           </template>
           <v-data-table
@@ -51,13 +51,13 @@
               class="mr-2"
               @click="editItem(item)"
             >
-              mdi-pencil
+              fa-pencil
             </v-icon>
             <v-icon
               small
               @click="deleteItem(item.id)"
             >
-              mdi-close
+              fa-close
             </v-icon>
           </template>
           </v-data-table>
@@ -124,7 +124,7 @@
               color="white"
               class="mr-3"
             >
-              mdi-bell-plus
+              fa-bell
             </v-icon>
             {{notification}}
             <v-btn
@@ -132,7 +132,7 @@
               @click="snackbar = false"
             >
               <v-icon>
-                mdi-close-circle
+                fa-close
               </v-icon>
             </v-btn>
           </v-snackbar>

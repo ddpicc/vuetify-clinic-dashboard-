@@ -60,10 +60,10 @@ export const asyncRouterMap = [
       {path: '/med-list', name: '药品管理', component: () => import('../views/MedList.vue')},
       {path: '/ord-list', name: '处方管理', component: () => import('../views/OrderList.vue')},
       {path: '/create-ord', name: '生成处方', component: () => import('../views/CreateOrd.vue')},
-      {path: '/patient-list', name: '病人管理', component: () => import('../views/PatientList.vue')},
+      {path: '/patient-list', name: '病人管理', component: () => import('../views/PatientList.vue'), meta: {roles: ['admin']}},
       {path: '/detail-info', name: '详细账单', component: () => import('../views/DetailInfo.vue')},
       {path: '/settings', component: () => import('../views/Setting.vue')},
-      {path: '/today-patient', name: '今日病人', component: () => import('../views/CheckTodayPatient.vue')},
+      {path: '/today-patient', name: '今日病人', component: () => import('../views/CheckTodayPatient.vue'), meta: {roles: ['admin']}},
       { path: '*', redirect: '/' }
     ]
   }

@@ -27,7 +27,7 @@
         />
       </v-list-item-avatar>
       <v-list-item-title class="title">
-        云杰诊所
+        {{name}}
       </v-list-item-title>
     </v-list-item>
 
@@ -80,37 +80,37 @@
   var moreLinks = [
     {
       to: '/dashboard',
-      icon: 'mdi-view-dashboard',
+      icon: 'fa-dashboard',
       text: '首页'
     },
-    {
+/*     {
       to: '/today-patient',
       icon: 'mdi-clipboard-outline',
       text: '今日病人'
-    },
+    }, */
     {
       to: '/create-ord',
-      icon: 'mdi-format-font',
+      icon: 'fa-font',
       text: '生成处方'
     },        
     {
       to: '/ord-list',
-      icon: 'mdi-clipboard-outline',
+      icon: 'fa-clipboard',
       text: '处方管理'
     },              
     {
       to: '/med-list',
-      icon: 'mdi-pill',
+      icon: 'fa-medkit',
       text: '药品管理'
     },
     {
       to: '/patient-list',
-      icon: 'mdi-human-male-female',
+      icon: 'fa-male',
       text: '病人管理'
     },
     {
       to: '/detail-info',
-      icon: 'mdi-receipt',
+      icon: 'fa-file-o',
       text: '详细账单'
     }
   ];
@@ -118,12 +118,12 @@
   var lessLinks = [
     {
       to: '/create-ord',
-      icon: 'mdi-format-font',
+      icon: 'fa-font',
       text: '生成处方'
     },        
     {
       to: '/ord-list',
-      icon: 'mdi-clipboard-outline',
+      icon: 'fa-clipboard',
       text: '处方管理'
     }, 
   ]
@@ -136,6 +136,7 @@
     },
     data: () => ({
       links: [],
+      name: '',
     }),
 
     computed: {
@@ -156,7 +157,12 @@
 
     mounted: function() {
       console.log('drawer init');
-      let userSetting = loadFromLocal(1,'userSetting', []);
+      if(this.$store.state.user.user_id == 1){
+        this.name = '云杰诊所'
+      }else if(this.$store.state.user.user_id == 2){
+        this.name = 'yunjie'
+      }
+      let userSetting = loadFromLocal(this.$store.state.user.user_id,'userSetting', []);
       let displayLessMenu = userSetting[0]['displayLessMenu'];
       let childrenPath = this.$store.state.permission.addRouters[0].children;
       if(displayLessMenu){

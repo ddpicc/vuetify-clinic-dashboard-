@@ -76,6 +76,7 @@ export default {
 	FedLogOut({ commit }) {
 		return new Promise(resolve => {
 			commit('SET_TOKEN', '');
+			commit('SET_ROLES', []);
 			Cookies.remove('Admin-Token');
 			resolve();
 		});

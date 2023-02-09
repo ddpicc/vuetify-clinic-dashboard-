@@ -318,8 +318,9 @@ module.exports = {
   saveMonthTotalToUserSetting(req, res, next) {
     console.log('api - saveMonthTotalToUserSetting');
     var id = req.body.userid;
-    var colTotal = req.body.col, total = req.body.lastMonthTotal;
-    var colProfit = req.body.col, profit = req.body.lastMonthProfit;
+    var colTotal = req.body.colTotal, total = req.body.lastMonthTotal;
+    var colProfit = req.body.colProfit, profit = req.body.lastMonthProfit;
+    console.log(id + 'pp'+colTotal + 'pp' + total)
     pool.getConnection((err, connection) => {
       if(err)
         console.log(err);

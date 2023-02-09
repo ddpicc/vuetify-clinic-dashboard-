@@ -54,11 +54,11 @@
       >
         <material-stats-card
           color="green"
-          icon="mdi-store"
+          icon="fa-window-restore"
           title="当天收入"
           :value="todayIncome"
           small-value="元"
-          sub-icon="mdi-calendar"
+          sub-icon="fa-calendar"
           :sub-text="todayDate()"
         />
       </v-col>
@@ -70,11 +70,11 @@
       >
         <material-stats-card
           color="orange"
-          icon="mdi-content-copy"
+          icon="fa-copy"
           title="当天病人"
           :value="todayNum"
           small-value="人"
-          sub-icon="mdi-alert"
+          sub-icon="fa-calendar"
           sub-icon-color="error"
           :sub-text="todayDate()"
         />
@@ -87,11 +87,11 @@
       >
         <material-stats-card
           color="red"
-          icon="mdi-information-outline"
+          icon="fa-instagram"
           title="月收入"
           :value="monthIncome"
           small-value="元"
-          sub-icon="mdi-tag"
+          sub-icon="fa-tag"
           :sub-text="todayMonth()"
         />
       </v-col>
@@ -103,11 +103,11 @@
       >
         <material-stats-card
           color="info"
-          icon="mdi-twitter"
+          icon="fa-twitter"
           title="月病人"
           :value="monthNum"
           small-value="人"
-          sub-icon="mdi-update"
+          sub-icon="fa-tag"
           :sub-text="todayMonth()"
         />
       </v-col>
@@ -118,10 +118,10 @@
       >
         <material-stats-card
           color="green"
-          icon="mdi-store"
+          icon="fa-window-restore"
           title="全年收入"
           :value="yearIncome"
-          sub-icon="mdi-calendar"
+          sub-icon="fa-calendar"
           :sub-text="todayYear()"
         />
       </v-col>
@@ -131,10 +131,10 @@
       >
         <material-stats-card
           color="green"
-          icon="mdi-store"
+          icon="fa-window-restore"
           title="总收入"
           :value="overallIncome"
-          sub-icon="mdi-calendar"
+          sub-icon="fa-calendar"
           sub-text="从19年6月至今"
         />
       </v-col>
@@ -196,7 +196,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
       },
 
       loadDataAndSetupChart: function(){
-        let fromlocal = loadFromLocal(1,'cacheOrder',[]);
+        let fromlocal = loadFromLocal(this.$store.state.user.user_id,'cacheOrder',[]);
         let monthTotalFromLocal = loadFromLocal(1,'userSetting', []);
         let data30Days = [];
 
@@ -343,7 +343,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
     },
 
     mounted: function() {
-      let userSetting = loadFromLocal(1,'userSetting', []);
+      let userSetting = loadFromLocal(this.$store.state.user.user_id,'userSetting', []);
       this.displayProfit = userSetting[0]['displayProfit'];
       this.loadDataAndSetupChart();      
 		}

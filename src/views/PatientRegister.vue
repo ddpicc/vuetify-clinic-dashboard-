@@ -83,7 +83,7 @@
 									color="white"
 									class="mr-3"
 								>
-									mdi-bell-plus
+									fa-bell
 								</v-icon>
 								{{notification}}
 								<v-btn
@@ -91,7 +91,7 @@
 									@click="snackbar = false"
 								>
 									<v-icon>
-										mdi-close-circle
+										fa-close
 									</v-icon>
 								</v-btn>
 							</v-snackbar>

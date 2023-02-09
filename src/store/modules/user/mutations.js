@@ -8,8 +8,8 @@ export default {
 	SET_AVATAR: (state, avatar) => {
 		state.avatar = avatar;
 	},
-	SET_ROLES: (state, roles) => {
-		state.roles = roles;
+	SET_ROLES: (state, role) => {
+		state.role = role;
 	},
 	SET_PREFIX: (state, prefix) => {
 		state.dbs_prefix = prefix;

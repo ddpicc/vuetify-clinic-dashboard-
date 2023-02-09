@@ -55,7 +55,7 @@
 
 <script>
   import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate';
-  import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
+  import { saveToLocal, loadFromLocal, clearCache} from '../utils/handleLocalStorage';
   export default {
     data () {
       return {
@@ -72,14 +72,15 @@
       
       //if the date saved in the localstorage is not today, load and set all data, otherwise directly jump to dashboard
       checkDate: function() {
-        let updated_date = loadFromLocal(1,'updated_date',[]);
+        let updated_date = loadFromLocal(this.$store.state.user.user_id,'updated_date',[]);
         if(updated_date != new Date().toDateString() || updated_date.length == 0){
-          window.localStorage.removeItem('__clinicUser__');
-          saveToLocal(1,'updated_date', new Date().toDateString());
+          //window.localStorage.removeItem('__clinicUser__');
+          clearCache(this.$store.state.user.user_id)
+          saveToLocal(this.$store.state.user.user_id,'updated_date', new Date().toDateString());
           this.loadData();
           this.loadUserConfig();		    
         }else{
-          this.$router.push({ path: '/dashboard' });
+          this.$router.push({ path: '/create-ord' });
         }
       },
 
@@ -96,9 +97,9 @@
           }
         }).then(response => {
           this.$nextTick( () => {
-            saveToLocal(1,'cacheOrder',response.data);
+            saveToLocal(this.$store.state.user.user_id,'cacheOrder',response.data);
             this.e6 = 2;
-            setTimeout( () => {this.$router.push({ path: '/dashboard' });},2200);
+            setTimeout( () => {this.$router.push({ path: '/create-ord' });},2200);
           })
         })
 			},
@@ -127,7 +128,7 @@
           if (response.data[0][columnTotal] == 0){
             this.saveLastMonthTotalToDb(response.data[0], columnTotal, columnProfit, lastMonth, thisMonth);
           }else{
-            saveToLocal(1,'userSetting',response.data);
+            saveToLocal(this.$store.state.user.user_id,'userSetting',response.data);
           }
           this.e6 = 3;
         })
@@ -161,7 +162,7 @@
           }).then( (res) => {
             UserSettingAry[columnTotal] = _lastMonthIncome;
             UserSettingAry[columnProfit] = _lastMonthProfit;
-            saveToLocal(1,'userSetting',UserSettingAry);
+            saveToLocal(this.$store.state.user.user_id,'userSetting',UserSettingAry);
           })
         })
         

@@ -22,7 +22,10 @@
 
           <v-row>
             <v-col cols="12" sm="12" lg="4" md="4">
-              <v-date-picker full-width v-model="dates" range color="green"></v-date-picker>
+              <v-date-picker
+        v-model="dates"
+        range
+      ></v-date-picker>
               <div class="py-12"></div>
               <material-piechart-card
                 :data="monthSalesChart.data"
@@ -259,7 +262,7 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
     data: () => ({
       dates: [],
       reportDisplay: false,
-      iconChange: 'mdi-check-bold',
+      iconChange: 'fa-check',
       monthSalesChart: {
         data: [],
       },
@@ -319,7 +322,7 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
         this.monthProfitChart.data = [];
         if(this.reportDisplay != true){
           this.reportDisplay = true;
-          this.iconChange = 'mdi-close';
+          this.iconChange = 'fa-close';
           var start = this.dates[0];
           var end = this.dates[1];
           let days = (stringToDate(end) - stringToDate(start)) / (1000*3600*24) + 1;
@@ -336,7 +339,7 @@ import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate
           );
         }else{
           this.reportDisplay = false;
-          this.iconChange = 'mdi-check-bold';
+          this.iconChange = 'fa-check';
           this.dates = [];
         }
       },

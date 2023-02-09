@@ -38,3 +38,21 @@ export function loadFromLocal(id, key, def) {
 	
 	return ret;
 }
+
+export function clearCache(id) {
+	let clinicUser = window.localStorage.__clinicUser__;
+	if (!clinicUser) {
+	  //刚开始的时候还没有clinicUser
+	  clinicUser = {};
+	  clinicUser[id] = {};
+	} else {
+	  //如果window.localStorage.__clinicUser__已经有了
+    //因为读取的值是字符串的json，所以需要解析成json形式
+		clinicUser = JSON.parse(clinicUser);
+		if (clinicUser[id]) {
+		  //需要判断seller中是否有属性id，没有的话需要给他进行定义
+		  clinicUser[id] = {};
+		}
+	}
+	window.localStorage.__clinicUser__ = JSON.stringify(clinicUser);
+};

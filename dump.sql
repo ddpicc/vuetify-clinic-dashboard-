@@ -1,0 +1,125 @@
+-- MySQL dump 10.13  Distrib 8.0.27, for macos11 (arm64)
+--
+-- Host: localhost    Database: myDbs
+-- ------------------------------------------------------
+-- Server version	8.0.27
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `myDbs_userconfig`
+--
+
+DROP TABLE IF EXISTS `myDbs_userconfig`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `myDbs_userconfig` (
+  `id` smallint unsigned NOT NULL AUTO_INCREMENT,
+  `userid` smallint unsigned DEFAULT NULL,
+  `displayYaowan` smallint NOT NULL DEFAULT '0',
+  `displayProfit` smallint NOT NULL DEFAULT '0',
+  `displayLessMenu` smallint NOT NULL DEFAULT '0',
+  `defaultDoctor` varchar(20) NOT NULL DEFAULT '崔云杰',
+  `total201906` double NOT NULL DEFAULT '0',
+  `profit201906` double NOT NULL DEFAULT '0',
+  `total201907` double NOT NULL DEFAULT '0',
+  `profit201907` double NOT NULL DEFAULT '0',
+  `total201908` double NOT NULL DEFAULT '0',
+  `profit201908` double NOT NULL DEFAULT '0',
+  `total201909` double NOT NULL DEFAULT '0',
+  `profit201909` double NOT NULL DEFAULT '0',
+  `total201910` double NOT NULL DEFAULT '0',
+  `profit201910` double NOT NULL DEFAULT '0',
+  `total201911` double NOT NULL DEFAULT '0',
+  `profit201911` double NOT NULL DEFAULT '0',
+  `total201912` double NOT NULL DEFAULT '0',
+  `profit201912` double NOT NULL DEFAULT '0',
+  `total202001` double NOT NULL DEFAULT '0',
+  `profit202001` double NOT NULL DEFAULT '0',
+  `total202002` double NOT NULL DEFAULT '0',
+  `profit202002` double NOT NULL DEFAULT '0',
+  `total202003` double NOT NULL DEFAULT '0',
+  `profit202003` double NOT NULL DEFAULT '0',
+  `total202004` double NOT NULL DEFAULT '0',
+  `profit202004` double NOT NULL DEFAULT '0',
+  `total202005` double NOT NULL DEFAULT '0',
+  `profit202005` double NOT NULL DEFAULT '0',
+  `total202006` double NOT NULL DEFAULT '0',
+  `profit202006` double NOT NULL DEFAULT '0',
+  `total202007` double NOT NULL DEFAULT '0',
+  `profit202007` double NOT NULL DEFAULT '0',
+  `total202008` double NOT NULL DEFAULT '0',
+  `profit202008` double NOT NULL DEFAULT '0',
+  `total202009` double NOT NULL DEFAULT '0',
+  `profit202009` double NOT NULL DEFAULT '0',
+  `total202010` double NOT NULL DEFAULT '0',
+  `profit202010` double NOT NULL DEFAULT '0',
+  `total202011` double NOT NULL DEFAULT '0',
+  `profit202011` double NOT NULL DEFAULT '0',
+  `total202012` double NOT NULL DEFAULT '0',
+  `profit202012` double NOT NULL DEFAULT '0',
+  `total202101` double NOT NULL DEFAULT '0',
+  `profit202101` double NOT NULL DEFAULT '0',
+  `total202102` double NOT NULL DEFAULT '0',
+  `profit202102` double NOT NULL DEFAULT '0',
+  `total202103` double NOT NULL DEFAULT '0',
+  `profit202103` double NOT NULL DEFAULT '0',
+  `total202104` double NOT NULL DEFAULT '0',
+  `profit202104` double NOT NULL DEFAULT '0',
+  `total202105` double NOT NULL DEFAULT '0',
+  `profit202105` double NOT NULL DEFAULT '0',
+  `total202106` double NOT NULL DEFAULT '0',
+  `profit202106` double NOT NULL DEFAULT '0',
+  `total202107` double NOT NULL DEFAULT '0',
+  `profit202107` double NOT NULL DEFAULT '0',
+  `total202108` double NOT NULL DEFAULT '0',
+  `profit202108` double NOT NULL DEFAULT '0',
+  `total202109` double NOT NULL DEFAULT '0',
+  `profit202109` double NOT NULL DEFAULT '0',
+  `total202110` double NOT NULL DEFAULT '0',
+  `profit202110` double NOT NULL DEFAULT '0',
+  `total202111` double NOT NULL DEFAULT '0',
+  `profit202111` double NOT NULL DEFAULT '0',
+  `total202112` double NOT NULL DEFAULT '0',
+  `profit202112` double NOT NULL DEFAULT '0',
+  `total202201` double NOT NULL DEFAULT '0',
+  `profit202201` double NOT NULL DEFAULT '0',
+  `total202202` double NOT NULL DEFAULT '0',
+  `profit202202` double NOT NULL DEFAULT '0',
+  `total202203` double NOT NULL DEFAULT '0',
+  `profit202203` double NOT NULL DEFAULT '0',
+  `total202204` double NOT NULL DEFAULT '0',
+  `profit202204` double NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `myDbs_userconfig`
+--
+
+LOCK TABLES `myDbs_userconfig` WRITE;
+/*!40000 ALTER TABLE `myDbs_userconfig` DISABLE KEYS */;
+INSERT INTO `myDbs_userconfig` VALUES (1,1,1,1,0,'崔云杰',130146.23,83538.53,187930.81,119318.47,190253.31,122471.47,222946.23,146219.25,221305.17,142884.43,199129.31,128177.57,215346.92,130769.31,170815.03,102417.25,24425.67,12696.99,95350.25,62427.62,148482.44,103695.55,158565.34,108657.86,189684.37,128144.64,152295.88,102574.22,176866.73,117077.41,201608.24,129441.89,224420.3,144114.55,210399.28,136634.1,221509.13,145678.3,215553.37,145316.26,114896.33,78921.97,185204.58,126805.82,215591.51,144224.3,236058.28,154852.85,203551.94,132696.94,208325.23,136513.62,173417.86,115148.68,176969.94,119497.65,212837.42,138688.07,210841.65,136637.4,251255.42,161425.26,183603.92,120017.14,133398.63,92201.03,222789.72,147824.91,194069.88,125046.7),(2,2,1,1,0,'谢双阳',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,54851.16,37837.88);
+/*!40000 ALTER TABLE `myDbs_userconfig` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2022-05-07 11:11:14

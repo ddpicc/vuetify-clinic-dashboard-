@@ -15,7 +15,7 @@
       <v-icon
         color="tertiary"
         size="17"
-      >mdi-heart</v-icon>
+      >fa-heart</v-icon>
       for a better web
     </span>
   </v-footer>

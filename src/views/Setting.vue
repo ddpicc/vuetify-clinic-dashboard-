@@ -20,7 +20,7 @@
 
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>更改名称 <v-icon small @click.stop="canEdit = !canEdit">mdi-pencil</v-icon> </v-list-item-title>                
+                <v-list-item-title>更改名称 <v-icon small @click.stop="canEdit = !canEdit">fa-pencil</v-icon> </v-list-item-title>                
               </v-list-item-content>
               <v-list-item-action>
                 <v-text-field
@@ -33,13 +33,13 @@
 
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>更改密码<v-icon small @click.stop="canEditPass = !canEditPass">mdi-pencil</v-icon> </v-list-item-title>
+                <v-list-item-title>更改密码<v-icon small @click.stop="canEditPass = !canEditPass">fa-pencil</v-icon> </v-list-item-title>
               </v-list-item-content>
               <v-list-item-action>
                 <v-text-field
                   v-model="password"
                   :readonly="canEditPass"
-                  :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                  :append-icon="show ? 'fa-eye' : 'fa-eye-slashf'"
                   :rules="[rules.required, rules.min]"
                   :type="show ? 'text' : 'password'"
                   hint="At least 8 characters"
@@ -59,7 +59,7 @@
                   dense
                   accept="image/png, image/jpeg, image/bmp"
                   placeholder="上传logo"
-                  prepend-icon="mdi-camera"
+                  prepend-icon="fa-camera"
                   full-width
                 ></v-file-input>
               </v-list-item-action>
@@ -163,7 +163,7 @@
               color="white"
               class="mr-3"
             >
-              mdi-bell-plus
+              fa-bell
             </v-icon>
             {{notification}}
             <v-btn
@@ -171,7 +171,7 @@
               @click="snackbar = false"
             >
               <v-icon>
-                mdi-close-circle
+                fa-close
               </v-icon>
             </v-btn>
           </v-snackbar>
@@ -221,12 +221,12 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
           defaultDoctor: this.doctor,
           userid: this.$store.state.user.user_id           
         }).then( (res) => {
-          let userSetting = loadFromLocal(1,'userSetting', []);
+          let userSetting = loadFromLocal(this.$store.state.user.user_id,'userSetting', []);
           userSetting[0]['displayYaowan'] = this.displayYaowan? 1:0;
           userSetting[0]['displayProfit'] = this.displayProfit? 1:0;
           userSetting[0]['displayLessMenu'] = this.displayLessMenu? 1:0;
           userSetting[0]['defaultDoctor'] = this.doctor;
-          saveToLocal(1,'userSetting',userSetting);
+          saveToLocal(this.$store.state.user.user_id,'userSetting',userSetting);
           this.snackbar = true;
           this.notification = '修改成功';
           this.snackbarColor = 'green';

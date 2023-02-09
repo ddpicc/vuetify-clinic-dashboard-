@@ -26,7 +26,7 @@
               color="amber"
               @click="returnPtList"
             >
-              <v-icon>mdi-keyboard-return</v-icon>
+              <v-icon>fa-long-arrow-left</v-icon>
             </v-btn>
           </template>
           <v-form>

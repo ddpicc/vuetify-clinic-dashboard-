@@ -12,7 +12,7 @@
         icon
         @click.stop="onClick"
       >
-        <v-icon>mdi-view-list</v-icon>
+        <v-icon>fa-list-ul</v-icon>
       </v-btn>
       {{ title }}
     </v-toolbar-title>
@@ -30,7 +30,7 @@
           to="/settings"
         >
           <v-icon color="tertiary">
-            mdi-account
+            fa-user-o
           </v-icon>
         </v-btn>
 
@@ -39,7 +39,7 @@
           @click="reloadData"
         >
           <v-icon color="tertiary">
-            mdi-refresh
+            fa-refresh
           </v-icon>
         </v-btn>
 
@@ -90,7 +90,7 @@
           icon
         >
           <v-icon color="tertiary">
-            mdi-logout
+            fa-sign-out
           </v-icon>
         </v-btn>
       </v-row>
@@ -148,7 +148,7 @@
 
       reloadData: function(){
         window.localStorage.clear();
-        saveToLocal(1,'updated_date', new Date().toDateString());
+        saveToLocal(this.$store.state.user.user_id,'updated_date', new Date().toDateString());
         this.loadData();
         this.loadUserConfig();
       },
@@ -166,7 +166,7 @@
           }
         }).then(response => {
           this.$nextTick( () => {
-            saveToLocal(1,'cacheOrder',response.data);
+            saveToLocal(this.$store.state.user.user_id,'cacheOrder',response.data);
             location.reload();
           })
         })
@@ -196,7 +196,7 @@
           if (response.data[0][columnTotal] == 0){
             this.saveLastMonthTotalToDb(response.data[0], columnTotal, columnProfit, lastMonth, thisMonth);
           }else{
-            saveToLocal(1,'userSetting',response.data);
+            saveToLocal(this.$store.state.user.user_id,'userSetting',response.data);
           }
         })
       },
@@ -229,7 +229,7 @@
           }).then( (res) => {
             UserSettingAry[columnTotal] = _lastMonthIncome;
             UserSettingAry[columnProfit] = _lastMonthProfit;
-            saveToLocal(1,'userSetting',UserSettingAry);
+            saveToLocal(this.$store.state.user.user_id,'userSetting',UserSettingAry);
           })
         })
         
