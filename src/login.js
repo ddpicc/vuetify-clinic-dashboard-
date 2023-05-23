@@ -14,7 +14,7 @@ function hasPermission(role, to) {
   }
 }
 
-const whiteList = ['/login','/','/registerp','/displayp']// 不重定向白名单
+const whiteList = ['/login','/','/registerp','/displayp','/formula']// 不重定向白名单
 router.beforeEach((to, from, next) => {
 	if (store.state.user.token) { // 判断是否有token
 	  if (to.path === '/login') {

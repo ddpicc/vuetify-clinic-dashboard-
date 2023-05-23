@@ -16,6 +16,7 @@ import Login from '../views/Login'
 import LoadDataPage from '../views/LoadDataPage'
 import RegisterP from '../views/PatientRegister'
 import DisplayP from '../views/DisplayTodayPatient'
+import Formula from '../views/NutritionFormula'
 
 
 //不理解，但是是为了解决 next()的时候路由导航钩子时出现"uncaught (in promise) undefined 
@@ -32,7 +33,8 @@ export const constantRouterMap = [
   { path: '/login', component: Login, hidden: true },
   { path: '/loading', component: LoadDataPage, hidden: true },
   { path: '/registerp', component: RegisterP, hidden: true },
-  { path: '/displayp', component: DisplayP, hidden: true }
+  { path: '/displayp', component: DisplayP, hidden: true },
+  { path: '/formula', component: Formula, hidden: true }
 ]
 // Create a new router
 const router = new Router({
