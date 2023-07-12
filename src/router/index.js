@@ -66,6 +66,7 @@ export const asyncRouterMap = [
       {path: '/detail-info', name: '详细账单', component: () => import('../views/DetailInfo.vue')},
       {path: '/settings', component: () => import('../views/Setting.vue')},
       {path: '/today-patient', name: '今日病人', component: () => import('../views/CheckTodayPatient.vue'), meta: {roles: ['admin']}},
+      {path: '/videocall',name: '在线问诊',component: () => import('@/views/videocall'),meta: {roles: ['admin']}},
       { path: '*', redirect: '/' }
     ]
   }

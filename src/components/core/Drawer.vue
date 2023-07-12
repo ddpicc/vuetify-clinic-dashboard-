@@ -83,11 +83,11 @@
       icon: 'fa-dashboard',
       text: '首页'
     },
-/*     {
+    {
       to: '/today-patient',
       icon: 'mdi-clipboard-outline',
       text: '今日病人'
-    }, */
+    },
     {
       to: '/create-ord',
       icon: 'fa-font',
@@ -175,14 +175,25 @@
           }
         });
       }else{
-        childrenPath.forEach(element => {
-          var findLinks = moreLinks.find(function(p){
-            return p.to === element.path;
-          })
-          if(typeof(findLinks) != 'undefined'){
-            this.links.push(findLinks);
-          }
-        });
+        if(this.$store.state.user.role != 'admin'){
+          childrenPath.forEach(element => {
+            var findLinks = lessLinks.find(function(p){
+              return p.to === element.path;
+            })
+            if(typeof(findLinks) != 'undefined'){
+              this.links.push(findLinks);
+            }
+          });
+        }else{
+          childrenPath.forEach(element => {
+            var findLinks = moreLinks.find(function(p){
+              return p.to === element.path;
+            })
+            if(typeof(findLinks) != 'undefined'){
+              this.links.push(findLinks);
+            }
+          });
+        }
       }      
 		}
   }

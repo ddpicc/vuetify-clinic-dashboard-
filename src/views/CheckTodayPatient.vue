@@ -27,78 +27,127 @@
           </template>
           </v-data-table>
           <div class="text-center pt-2">
-            <v-btn block color="green" dark class="mr-2" @click="displayAll">{{displayBtnText}}</v-btn>
+            <v-btn block color="green" dark class="mr-2" @click="displayAll()">{{displayBtnText}}</v-btn>
+						<v-btn block color="green" dark class="mr-2" @click="gotoVideo()">视频</v-btn>
           </div>
         </material-card>
-				<v-dialog v-model="selectPatientDialog" scrollable persistent max-width="800px">
-					<material-card class="v-card-profile">
-						<v-data-table
-							:headers="ordHeaders"
-							:items="ordItems"
-							item-key="id"
-							show-expand
-							single-expand
-							:expanded.sync="expanded"
-							:items-per-page="15"
-							loading 
-							loading-text="没有找到该病人"
+				<v-dialog
+					v-model="selectPatientDialog"
+					fullscreen
+					hide-overlay
+				>
+					<v-card>
+						<v-toolbar
+							dark
+							color="primary"
 						>
-						<template v-slot:item.action="{ item }">
-							<v-btn small @click.stop="reuse(item)" text color="green">重用</v-btn>
-						</template>
-						<template v-slot:expanded-item="{ item }">
-							<td :colspan="8">
-								<v-btn text small color="green">打印</v-btn>
-								<div>
-									<h4 style="text-align:center;">处  方</h4>
-									<br>
-									<hr style="height:1px;border:none;border-top:1px solid #555555;" />
-									<v-simple-table>
-										<template v-slot:default>
-											<tbody>
-												<tr>
-													<td :colspan="2"><p>姓名： {{item.patient}}</p></td>
-													<td :colspan="2"><p>年龄： {{item.age}}</p></td>
-													<td :colspan="2"><p>性别： {{item.sex}}</p></td>
-													<td :colspan="2"><p>电话:  {{item.phone}}</p></td>
-												</tr>
-												<tr>
-													<td  :colspan="6" style="border-bottom:1px solid"><p>症状： {{item.symptom}}</p></td>
-													<td  :colspan="2" style="border-bottom:1px solid"><p>备注： {{item.order_comment}}</p></td>
-												</tr>
-												<tr v-for="element in item.medarray" :key="element.name">
-													<td>{{ JSON.parse(element).name1 }}</td>
-													<td>{{ JSON.parse(element).count1 }}</td>
-													<td>{{ JSON.parse(element).name2 }}</td>
-													<td>{{ JSON.parse(element).count2 }}</td>
-													<td>{{ JSON.parse(element).name3 }}</td>
-													<td>{{ JSON.parse(element).count3 }}</td>
-													<td>{{ JSON.parse(element).name4 }}</td>
-													<td>{{ JSON.parse(element).count4 }}</td>
-												</tr>
-												<tr>
-													<td :colspan="6"></td>
-													<td :colspan="2"><p>{{item.dose}}付</p></td>
-												</tr>
-												<tr>
-													<td :colspan="6" style="border-bottom:1px solid"></td>
-													<td :colspan="2" style="border-bottom:1px solid"><p>价钱： {{item.total}}元</p></td>
-												</tr>
-												<tr>
-													<td :colspan="6"><p>处方医师：  崔云杰</p></td>
-													<td :colspan="2"><p>日期： {{item.date}}</p></td>
-												</tr>
-											</tbody>
-										</template>
-									</v-simple-table>
-								</div>
-							</td>              
-						</template>
-          	</v-data-table>
-						<div class="text-center pt-2">
-							<v-btn block color="green" dark class="mr-2" @click="usePIngoreOrd">跳过,直接生成新病人</v-btn>
-          	</div>
-        	</material-card>
+							<v-btn
+								icon
+								dark
+								@click="selectPatientDialog = false"
+							>
+								<v-icon>fa-close</v-icon>
+							</v-btn>
+							<v-spacer></v-spacer>
+							<v-toolbar-items>
+								<v-btn
+									dark
+									text
+									@click="selectPatientDialog = false"
+								>
+									Save
+								</v-btn>
+							</v-toolbar-items>
+						</v-toolbar>
+						<v-container fluid>
+							<div class="title">{{ patient.name }}</div>
+							<v-divider></v-divider>
+							<v-row>
+								<v-col cols="12" md="6">
+									<v-card
+										class="mx-auto"
+									>
+										<v-card-title>
+											Top western road trips
+										</v-card-title>
+
+										<v-card-subtitle>
+											1,000 miles of wonder
+										</v-card-subtitle>
+
+										<v-card-actions>
+											<v-btn
+												color="orange lighten-2"
+												text
+											>
+												Explore
+											</v-btn>
+
+											<v-spacer></v-spacer>
+
+											<v-btn
+												icon
+												@click="show = !show"
+											>
+												<v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+											</v-btn>
+										</v-card-actions>
+
+										<v-expand-transition>
+											<div v-show="show">
+												<v-divider></v-divider>
+
+												<v-card-text>
+													I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
+												</v-card-text>
+											</div>
+										</v-expand-transition>
+									</v-card>
+								</v-col>
+								<v-col cols="12" md="6">
+									<v-card
+										class="mx-auto"
+									>
+										<v-card-title>
+											Top western road trips
+										</v-card-title>
+
+										<v-card-subtitle>
+											1,000 miles of wonder
+										</v-card-subtitle>
+
+										<v-card-actions>
+											<v-btn
+												color="orange lighten-2"
+												text
+											>
+												Explore
+											</v-btn>
+
+											<v-spacer></v-spacer>
+
+											<v-btn
+												icon
+												@click="show = !show"
+											>
+												<v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+											</v-btn>
+										</v-card-actions>
+
+										<v-expand-transition>
+											<div v-show="show">
+												<v-divider></v-divider>
+
+												<v-card-text>
+													I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
+												</v-card-text>
+											</div>
+										</v-expand-transition>
+									</v-card>
+								</v-col>
+							</v-row>
+						</v-container>
+					</v-card>
 				</v-dialog>
       </v-col>
     </v-row>
@@ -110,37 +159,33 @@
 	var connectUrl = 'ws://49.233.152.15:8081';
   export default {
     data: () => ({
+			loading: false,
       headers: [
 				{ text: '序号', value: 'id' },
         {
           sortable: false,
           text: '姓名',
 					value: 'name',
-					width: '25%'
         },
         {
           sortable: false,
           text: '年龄',
 					value: 'age',
-					width: '15%'
 				},
 				{
           sortable: false,
           text: '性别',
 					value: 'sex',
-					width: '15%'
         },
         {
           sortable: false,
           text: '时间',
 					value: 'time',
-					width: '15%'
         },
         {
           sortable: false,
           text: '操作',
 					value: 'action',
-					width: '30%'
         },
       ],
 			items: [],
@@ -171,7 +216,10 @@
       expanded: [],
 			finishEnabled: true,
 			displayBtnText: '显示全部',
+
 			selectPatientDialog: false,
+			patient: {},
+			show: false,
 			patientName: '',
       patientSex: '',
       patientAge: '',
@@ -190,6 +238,9 @@
 					}
         }).then( (res) => {
           this.items = res.data;
+					for(let item of this.items){
+						item.time = new Date(item.register_date).toLocaleString()
+					}
         })
 			},
 			// 获取今日所有的病人
@@ -200,6 +251,9 @@
 					}
         }).then( (res) => {
           this.items = res.data;
+					for(let item of this.items){
+						item.time = new Date(item.register_date).toLocaleString()
+					}
         })
 			},
 
@@ -253,11 +307,8 @@
 
 			selectPatient: function(item){
 				this.selectPatientDialog = true;
-				this.patientName = item.name;
-        this.patientAge = item.age;
-        this.patientSex = item.sex;
-        this.patientPhone = item.phone;
-				this.$http.get('/api/selectOrdByPatientName',{
+				this.patient = item
+				/* this.$http.get('/api/selectOrdByPatientName',{
           params: {
             dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
             dbs_b : this.$store.state.user.dbs_prefix+'patient',
@@ -268,11 +319,15 @@
 					for(let element of respond.data) {
 						element.medarray = element.medarray.split(";");
 					}
-				})
+				}) */
 			},
 
 			reuse: function(selectedItem){
         this.$router.push({name: '生成处方', params: {ord_item: selectedItem}});
+      },
+
+			gotoVideo: function(){
+        this.$router.push({ path: '/videocall' });
       },
 			
 			createWebSocket() {
@@ -327,8 +382,8 @@
     },
 
     mounted: function() {
-			this.getNotFinished();
-			this.createWebSocket();
+			this.getAll();
+			//this.createWebSocket();
 		}
 
     

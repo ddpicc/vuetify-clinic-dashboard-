@@ -105,6 +105,7 @@ module.exports = {
   },
 
   getAllPatient(req, res, next) {
+    console.log('api - getAllPatient');
     var dbs = req.query.dbs;
     pool.getConnection((err, connection) => {
       var sql = sqlMap.getAllPatient;

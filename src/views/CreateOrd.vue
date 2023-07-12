@@ -421,7 +421,7 @@
       inputDose: '',
       medString: '',
       doctor: '',
-      doctorList: ['崔云杰','谢双阳'],
+      doctorList: ['崔云杰','谢双阳','王同迅'],
       selectPatientDialog: false,
       selectUseageDialog: false,
       printOrderDialog: false,

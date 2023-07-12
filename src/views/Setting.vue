@@ -207,7 +207,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
           fileSize: value => !value || value.size < 2000000 || 'Avatar size should be less than 2 MB!',
         },
         doctor: '崔云杰',
-        doctorList: ['崔云杰','谢双阳'],
+        doctorList: ['崔云杰','谢双阳','王同迅'],
       }
     },
 
