@@ -51,9 +51,7 @@
 </template>
 
 <script>
-	let socket;
-	var connectUrl = 'ws://49.233.152.15:8081';
-	//"ws://49.233.152.15:8081"
+			//"ws://49.233.152.15:8081"
   export default {
     data: () => ({
       headers: [
@@ -70,8 +68,7 @@
         }
       ],
 			items: [],
-			lockReconnect: false
-    }),
+			    }),
 
     methods: {
 			getText: function(){
@@ -94,15 +91,15 @@
         })
       },
 			
-			createWebSocket() {
+			/* WebSocket methods removed: createWebSocket() {
 				try {
 						// 创建Web Socket 连接
-						socket = new WebSocket(connectUrl);
+						return;
 						// 初始化事件
-						this.initEventHandle(socket);
+						return;
 				} catch (e) {
 						// 出错时重新连接
-						this.reconnect(connectUrl);
+						return;
 				}
 			},
 			
@@ -139,11 +136,12 @@
 						this.createWebSocket(connectUrl);
 				}, 2000);
 			},
+    */
     },
 
-    mounted: function() {
+    mounted: function(){
 			this.getAll();
-			this.createWebSocket();
+			// WebSocket 已停用
 		}
 
     

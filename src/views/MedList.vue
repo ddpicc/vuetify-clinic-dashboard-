@@ -308,7 +308,7 @@
               baseprice : this.dialogBaseprice,
               sellprice : this.dialogSellprice,
               checked : this.dialogChecked,
-              id: this.dialogMedId            
+              id: this.dialogMedId
           }).then( (res) => {
             this.snackbar = true;
             this.notification = '修改成功';

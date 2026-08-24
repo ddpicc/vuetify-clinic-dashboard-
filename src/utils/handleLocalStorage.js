@@ -21,7 +21,7 @@ export function saveToLocal(id, key, value) {
   //由于存储只能是字符串的值，需要将JSON转化成字符串的json形式
   //存储的localStorage的变量名是：_seller_
 	window.localStorage.__clinicUser__ = JSON.stringify(clinicUser);
-};
+}
 //读取数据
 export function loadFromLocal(id, key, def) {
   //id-商家的id，key-不同的属性名,def-default默认值
@@ -55,4 +55,4 @@ export function clearCache(id) {
 		}
 	}
 	window.localStorage.__clinicUser__ = JSON.stringify(clinicUser);
-};
+}

@@ -14,7 +14,7 @@
           <v-data-table
             :headers="headers"
             :items="items"
-            item-key="name"
+            item-key="id"
             :items-per-page="15"
             :search="searchStr"
             :custom-filter="filterText"
@@ -31,7 +31,7 @@
           </template>
           </v-data-table>
           <div class="text-center pt-2">
-            <v-btn block color="green" dark class="mr-2" @click="backTop">回到顶部</v-btn>
+            <v-btn block color="green" dark class="mt-5" :disabled="loading || !hasMore" @click="getAll(1)">读取更多</v-btn>
           </div>
         </material-card>
       </v-col>
@@ -40,6 +40,7 @@
 </template>
 
 <script>
+  import { mapState } from 'vuex'
   export default {
     data: () => ({
       searchStr: '',
@@ -76,8 +77,12 @@
 					width: '20%'
         },
       ],
-      items: []
+      items: [],
+      hasMore: true
     }),
+    computed: {
+      ...mapState('patientpage', ['offset']),
+    },
 
     methods: {
       //搜索
@@ -89,16 +94,29 @@
       },
 
       // 获取系统中所有病人
-      getAll: function() {
+      getAll: function(_offset = 0) {
+        if (this.loading) return;
         this.loading = true;
-        this.$http.get('/api/getAllPatient',{
+        if(_offset === 0){
+          this.$store.commit('patientpage/GO_PAGE', 0);
+          this.items = [];
+          this.hasMore = true;
+        }
+        this.$http.get('/api/loadPatientMore',{
           params: {
             dbs : this.$store.state.user.dbs_prefix+'patient',
+            offset : this.offset,
 					}
-        }).then( (res) => {
-          this.items = res.data;
+        }).then((res) => {
+          const patients = Array.isArray(res.data) ? res.data : [];
+          this.$store.commit('patientpage/NEXT_PAGE', patients.length);
+          this.items = this.items.concat(patients);
+          this.hasMore = patients.length === 3000;
+        }).catch(() => {
+          this.hasMore = true;
+        }).then(() => {
           this.loading = false;
-        })
+        });
       },
 
       backTop() {
@@ -120,13 +138,13 @@
           this.snackbar = true;
           this.notification = '删除成功';
           this.snackbarColor = 'green';
-          this.getAll();
+          this.getAll(0);
         })
       }
     },
 
     mounted: function() {
-			this.getAll();
+			this.getAll(0);
 		}
 
     

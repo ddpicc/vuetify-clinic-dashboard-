@@ -12,7 +12,131 @@ const pool = mysql.createPool({
   multipleStatements: true    // 多语句查询
 });
 
+const clinicPrefixPattern = /^[A-Za-z0-9_]+$/;
+
+function clinicTables(prefix) {
+  if (!clinicPrefixPattern.test(prefix || '')) {
+    throw new Error('诊所标识无效');
+  }
+  return {
+    patient: prefix + 'patient',
+    order: prefix + 'ordlist',
+    medicine: prefix + 'medlist',
+    gaofang: prefix + 'gaofang',
+  };
+}
+
+function query(connection, sql, values) {
+  return new Promise((resolve, reject) => {
+    connection.query(sql, values, (err, result) => err ? reject(err) : resolve(result));
+  });
+}
+
+function inTransaction(work, res) {
+  pool.getConnection((connectionError, connection) => {
+    if (connectionError) return res.status(500).json({ error: '数据库连接失败' });
+    connection.beginTransaction(async beginError => {
+      if (beginError) {
+        connection.release();
+        return res.status(500).json({ error: '无法开始数据库事务' });
+      }
+      try {
+        const result = await work(connection);
+        connection.commit(commitError => {
+          connection.release();
+          if (commitError) return res.status(500).json({ error: '提交数据库事务失败' });
+          res.json(result);
+        });
+      } catch (error) {
+        connection.rollback(() => {
+          connection.release();
+          res.status(400).json({ error: error.message || '保存失败' });
+        });
+      }
+    });
+  });
+}
+
 module.exports = {
+  savePrescription(req, res, next) {
+    const prefix = req.body.dbPrefix;
+    const patient = req.body.patient || {};
+    const order = req.body.order || {};
+    const inventoryItems = Array.isArray(req.body.inventoryItems) ? req.body.inventoryItems : [];
+
+    if (!patient.name || !order.medarray || !order.medtype || !order.date) {
+      return res.status(400).json({ error: '处方信息不完整' });
+    }
+
+    let tables;
+    try {
+      tables = clinicTables(prefix);
+    } catch (error) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    inTransaction(async connection => {
+      let patientId = Number.parseInt(patient.id, 10);
+      if (Number.isInteger(patientId) && patientId > 0) {
+        await query(connection, 'UPDATE ?? SET sex = ?, age = ?, phone = ? WHERE id = ?', [
+          tables.patient, patient.sex, patient.age, patient.phone, patientId,
+        ]);
+        const visitResult = await query(connection, 'UPDATE ?? SET visitTimes = visitTimes + 1 WHERE id = ?', [tables.patient, patientId]);
+        if (visitResult.affectedRows !== 1) throw new Error('患者不存在');
+      } else {
+        const patientResult = await query(connection,
+          'INSERT INTO ?? (name, name_pinyin, sex, age, phone) VALUES (?, ?, ?, ?, ?)',
+          [tables.patient, patient.name, patient.namePinyin, patient.sex, patient.age, patient.phone]);
+        patientId = patientResult.insertId;
+      }
+
+      for (const item of inventoryItems) {
+        const count = Number(item.count);
+        if (!item.name || !Number.isFinite(count) || count <= 0) throw new Error('库存扣减参数无效');
+        const inventoryResult = await query(connection,
+          'UPDATE ?? SET inventoryNm = inventoryNm - ? WHERE medname = ? AND inventoryNm >= ?',
+          [tables.medicine, count, item.name, count]);
+        if (inventoryResult.affectedRows !== 1) throw new Error('库存不足或药品不存在：' + item.name);
+      }
+
+      const orderResult = await query(connection,
+        'INSERT INTO ?? (patient, patient_id, symptom, order_comment, medtype, dose, medarray, total, totalprofit, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [tables.order, patient.name, patientId, order.symptom, order.comment, order.medtype, order.dose, order.medarray, order.total, order.totalprofit, order.date]);
+      return { patientId, orderId: orderResult.insertId };
+    }, res);
+  },
+
+  saveGaofangIntake(req, res, next) {
+    const prefix = req.body.dbPrefix;
+    const patient = req.body.patient || {};
+    const record = req.body.record || {};
+    if (!patient.name || !record.date) return res.status(400).json({ error: '膏方信息不完整' });
+
+    let tables;
+    try {
+      tables = clinicTables(prefix);
+    } catch (error) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    inTransaction(async connection => {
+      let patientId = Number.parseInt(patient.id, 10);
+      if (Number.isInteger(patientId) && patientId > 0) {
+        const updateResult = await query(connection, 'UPDATE ?? SET sex = ?, age = ?, phone = ?, visitTimes = visitTimes + 1 WHERE id = ?',
+          [tables.patient, patient.sex, patient.age, patient.phone, patientId]);
+        if (updateResult.affectedRows !== 1) throw new Error('患者不存在');
+      } else {
+        const patientResult = await query(connection,
+          'INSERT INTO ?? (name, name_pinyin, sex, age, phone) VALUES (?, ?, ?, ?, ?)',
+          [tables.patient, patient.name, patient.namePinyin, patient.sex, patient.age, patient.phone]);
+        patientId = patientResult.insertId;
+      }
+      const recordResult = await query(connection,
+        'INSERT INTO ?? (patient_id, symptom, order_comment, date) VALUES (?, ?, ?, ?)',
+        [tables.gaofang, patientId, record.symptom, record.comment, record.date]);
+      return { patientId, recordId: recordResult.insertId };
+    }, res);
+  },
   getAllMedbyType(req, res, next) {
     console.log('api - getAllMedbyType');
     var dbs = req.query.dbs;
@@ -442,9 +566,109 @@ module.exports = {
         connection.release();
       })
     })
-  }
+  },
 
+  createOrdAtGaofang(req, res, next) {
+    console.log('api - createOrdAtGaofang')
+    var dbs = req.body.dbs;
+    var patient_id = req.body.patient_id;
+    var symptom = req.body.symptom,order_comment = req.body.order_comment;
+    var date = req.body.date;
+    pool.getConnection((err, connection) => {
+      if (err) return res.status(500).json({ error: '数据库连接失败' });
+      var sql = sqlMap.createOrdAtGaofang;
+      connection.query(sql, [dbs,patient_id,symptom,order_comment,date], (queryErr, result) => {
+        connection.release();
+        if (queryErr) return res.status(500).json({ error: '创建膏方记录失败' });
+        res.json(result);
+      })
+    })
+  },
+
+  getGaofangRecord(req, res, next) {
+    console.log('api - getGaofangRecord');
+    var dbs = req.query.dbs;
+    var offset = Number.parseInt(req.query.offset, 10);
+    if (!Number.isInteger(offset) || offset < 0) {
+      return res.status(400).json({ error: '分页参数无效' });
+    }
+    pool.getConnection((err, connection) => {
+      if (err) return res.status(500).json({ error: '数据库连接失败' });
+      var sql = sqlMap.getGaofangRecord;
+      connection.query(sql, [dbs,offset], (queryErr, result) => {
+        connection.release();
+        if (queryErr) return res.status(500).json({ error: '读取膏方记录失败' });
+        res.json(result);
+      })
+    })
+  },
+  saveGaofangRecord(req, res, next) {
+    console.log('api - saveGaofangRecord')
+    var dbs = req.body.dbs;
+    var gaofangRecordId = req.body.gaofangRecordId;
+    var gaofang_total = req.body.gaofang_total;
+    var medarray = req.body.medarray;
+    var status = req.body.status;
+    pool.getConnection((err, connection) => {
+      if (err) return res.status(500).json({ error: '数据库连接失败' });
+      var sql = sqlMap.saveGaofangRecord;
+      connection.query(sql, [dbs,medarray,gaofang_total,status,gaofangRecordId], (queryErr, result) => {
+        connection.release();
+        if (queryErr) return res.status(500).json({ error: '保存膏方记录失败' });
+        res.json(result);
+      })
+    })
+  },
+  updateGaofangStatus(req, res, next) {
+    console.log('api - updateGaofangStatus')
+    var dbs = req.body.dbs;
+    var gaofangRecordId = req.body.gaofangRecordId;
+    var status = req.body.status;
+    pool.getConnection((err, connection) => {
+      if (err) return res.status(500).json({ error: '数据库连接失败' });
+      var sql = sqlMap.updateGaofangStatus;
+      connection.query(sql, [dbs,status,gaofangRecordId], (queryErr, result) => {
+        connection.release();
+        if (queryErr) return res.status(500).json({ error: '更新膏方状态失败' });
+        res.json(result);
+      })
+    })
+  },
   
+  reuseGaofangRecord(req, res, next) {
+    console.log('api - reuseGaofangRecord')
+    var dbs = req.body.dbs;
+    var patient_id = req.body.patient_id,medarray = req.body.medarray;
+    var symptom = req.body.symptom,order_comment = req.body.order_comment;
+    var date = req.body.date, gaofang_total = req.body.gaofang_total;
+    pool.getConnection((err, connection) => {
+      if (err) return res.status(500).json({ error: '数据库连接失败' });
+      var sql = sqlMap.reuseGaofangRecord;
+      connection.query(sql, [dbs,patient_id,symptom,medarray,gaofang_total,order_comment,date], (queryErr, result) => {
+        connection.release();
+        if (queryErr) return res.status(500).json({ error: '复用膏方记录失败' });
+        res.json(result);
+      })
+    })
+  },
+
+  loadPatientMore(req, res, next) {
+    console.log('api - loadPatientMore');
+    var dbs = req.query.dbs;
+    var offset = Number.parseInt(req.query.offset, 10);
+    if (!Number.isInteger(offset) || offset < 0) {
+      return res.status(400).json({ error: '分页参数无效' });
+    }
+    pool.getConnection((err, connection) => {
+      if (err) return res.status(500).json({ error: '数据库连接失败' });
+      var sql = sqlMap.loadPatientMore;
+      connection.query(sql, [dbs,offset], (queryErr, result) => {
+        connection.release();
+        if (queryErr) return res.status(500).json({ error: '读取患者记录失败' });
+        res.json(result);
+      })
+    })
+  },
 
   
 }

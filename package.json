@@ -6,14 +6,15 @@
     "one": "./scripts/one.js"
   },
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "serve": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "axios": "^0.23.0",
     "chart.js": "2.9.2",
     "core-js": "^3.6.5",
+    "dotenv": "^17.4.2",
     "js-cookie": "^3.0.1",
     "mysql": "^2.18.1",
     "node-schedule": "^2.1.0",
@@ -46,14 +47,17 @@
   "eslintConfig": {
     "root": true,
     "env": {
-      "node": true
+      "node": true,
+      "es6": true
     },
     "extends": [
       "plugin:vue/essential",
       "eslint:recommended"
     ],
     "parserOptions": {
-      "parser": "babel-eslint"
+      "parser": "babel-eslint",
+      "ecmaVersion": 2020,
+      "sourceType": "module"
     },
     "rules": {}
   },

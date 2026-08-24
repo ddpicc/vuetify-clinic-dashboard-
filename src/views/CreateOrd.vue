@@ -5,14 +5,20 @@
     grid-list-xl
   >
     <v-row align="center">
-      <v-col cols="12" >
-        <material-card flat full-width :color=cardColor>
+      <v-col cols="12">
+        <material-card flat full-width :color="cardColor">
           <template v-slot:header>
             <v-row align="center">
               <v-col sm="4" md="4">
                 <div class="px-3">
                   <div class="title font-weight-light mb-2">
-                    <v-radio-group v-model="medRadio" :mandatory="false" row @change="radioChanged">
+                    <v-radio-group
+                      v-model="medRadio"
+                      :mandatory="false"
+                      :row="!isMobile"
+                      class="med-type-group"
+                      @change="radioChanged"
+                    >
                       <v-radio label="草药" value="草药" color="grey darken-1"></v-radio>
                       <v-radio label="免煎" value="免煎" color="grey darken-1"></v-radio>
                       <v-radio label="西药" value="西药" color="grey darken-1"></v-radio>
@@ -29,18 +35,21 @@
                 <v-container>
                   <v-row dense>
                     <v-col sm="4" md="4">
-                      <v-text-field v-model="patientName" @blur="nameLostFoucs()"
+                      <v-text-field v-model="patientName" @input="onPatientNameInput" @blur="nameLostFoucs()"
+                        :disabled="isSavingOrder"
                         label="姓名"
                       ></v-text-field>
                     </v-col>
                     <v-col sm="4" md="3">
                       <v-select v-model="patientSex"
+                        :disabled="isSavingOrder"
                         :items="sexItems"
                         label="性别"
                       ></v-select>
                     </v-col>
                     <v-col sm="4" md="3">
                       <v-text-field v-model="patientAge"
+                        :disabled="isSavingOrder"
                         label="年龄"
                       ></v-text-field>
                     </v-col>
@@ -53,6 +62,8 @@
                         top
                         right
                         color="amber"
+                        :disabled="isSavingOrder"
+                        :loading="isSavingOrder"
                         @click="postOrdToDbSure"
                       >
                         <v-icon>fa-plus</v-icon>
@@ -64,6 +75,7 @@
                   >
                     <v-col sm="5" md="5">
                       <v-text-field v-model="patientPhone"
+                        :disabled="isSavingOrder"
                         label="电话"
                       ></v-text-field>
                     </v-col>
@@ -84,12 +96,13 @@
             :search="searchStr"
             :custom-filter="filterText"
             hide-default-footer
+            :mobile-breakpoint="600"
           >
           <template v-slot:top>
             <v-row 
             dense
             >
-              <v-col sm="6" md="6">
+              <v-col cols="12" sm="6" md="6">
                 <v-autocomplete
                   label="药品"
                   :items="components"
@@ -116,17 +129,19 @@
                 </template>
                 </v-autocomplete>
               </v-col>
-              <v-col v-if="!howToUseOn" sm="6" md="6">
+              <v-col v-if="!howToUseOn" cols="12" sm="6" md="6">
                 <v-text-field
                   v-model="inputDose"
                   label="剂量"
                   dense
                   ref="mark2"
-                  @keyup.enter.native="postToTb"
+                  append-icon="fa-plus"
+                  @keyup.native="handleKeyUp"
+                  @click:append="postToTb"
                   @focus="focus($event)"
                 ></v-text-field>
               </v-col>
-              <v-col v-if="howToUseOn" sm="3" md="3">
+              <v-col v-if="howToUseOn" cols="12" sm="3" md="3">
                 <v-text-field
                   v-model="useage"
                   label="用法用量"
@@ -137,7 +152,7 @@
                   @blur="useageLostFoucs"
                 ></v-text-field>
               </v-col>
-              <v-col v-if="howToUseOn" sm="3" md="3">
+              <v-col v-if="howToUseOn" cols="12" sm="3" md="3">
                 <v-text-field
                   v-model="inputDose"
                   label="剂量"
@@ -248,26 +263,26 @@
           </template>
           </v-data-table>
           <div class="text-center pt-2">
-            <v-row>
-              <v-col sm="3" md="4"></v-col>
-              <v-col sm="2" md="2">
+            <v-row align="center">
+              <v-col cols="12" md="4" class="d-none d-md-block"></v-col>
+              <v-col cols="12" sm="6" md="2">
                 <v-select
                   dense
                   v-model="doctor"
                   :items="doctorList"
                 ></v-select>
               </v-col>
-              <v-col sm="4" md="3">
+              <v-col cols="12" sm="6" md="3">
                 <v-text-field dense v-model="orderComment"
                   label="处方备注" placeholder="备注"
                 ></v-text-field>
               </v-col>
-              <v-col sm="1" md="1">
+              <v-col cols="6" sm="4" md="1">
                 <v-text-field dense v-if="!isYaowan" v-model="orderCount"
                   label="几付" suffix="付" placeholder=" " @focus="focus($event)"
                 ></v-text-field>
               </v-col>
-              <v-col sm="2" md="2">
+              <v-col cols="6" sm="4" md="2">
                 <v-text-field @focus="focus($event)" dense suffix="元" v-model="total"
                 label="总价" placeholder=" " append-icon="fa-check" @click:append="addMoney"
                 ></v-text-field>
@@ -396,6 +411,8 @@
       sexItems: ['男', '女'],
       patientName: '',
       patient_id: '',
+      selectedPatientName: '',
+      isSavingOrder: false,
 			patientAge: '',
       patientSex: '',
       patientPhone: '',
@@ -443,6 +460,12 @@
       useageHeader: [{ text: '用法', value: 'use' },{ text: '操作', value: 'action' }],
       useageList: useages,
     }),
+
+    computed: {
+      isMobile () {
+        return this.$vuetify.breakpoint.smAndDown;
+      },
+    },
 
     methods: {
       //搜索
@@ -641,6 +664,13 @@
         this.$refs.mark1.$el.querySelector('input').focus();
       },
 
+      handleKeyUp(e) {
+        // 兼容“换行”键或“前往”键
+        if (e.key === 'Enter' || e.keyCode === 13 || e.key === 'Go' || e.key === 'Search') {
+          this.postToTb();
+        }
+      },
+
       postOrdToDbSure:function() {
         if(this.items.length == 0){
           alert('订单为空');
@@ -662,6 +692,10 @@
       },
 
       printIt: function(){
+        if(this.isSavingOrder){
+          return;
+        }
+        this.isSavingOrder = true;
         this.printOrderDialog = false;
         this.$print(this.$refs.print);
         let ordProfit = '';
@@ -1059,7 +1093,6 @@
               '重楼':4.2,
               '免煎 沉香':3,
               '免煎   阿胶':7,
-              '饴糖':0.05,
               '饴糖':0.5,
               '生附子':0.12,
               '免煎 补骨脂':2.6,
@@ -1112,143 +1145,60 @@
           }
         }
 
-        if(this.medRadio == '免煎' || this.medRadio == '西药'){
-          //如果是免煎药或者是西药，更新药品库存
-          let sqlStatement = '';
-          for(let oneMed of this.orderMed1PerObj){
-            let countCost = oneMed.count * this.orderCount;
-            let oneSqlString = 'UPDATE ' + this.$store.state.user.dbs_prefix+'medlist' +  ' SET inventoryNm = inventoryNm - ' + countCost + " WHERE medname = '" + oneMed.name + "';";
-            sqlStatement = sqlStatement + oneSqlString;
+        const orderSnapshot = {
+          patient: {
+            id: this.patient_id || null,
+            name: this.patientName,
+            namePinyin: pinyin(this.patientName, {style: pinyin.STYLE_NORMAL}).join(''),
+            sex: this.patientSex,
+            age: !this.patientAge ? 0 : parseFloat(this.patientAge),
+            phone: !this.patientPhone ? 0 : parseInt(this.patientPhone),
+          },
+          order: {
+            symptom: this.patientSymptom,
+            comment: this.orderComment,
+            medtype: this.medRadio,
+            dose: this.orderCount,
+            medarray: this.medString,
+            total: this.medRadio == '药丸' ? yaowanTotal : parseFloat(this.total),
+            totalprofit: ordProfit,
+            date: getNowFormatDate(),
+          },
+          inventoryItems: (this.medRadio == '免煎' || this.medRadio == '西药')
+            ? this.orderMed1PerObj.map(oneMed => ({
+              name: oneMed.name,
+              count: Number(oneMed.count) * Number(this.orderCount),
+            }))
+            : [],
+        };
+
+        this.$http.post('/api/savePrescription', {
+          dbPrefix: this.$store.state.user.dbs_prefix,
+          patient: orderSnapshot.patient,
+          order: orderSnapshot.order,
+          inventoryItems: orderSnapshot.inventoryItems,
+        }).then(() => {
+          this.finishSavingOrder();
+          if (saveToTest) {
+            this.$http.post('/api/savePrescription', {
+              dbPrefix: 'test_',
+              patient: Object.assign({}, orderSnapshot.patient, { id: null }),
+              order: Object.assign({}, orderSnapshot.order, { total: toTestTotal }),
+              inventoryItems: [],
+            }).catch(err => console.log('test order save failed', err));
           }
-          this.$http.post('/api/updateMedInventory',{
-            sqlStatement : sqlStatement,
-          }).then( (res) => {
-            console.log('update med success');
-          })
-        }
-        if(!this.patient_id){
-          this.$http.post('/api/insertPatientOrderPage',{
-              //搜索全拼相同，在得到的结果中找至少有一个字相同的名字,找到了就列出来，没找到就创建一个新的病人
-              dbs : this.$store.state.user.dbs_prefix+'patient',
-              name : this.patientName,
-              name_pinyin : pinyin(this.patientName,{style: pinyin.STYLE_NORMAL}).join(""),
-              sex : this.patientSex,
-              age : !this.patientAge? 0 : parseFloat(this.patientAge),
-              phone : !this.patientPhone? 0 : parseInt(this.patientPhone),
-              lastVisit : getNowFormatDate(),
-            }).then( (res) => {
-              this.$http.post('/api/insertOrd',{
-                dbs : this.$store.state.user.dbs_prefix+'ordlist',
-                patient : this.patientName,
-                patient_id : res.data.insertId,
-                symptom : this.patientSymptom,
-                order_comment : this.orderComment,
-                medtype : this.medRadio,
-                dose : this.orderCount,
-                medarray : this.medString,
-                total : this.medRadio == '药丸'? yaowanTotal : parseFloat(this.total),
-                totalprofit : ordProfit,
-                date : getNowFormatDate(),
-              }).then( (resord) => {   
-                if(saveToTest){
-                  this.$http.post('/api/insertPatientOrderPage',{
-                    dbs : 'test_patient',
-                    name : this.patientName,
-                    name_pinyin : pinyin(this.patientName,{style: pinyin.STYLE_NORMAL}).join(""),
-                    sex : this.patientSex,
-                    age : !this.patientAge? 0 : parseFloat(this.patientAge),
-                    phone : !this.patientPhone? 0 : parseInt(this.patientPhone),
-                    lastVisit : getNowFormatDate(),
-                  }).then( (res) => {
-                    this.$http.post('/api/insertOrd',{
-                      dbs : 'test_ordlist',
-                      patient : this.patientName,
-                      patient_id : res.data.insertId,
-                      symptom : this.patientSymptom,
-                      order_comment : this.orderComment,
-                      medtype : this.medRadio,
-                      dose : this.orderCount,
-                      medarray : this.medString,
-                      total : toTestTotal,
-                      totalprofit : ordProfit,
-                      date : getNowFormatDate(),
-                    }).then( res => {
-                      this.clearInfo();
-                      this.radioChanged();
-                    })
-                  })
-                }else{
-                  this.clearInfo();
-                  this.radioChanged();
-                }
-              })
-              .catch( (err) =>{
-                console.log(err);
-              })
-            })
-            .catch( (err) =>{
-              console.log(err);
-            })
-        }else{
-          //update lastvistit
-          this.$http.post('/api/updatePatientTimes',{
-            dbs : this.$store.state.user.dbs_prefix+'patient',
-            patient_id: this.patient_id,
-            change: 1,
-          }).then( (res) => {
-            this.$http.post('/api/updatePatientOrderPage',{
-              dbs : this.$store.state.user.dbs_prefix+'patient',
-              sex : this.patientSex,
-              age : !this.patientAge? 0 : parseFloat(this.patientAge),
-              phone : !this.patientPhone? 0 : parseInt(this.patientPhone),
-              patient_id: this.patient_id,
-            })
-            this.$http.post('/api/insertOrd',{
-              dbs : this.$store.state.user.dbs_prefix+'ordlist',
-              patient : this.patientName,
-              patient_id : this.patient_id,
-              symptom : this.patientSymptom,
-              order_comment : this.orderComment,
-              medtype : this.medRadio,
-              dose : this.orderCount,
-              medarray : this.medString,
-              total : this.medRadio == '药丸'? yaowanTotal : parseFloat(this.total),
-              totalprofit : ordProfit,
-              date : getNowFormatDate(),
-            }).then( (resord) => {
-              this.clearInfo();
-              this.radioChanged();
-              if(saveToTest){
-                this.$http.post('/api/insertOrd',{
-                  dbs : 'test_ordlist',
-                  patient : this.patientName,
-                  patient_id : this.patient_id,
-                  symptom : this.patientSymptom,
-                  order_comment : this.orderComment,
-                  medtype : this.medRadio,
-                  dose : this.orderCount,
-                  medarray : this.medString,
-                  total : toTestTotal,
-                  totalprofit : ordProfit,
-                  date : getNowFormatDate(),
-                }).then( res => {
-                  this.clearInfo();
-                  this.radioChanged();
-                })
-              }else{
-                this.clearInfo();
-                this.radioChanged();
-              }
-            })
-            .catch( (err) =>{
-              console.log(err);
-            })
-          })          
-        }
+        }).catch(err => {
+          console.log(err);
+          const message = err.response && err.response.data && err.response.data.error;
+          alert(message || '保存失败，请重试');
+          this.isSavingOrder = false;
+        });
       },
 
       clearInfo: function(){
         this.patientName = '';
+        this.patient_id = '';
+        this.selectedPatientName = '';
         this.patientSex = '';
         this.patientAge = '';
         this.patientPhone = '';
@@ -1264,6 +1214,12 @@
         this.useage = '';
         this.orderMed1PerObj = [];
         this.medString = '';
+      },
+
+      finishSavingOrder: function(){
+        this.clearInfo();
+        this.radioChanged();
+        this.isSavingOrder = false;
       },
 
       save: function(count, name){
@@ -1327,9 +1283,17 @@
           }
         })
       },
+
+      onPatientNameInput: function(name){
+        if(this.patient_id && name !== this.selectedPatientName){
+          this.patient_id = '';
+          this.selectedPatientName = '';
+        }
+      },
       
       choosePatient: function(item){
         this.patient_id = item.id;
+        this.selectedPatientName = item.name;
         this.patientName = item.name;
         this.patientSex = item.sex;
         this.patientAge = item.age;
@@ -1349,6 +1313,7 @@
         this.orderComment = ordItem.order_Comment;
         this.patientPhone = ordItem.phone;
         this.patient_id = ordItem.patient_id;
+        this.selectedPatientName = ordItem.patient;
         this.orderCount = ordItem.dose;
         this.radioChanged();
         this.$http.get('/api/getAllMedbyType',{
@@ -1358,12 +1323,13 @@
 					}
         }).then( (res) => {
           this.cacheMedData = res.data;
+          let existInDb;
           for(let item of ordItem.medarray) {
             item = JSON.parse(item);
             if(typeof(item.name1) == 'undefined')
               break;
             else{
-              var existInDb = this.cacheMedData.find(function(p){
+              existInDb = this.cacheMedData.find(function(p){
               return p.medname === item.name1;
               })
               if(typeof(existInDb) != 'undefined'){
@@ -1379,7 +1345,7 @@
             if(typeof(item.name2) == 'undefined')
               break;
             else{
-              var existInDb = this.cacheMedData.find(function(p){
+              existInDb = this.cacheMedData.find(function(p){
               return p.medname === item.name2;
               })
               if(typeof(existInDb) != 'undefined'){
@@ -1395,7 +1361,7 @@
             if(typeof(item.name3) == 'undefined')
               break;
             else{
-              var existInDb = this.cacheMedData.find(function(p){
+              existInDb = this.cacheMedData.find(function(p){
               return p.medname === item.name3;
               })
               if(typeof(existInDb) != 'undefined'){
@@ -1411,7 +1377,7 @@
             if(typeof(item.name4) == 'undefined')
               break;
             else{
-              var existInDb = this.cacheMedData.find(function(p){
+              existInDb = this.cacheMedData.find(function(p){
               return p.medname === item.name4;
               })
               if(typeof(existInDb) != 'undefined'){
@@ -1483,7 +1449,19 @@
     
   }
 </script>
+
 <style scoped>
+  .med-type-group ::v-deep .v-input--radio-group__input {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (max-width: 600px) {
+    .med-type-group {
+      margin-bottom: 8px;
+    }
+  }
+
   .smallHeight .v-data-table td{
     height: 20px;
     font-size: 14px;

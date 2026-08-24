@@ -258,7 +258,7 @@
 
 <script>
 import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate';
-  export default {
+export default {
     data: () => ({
       dates: [],
       reportDisplay: false,

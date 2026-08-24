@@ -28,6 +28,12 @@ var sqlMap = {
     selectOrdByPatientName: 'SELECT a.id,a.patient,a.medtype,a.symptom,a.order_comment,a.dose,a.medarray,a.total,a.totalprofit,a.date,b.sex,b.age,b.phone FROM ?? a INNER JOIN ?? b ON a.patient_id = b.id where patient = ?',
     registerPatient: 'INSERT INTO ??(name,sex,age,date,time) VALUES(?,?,?,?,?)',
     setPatientFinished: 'UPDATE ?? SET isFinished = ? WHERE id = ?',
+    createOrdAtGaofang: 'INSERT INTO ?? (patient_id,symptom,order_comment,date) VALUES(?,?,?,?)',
+    getGaofangRecord: "SELECT * from ?? order by id desc limit 30 offset ?",
+    saveGaofangRecord: 'UPDATE ?? SET medarray = ?, gaofang_total = ?, status = ? WHERE id = ?',
+    updateGaofangStatus: 'UPDATE ?? SET status = ? WHERE id = ?',
+    reuseGaofangRecord: 'INSERT INTO ?? (patient_id,symptom,medarray, gaofang_total, order_comment,date) VALUES(?,?,?,?,?,?)',
+    loadPatientMore: 'SELECT * FROM ?? order by id desc limit 3000 offset ?',
   }
   
   module.exports = sqlMap;

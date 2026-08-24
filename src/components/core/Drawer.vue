@@ -83,11 +83,11 @@
       icon: 'fa-dashboard',
       text: '首页'
     },
-    {
+    /* {
       to: '/today-patient',
       icon: 'mdi-clipboard-outline',
       text: '今日病人'
-    },
+    }, */
     {
       to: '/create-ord',
       icon: 'fa-font',
@@ -112,7 +112,12 @@
       to: '/detail-info',
       icon: 'fa-file-o',
       text: '详细账单'
-    }
+    },
+    {
+      to: '/yaogao',
+      icon: 'fa-font',
+      text: '定制药膏'
+    },
   ];
 
   var lessLinks = [

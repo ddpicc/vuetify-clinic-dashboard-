@@ -148,7 +148,7 @@ export function parseTime(time, cFormat) {
       return source.slice();
     }
     for (const property in source) {
-      if (source.hasOwnProperty(property)) {
+      if (Object.prototype.hasOwnProperty.call(source, property)) {
         const sourceProperty = source[property];
         if (typeof sourceProperty === 'object') {
           target[property] = objectMerge(target[property], sourceProperty);

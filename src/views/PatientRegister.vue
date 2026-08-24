@@ -106,9 +106,7 @@
 
 <script>
 	import { getTime, getNowFormatDate} from '../utils/handleDate';
-	let socket;
-	var connectUrl = 'ws://49.233.152.15:8081';
-	//"ws://49.233.152.15:8081"
+			//"ws://49.233.152.15:8081"
   export default {
     data () {
       return {
@@ -120,8 +118,7 @@
 				snackbar: false,
       	snackbarColor: '',
 				notification: '',
-				lockReconnect: false,
-				waitingPatient: 0
+								waitingPatient: 0
       }
     },
 
@@ -178,7 +175,7 @@
 							this.snackbar = true;
 							this.notification = '排号成功,你的号码是第' + resk.data.insertId + '号';
 							this.snackbarColor = 'green';
-							this.onSubmit();
+							this.getWaitingPatient();
 							//clear
 							this.patientName = '';
 							this.patientSex = '男';
@@ -191,15 +188,15 @@
 				})
 			},
 
-			createWebSocket() {
+			/* WebSocket methods removed: createWebSocket() {
 				try {
 						// 创建Web Socket 连接
-						socket = new WebSocket(connectUrl);
+						return;
 						// 初始化事件
-						this.initEventHandle(socket);
+						return;
 				} catch (e) {
 						// 出错时重新连接
-						this.reconnect(connectUrl);
+						return;
 				}
 			},
 			
@@ -239,12 +236,13 @@
 			onSubmit() {
 				// 给服务器发送一个字符串:
 				// ws.send("Hello!");
-				socket.send("reload");
+				return;
 			}
+    */
     },
 
-    mounted: function() {
-			this.createWebSocket();
+    mounted: function(){
+			// WebSocket 已停用
 			this.getWaitingPatient();   
 		}
   }

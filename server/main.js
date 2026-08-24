@@ -1,10 +1,8 @@
 const routerApi = require('./router');
 const express = require('express');
 const bodyParser = require("body-parser")
-const schedule = require("node-schedule");
 const app = express();
-const mysql = require('mysql');
-const WebSocket = require('ws');
+require('dotenv').config();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -21,7 +19,7 @@ app.all("*",(req,res,next) => {
 app.use('/api', routerApi);
 
 //每月第一天在数据库新建一个上个月的字段
-let date = new Date();
+/* let date = new Date();
 let lastMonth = date.getMonth();
 if (lastMonth >= 1 && lastMonth <= 9) {
 	lastMonth = "0" + lastMonth;
@@ -30,11 +28,11 @@ let columnTotal = 'total' + date.getFullYear() + lastMonth;
 let columnProfit = 'profit' + date.getFullYear() + lastMonth;
 schedule.scheduleJob('0 0 0 1 * *',()=>{
 	var connection = mysql.createConnection({
-			host     : 'localhost',
-			user     : 'root',
-			password : 'CuiQian1988',
-			database : 'myDbs',
-			port: '3306',
+			host     : process.env.MYSQL_HOST || 'localhost',
+			user     : process.env.MYSQL_USER || 'root',
+			password : process.env.MYSQL_PASSWORD || 'CuiQian1988',
+			database : process.env.MYSQL_DATABASE || 'myDbs',
+			port: process.env.MYSQL_PORT || '3306',
 			dateStrings: true,
 			multipleStatements: true
 		});
@@ -57,11 +55,11 @@ schedule.scheduleJob('0 0 0 1 * *',()=>{
 //每天晚上清空当天录入的病人
 schedule.scheduleJob('0 30 23 * * *',()=>{
 	var connection = mysql.createConnection({
-			host     : 'localhost',
-			user     : 'root',
-			password : 'CuiQian1988',
-			database : 'myDbs',
-			port: '3306',
+			host     : process.env.MYSQL_HOST || 'localhost',
+			user     : process.env.MYSQL_USER || 'root',
+			password : process.env.MYSQL_PASSWORD || 'CuiQian1988',
+			database : process.env.MYSQL_DATABASE || 'myDbs',
+			port: process.env.MYSQL_PORT || '3306',
 			dateStrings: true,
 			multipleStatements: true
 		});
@@ -74,14 +72,15 @@ schedule.scheduleJob('0 30 23 * * *',()=>{
 	});
 	
 	
-});
+}); */
 
-app.listen(3000,() => {
-    console.log('app listening on port 3000.')
+const serverPort = Number(process.env.SERVER_PORT) || 3000;
+app.listen(serverPort,() => {
+    console.log(`app listening on port ${serverPort}.`)
 })
 
 // 引用Server类:
-const WebSocketServer = WebSocket.Server;
+/* const WebSocketServer = WebSocket.Server;
 
 // 实例化:
 const wss = new WebSocketServer({
@@ -90,19 +89,19 @@ const wss = new WebSocketServer({
 
 wss.on('connection', function (ws) {
     ws.on('message', function (message) {
-        console.log(`[SERVER] Received: ${message}`);
+        console.log(`[SERVER] Received: ${message}`); */
         /* ws.send(`kkkkkkk`, (err) => {
             if (err) {
                 console.log(`[SERVER] error: ${err}`);
             }
 		}); */
-		wss.clients.forEach(function each(client) {
+/* 		wss.clients.forEach(function each(client) {
 			if (client.readyState === WebSocket.OPEN) {
 			  client.send('afafa');
 			}
 		})
     })
-});
+}); */
 
 
 

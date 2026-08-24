@@ -2,6 +2,14 @@ const express = require('express');
 const router = express.Router();
 const api = require('./api');
 
+router.post('/savePrescription', (req, res, next) => {
+  api.savePrescription(req, res, next);
+});
+
+router.post('/saveGaofangIntake', (req, res, next) => {
+  api.saveGaofangIntake(req, res, next);
+});
+
 router.get('/getAllMedbyType', (req, res, next) => {
   api.getAllMedbyType(req, res, next);
 });
@@ -121,6 +129,25 @@ router.post('/setPatientFinished', (req, res, next) => {
 router.post('/updateMedInventory', (req, res, next) => {
   api.updateMedInventory(req, res, next);
 });
+router.post('/createOrdAtGaofang', (req, res, next) => {
+  api.createOrdAtGaofang(req, res, next);
+});
+router.get('/getGaofangRecord', (req, res, next) => {
+  api.getGaofangRecord(req, res, next);
+});
+router.post('/saveGaofangRecord', (req, res, next) => {
+  api.saveGaofangRecord(req, res, next);
+});
+router.post('/updateGaofangStatus', (req, res, next) => {
+  api.updateGaofangStatus(req, res, next);
+});
+router.post('/reuseGaofangRecord', (req, res, next) => {
+  api.reuseGaofangRecord(req, res, next);
+});
+router.get('/loadPatientMore', (req, res, next) => {
+  api.loadPatientMore(req, res, next);
+});
+
 
 
 

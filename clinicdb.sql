@@ -80,6 +80,7 @@ CREATE TABLE `test_ordlist` (
   `dose` smallint(5) NOT NULL DEFAULT 0,
   `medarray` text,
   `total` float(10) NOT NULL DEFAULT 0,
+  `totalprofit` float(10) NOT NULL DEFAULT 0,
   `date` date,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
@@ -115,6 +116,36 @@ CREATE TABLE `test_patient` (
   `wechat` varchar(20),
   `visitTimes` smallint(5) NOT NULL DEFAULT 1,
   `comment` varchar(255),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/* 创建qcui_gaofang表 */
+DROP TABLE IF EXISTS `qcui_gaofang`;
+
+CREATE TABLE `qcui_gaofang` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `patient_id` smallint(5) unsigned NOT NULL,
+  `symptom` varchar(255),
+  `order_comment` varchar(255),
+  `medarray` text,
+  `gaofang_total` float(10) NOT NULL DEFAULT 0,
+  `status` varchar(20) NOT NULL DEFAULT '已录入',
+  `date` date,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/* 创建test_gaofang表 */
+DROP TABLE IF EXISTS `test_gaofang`;
+
+CREATE TABLE `test_gaofang` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `patient_id` smallint(5) unsigned NOT NULL,
+  `symptom` varchar(255),
+  `order_comment` varchar(255),
+  `medarray` text,
+  `gaofang_total` float(10) NOT NULL DEFAULT 0,
+  `status` varchar(20) NOT NULL DEFAULT '已录入',
+  `date` date,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
@@ -198,4 +229,3 @@ CREATE TABLE `myDbs_clinicOverall` (
   `overallTotal` float(50) NOT NULL DEFAULT 0,
   PRIMARY KEY (`clinicId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-

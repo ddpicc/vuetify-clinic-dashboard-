@@ -139,12 +139,47 @@
         />
       </v-col>
     </v-row>
+    <v-row>
+      <v-col cols="12" sm="12" lg="4" md="4">
+        <v-date-picker
+          v-model="dates"
+          range
+        ></v-date-picker>
+        </v-col>
+            <v-col cols="12" sm="12" lg="8" md="8">
+              <v-chip
+                class="ma-2"
+                color="green"
+                text-color="white"
+                @click="last30days"
+              >
+                最近30天
+              </v-chip>
+              
+              <v-chip
+                class="ma-2"
+                color="green"
+                text-color="white"
+                @click="last45days"
+              >
+                最近45天
+              </v-chip>
+
+              <v-card
+                class="mx-auto"
+              >
+                <v-card-text>
+                  <v-text-field v-model="dateRangeText" label="时间范围" readonly append-icon='fa-check' color="blue darken-2" @click:append="actionGenerate"></v-text-field>
+                </v-card-text>
+              </v-card>
+            </v-col>
+        </v-row>
   </v-container>
 </template>
 
 <script>
-import { dateToString, stringToDate} from '../utils/handleDate';
-import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
+import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate';
+import { saveToLocal, loadFromLocal, clearCache} from '../utils/handleLocalStorage';
   export default {
 
     data () {
@@ -166,10 +201,11 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         dailyNmPeopleChart: {
           data: [],
         },
+
+        dates: [],
       }
     },
     methods: {
-
       todayDate: function(){
         var myDate = new Date();     //获取当前年份(2位)
         var month=myDate.getMonth();       //获取当前月份(0-11,0代表1月)
@@ -338,8 +374,68 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
           if(this.displayProfit)
             this.monthSalesChart.data.push({name: '利润', data: profitMonth});
         this.yearIncome = parseFloat(this.yearIncome + _monthIncome).toFixed(2);
-      }
+      },
 
+
+      today: function(){
+        let todayDate = getNowFormatDate();
+        this.dates = [];
+        this.dates.push(todayDate);
+        this.dates.push(todayDate);
+      },
+
+      last45days: function(){
+        var end = dateToString(new Date());
+        var start = dateToString(new Date(new Date().setDate(new Date().getDate()-44)));
+        this.dates = [];
+        this.dates.push(start);
+        this.dates.push(end);
+      },
+
+      last30days: function(){
+        var end = dateToString(new Date());
+        var start = dateToString(new Date(new Date().setDate(new Date().getDate()-29)));
+        this.dates = [];
+        this.dates.push(start);
+        this.dates.push(end);
+      },
+      loadUserConfig: function(){
+        this.$http.get('/api/getUserSetting', {
+          params: {
+						userid : this.$store.state.user.user_id
+          }
+        }).then(response => {
+          saveToLocal(this.$store.state.user.user_id,'userSetting',response.data);
+          location.reload();
+        })
+      },
+
+      actionGenerate: function(){
+        clearCache(this.$store.state.user.user_id);
+        saveToLocal(this.$store.state.user.user_id,'updated_date', new Date().toDateString());
+        var start = this.dates[0];
+        var end = this.dates[1];
+        this.$http.get('/api/getOrdBetweenDates', {
+          params: {
+            dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
+            dbs_b : this.$store.state.user.dbs_prefix+'patient',
+            startDate: start,
+            endDate: end
+          }
+        }).then(response => {
+            console.log(response.data)
+            saveToLocal(this.$store.state.user.user_id,'cacheOrder',response.data);
+            this.loadUserConfig();
+          }
+        );
+      },
+
+    },
+
+    computed: {
+      dateRangeText () {
+        return this.dates.join(' ~ ')
+      },
     },
 
     mounted: function() {

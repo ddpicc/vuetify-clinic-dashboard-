@@ -1,10 +1,11 @@
-// 数据库连接配置
+require('dotenv').config();
+
 module.exports = {
     mysql: {
-      host: 'localhost',  // 新建数据库连接时的 主机名或ID地址 内容
-      user: 'root', 
-      password: 'CuiQian1988', // root 密码
-      database: 'myDbs', // 数据库名
-      port: '3306'
+      host: process.env.MYSQL_HOST || 'localhost',
+      user: process.env.MYSQL_USER || 'root',
+      password: process.env.MYSQL_PASSWORD || '',
+      database: process.env.MYSQL_DATABASE || 'myDbs',
+      port: process.env.MYSQL_PORT || '3306'
     }
   }

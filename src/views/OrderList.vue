@@ -314,12 +314,13 @@
             }
           }).then( (res) => {
             let cacheMedData = res.data;
+            let existInDb;
             for(let oneMed of oneOrder.medarray) {
               oneMed = JSON.parse(oneMed);
               if(typeof(oneMed.name1) == 'undefined')
                 break;
               else{
-                var existInDb = cacheMedData.find(function(p){
+                existInDb = cacheMedData.find(function(p){
                 return p.medname === oneMed.name1;
                 })
                 if(typeof(existInDb) != 'undefined'){
@@ -331,7 +332,7 @@
               if(typeof(oneMed.name2) == 'undefined')
                 break;
               else{
-                var existInDb = cacheMedData.find(function(p){
+                existInDb = cacheMedData.find(function(p){
                 return p.medname === oneMed.name2;
                 })
                 if(typeof(existInDb) != 'undefined'){
@@ -343,7 +344,7 @@
               if(typeof(oneMed.name3) == 'undefined')
                 break;
               else{
-                var existInDb = cacheMedData.find(function(p){
+                existInDb = cacheMedData.find(function(p){
                 return p.medname === oneMed.name3;
                 })
                 if(typeof(existInDb) != 'undefined'){
@@ -355,7 +356,7 @@
               if(typeof(oneMed.name4) == 'undefined')
                 break;
               else{
-                var existInDb = cacheMedData.find(function(p){
+                existInDb = cacheMedData.find(function(p){
                 return p.medname === oneMed.name4;
                 })
                 if(typeof(existInDb) != 'undefined'){

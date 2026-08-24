@@ -80,14 +80,15 @@
           this.loadData();
           this.loadUserConfig();		    
         }else{
-          this.$router.push({ path: '/create-ord' });
+          this.$router.push({ path: '/dashboard' });
         }
       },
 
 			//读取最近90天的订单数据存在本地
 			loadData: function(){
-        var end = dateToString(new Date(new Date().setDate(new Date().getDate()-1)));
-        var start = dateToString(new Date(new Date().setDate(new Date().getDate()-90)));
+        var currentDate = new Date();
+        var end = dateToString(new Date(currentDate.getTime() - 1 * 24 * 60 * 60 * 1000));
+        var start = dateToString(new Date(currentDate.getTime() - 45 * 24 * 60 * 60 * 1000));
         this.$http.get('/api/getOrdBetweenDates', {
           params: {
 						dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
@@ -96,11 +97,11 @@
             endDate: end
           }
         }).then(response => {
-          this.$nextTick( () => {
+
             saveToLocal(this.$store.state.user.user_id,'cacheOrder',response.data);
             this.e6 = 2;
-            setTimeout( () => {this.$router.push({ path: '/create-ord' });},2200);
-          })
+            setTimeout( () => {this.$router.push({ path: '/dashboard' });},2200);
+
         })
 			},
 			

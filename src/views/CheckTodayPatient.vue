@@ -28,7 +28,6 @@
           </v-data-table>
           <div class="text-center pt-2">
             <v-btn block color="green" dark class="mr-2" @click="displayAll()">{{displayBtnText}}</v-btn>
-						<v-btn block color="green" dark class="mr-2" @click="gotoVideo()">视频</v-btn>
           </div>
         </material-card>
 				<v-dialog
@@ -155,9 +154,7 @@
 </template>
 
 <script>
-	let socket;
-	var connectUrl = 'ws://49.233.152.15:8081';
-  export default {
+		  export default {
     data: () => ({
 			loading: false,
       headers: [
@@ -224,8 +221,7 @@
       patientSex: '',
       patientAge: '',
 			patientPhone: '',
-			lockReconnect: false
-    }),
+			    }),
 
 		
     methods: {
@@ -301,7 +297,7 @@
 					patient_id : id
         }).then( (res) => {
 					this.getNotFinished();
-					this.onSubmit();
+					// WebSocket 已停用
         })
 			},
 
@@ -326,19 +322,19 @@
         this.$router.push({name: '生成处方', params: {ord_item: selectedItem}});
       },
 
-			gotoVideo: function(){
+			/* WebSocket and video methods removed: gotoVideo: function(){
         this.$router.push({ path: '/videocall' });
       },
 			
 			createWebSocket() {
 				try {
 						// 创建Web Socket 连接
-						socket = new WebSocket(connectUrl);
+						return;
 						// 初始化事件
-						this.initEventHandle(socket);
+						return;
 				} catch (e) {
 						// 出错时重新连接
-						this.reconnect(connectUrl);
+						return;
 				}
 			},
 			
@@ -377,8 +373,11 @@
 			onSubmit() {
 				// 给服务器发送一个字符串:
 				// ws.send("Hello!");
-				socket.send("reload");
+				return;
 			}
+    },
+
+    */
     },
 
     mounted: function() {

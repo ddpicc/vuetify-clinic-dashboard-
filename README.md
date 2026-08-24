@@ -1,237 +1,186 @@
-中医诊所医疗管理系统，实现了开处方，管理处方和药品，收入统计，病人管理等功能，支持其它诊所入驻
+# 中医诊所医疗管理系统
 
-# [Vuetify Material Dashboard](https://www.creative-tim.com/vuetify-material-dashboard) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&logo=twitter)](https://twitter.com/home?status=Vuetify%20Material%20Dashboard%20-%20Admin%20Template%20for%20Vue.js%20https%3A//www.creative-tim.com/product/vuetify-material-dashboard%20%23vuejs%20%23vuex%20%23dashboard%20%23vuetify%20%23vuetify%20material%20%20%40creativetim)
+一个功能完整的中医诊所管理系统，实现了开处方、管理处方和药品、收入统计、病人管理等功能，支持多诊所入驻。
 
+## 功能特性
 
-![version](https://img.shields.io/badge/version-2.0.0-blue.svg) [![GitHub issues open](https://img.shields.io/github/issues/creativetimofficial/vuetify-material-dashboard.svg)](https://github.com/creativetimofficial/vuetify-material-dashboard/issues?q=is%3Aopen+is%3Aissue) [![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/creativetimofficial/vuetify-material-dashboard.svg?maxAge=259200)](https://github.com/creativetimofficial/vuetify-material-dashboard/issues?q=is%3Aissue+is%3Aclosed) [![Join the chat at https://gitter.im/NIT-dgp/General](https://badges.gitter.im/NIT-dgp/General.svg)](https://gitter.im/creative-tim/material-dashboard) [![Chat](https://img.shields.io/badge/chat-on%20discord-7289da.svg)](https://discord.gg/E4aHAQy)
+### 核心功能
+- **处方管理** - 支持草药、免煎、西药、药丸等多种处方类型
+- **药品管理** - 药品库存管理、价格管理、药品分类
+- **病人管理** - 病人注册、档案管理、今日病人查看
+- **数据统计** - 每天收入、每月收入、病人数量统计
+- **定制药膏** - 支持膏方定制功能
+- **营养配方** - 营养配方管理
 
-![Product Gif](./public/img/vuetify-material-dashboard.gif)
+### 技术特点
+- 支持多诊所入驻
+- 数据统计和图表展示
+- 药品拼音搜索功能
+- 处方打印功能
+- 响应式设计，支持移动端
 
-Vuetify Material Dashboard is a beautiful resource built over [Vuetify](https://vuetifyjs.com/en/) and [Vuex](https://vuex.vuejs.org/installation.html). It will help you get started developing dashboards in no time. Vuetify Material Dashboard is the official Vuejs version of the Original [Material Dashboard](https://www.creative-tim.com/product/material-dashboard). Using the Dashboard is pretty simple but requires basic knowledge of Javascript, [Vue](https://vuejs.org/v2/guide/), [Vuex](https://vuex.vuejs.org/installation.html) and [Vue-Router](https://router.vuejs.org/en/).
+## 技术栈
 
-## Getting Started
-- Install Nodejs from [Nodejs Official Page](https://nodejs.org/en/)
-- Open your terminal
-- Navigate to the project
-- Run `npm install` or `yarn install` if you use [Yarn](https://yarnpkg.com/en/)
-- Run `npm run dev` or `yarn serve` to start a local development server
-- A new tab will be opened in your browser
+### 前端
+- Vue 2.6.11
+- Vuetify 2.4.0 (UI组件库)
+- Vue Router (路由管理)
+- Vuex (状态管理)
+- Chart.js + vue-chartkick (数据可视化)
+- Axios (HTTP请求)
+- vue-baidu-map (百度地图)
 
-You can also run additional npm tasks such as
-- `npm run build` to build your app for production
-- `npm run lint` to run linting.
+### 后端
+- Node.js + Express
+- MySQL数据库
 
-## Vuetify
-Vuetify is developed exactly according to Material Design spec. Every component is hand crafted to bring you the best possible UI tools to your next great app. The development doesn't stop at the core components outlined in Google's spec. Through the support of community members and sponsors, additional components will be designed and made available for everyone to enjoy.
+## 快速开始
 
+### 环境要求
+- Node.js >= 14.x
+- MySQL >= 5.7
+- npm 或 yarn
 
-## Vuex
+### 安装步骤
 
-Vuex is a state management pattern + library for Vue.js applications. It serves as a centralized store for all the components in an application, with rules ensuring that the state can only be mutated in a predictable fashion. It also integrates with Vue's official [devtools](https://github.com/vuejs/vue-devtools) extension to provide advanced features such as zero-config time-travel debugging and state snapshot export / import.
-
-## Vue-cli
-
-We used the latest 3.x [Vue CLI](https://github.com/vuejs/vue-cli) which aims to reduce project configuration
-to as little as possible. Almost everything is inside `package.json` + some other related files such as
-`.babel.config.js`, `.eslintrc.js` and `.postcssrc.js`.
-
-Let us know what you think and what we can improve below. And good luck with development!
-
-
-#### Special thanks
-During the development of this dashboard, we have used many existing resources from awesome developers. We want to thank them for providing their tools open source:
-- [Vuetify](https://vuetifyjs.com/en/) for the wonderful framework
-
-
-Let us know your thoughts below. And good luck with development!
-
-## Table of Contents
-
-* [Versions](#versions)
-* [Demo](#demo)
-* [Quick Start](#quick-start)
-* [Documentation](#documentation)
-* [File Structure](#file-structure)
-* [Browser Support](#browser-support)
-* [Resources](#resources)
-* [Reporting Issues](#reporting-issues)
-* [Technical Support or Questions](#technical-support-or-questions)
-* [Licensing](#licensing)
-* [Useful Links](#useful-links)
-
-
-## Versions
-
-
-
-[<img src="https://pbs.twimg.com/profile_images/900908683927982080/GWykKJ7r_400x400.jpg" width="60" height="60" />](https://www.creative-tim.com/product/vuetify-material-dashboard)
-[<img src="https://s3.amazonaws.com/creativetim_bucket/github/html.png" width="60" height="60" />](https://www.creative-tim.com/product/material-dashboard-pro)
-[<img src="https://s3.amazonaws.com/creativetim_bucket/github/react.svg" width="60" height="60" />](https://www.creative-tim.com/product/material-dashboard-pro-react)
-[<img src="https://s3.amazonaws.com/creativetim_bucket/github/vuejs.png" width="60" height="60" />](https://www.creative-tim.com/product/vue-material-dashboard-pro)
-[<img src="https://s3.amazonaws.com/creativetim_bucket/github/angular.png" width="60" height="60" />](https://www.creative-tim.com/product/material-dashboard-pro-angular2)
-
-
-Vuetify | Vue | React | Angular | HTML |
-| --- | --- | --- | --- | --- |
-| [![Vuetify Material Dashboard](https://s3.amazonaws.com/creativetim_bucket/products/100/original/opt_md_vuetify_thumbnail.jpg)](https://www.creative-tim.com/product/vuetify-material-dashboard-pro) | [![Vue Material Dashboard](https://s3.amazonaws.com/creativetim_bucket/products/81/original/opt_md_vue_thumbnail.jpg)](https://www.creative-tim.com/product/vue-material-dashboard) | [![Material Dashboard React](https://s3.amazonaws.com/creativetim_bucket/products/71/original/opt_mdr_thumbnail.jpg)](https://www.creative-tim.com/product/material-dashboard-react)  | [![Material Dashboard Angular](https://s3.amazonaws.com/creativetim_bucket/products/53/original/opt_md_angular_thumbnail.jpg)](https://www.creative-tim.com/product/material-dashboard-angular2) | [![Material Dashboard HTML](https://s3.amazonaws.com/creativetim_bucket/products/50/original/opt_md_thumbnail.jpg)](https://www.creative-tim.com/product/material-dashboard)
-
-## Demo
-
-- [Start page](https://demos.creative-tim.com/vuetify-material-dashboard)
-- [Notifications page](https://demos.creative-tim.com/vuetify-material-dashboard/#/notifications)
-
-[View More](https://demos.creative-tim.com/vue-material-dashboard-pro).
-
-
-## Quick start
-
-Quick start options:
-
-- Download from [Creative Tim](https://www.creative-tim.com/product/vuetify-material-dashboard)
-
-
-## Documentation
-The documentation for the Vuetify Material Dashboard is hosted at our [website](https://demos.creative-tim.com/vuetify-material-dashboard/documentation).
-
-
-## File Structure
-
-Within the download you'll find the following directories and files:
-
-```
-vuetify-material-dashboard
-├── ISSUE_TEMPLATE.md
-├── LICENSE.md
-├── README.md
-├── babel.config.js
-├── cypress.json
-├── jest.config.js
-├── package.json
-├── postcss.config.js
-├── public
-│   ├── favicon.ico
-│   ├── img
-│   └── index.html
-├── src
-│   ├── App.vue
-│   ├── assets
-│   │   └── vuetify.svg
-│   ├── components
-│   │   ├── base
-│   │   │   └── Card.vue
-│   │   ├── core
-│   │   │   ├── AppBar.vue
-│   │   │   ├── Drawer.vue
-│   │   │   ├── Filter.vue
-│   │   │   ├── Footer.vue
-│   │   │   └── View.vue
-│   │   ├── helper
-│   │   │   └── Offset.vue
-│   │   └── material
-│   │       ├── Card.vue
-│   │       ├── ChartCard.vue
-│   │       ├── Notification.vue
-│   │       └── StatsCard.vue
-│   ├── main.js
-│   ├── plugins
-│   │   ├── axios.js
-│   │   ├── base.js
-│   │   ├── components.js
-│   │   ├── index.js
-│   │   └── vuetify.js
-│   ├── router
-│   │   ├── index.js
-│   │   └── paths.js
-│   ├── store
-│   │   ├── actions.js
-│   │   ├── getters.js
-│   │   ├── index.js
-│   │   ├── modules
-│   │   │   ├── app
-│   │   │   │   ├── mutations.js
-│   │   │   │   └── state.js
-│   │   │   └── index.js
-│   │   ├── mutations.js
-│   │   └── state.js
-│   ├── utils
-│   │   └── vuex.js
-│   └── views
-│       ├── Dashboard.vue
-│       ├── Icons.vue
-│       ├── Maps.vue
-│       ├── Notifications.vue
-│       ├── TableList.vue
-│       ├── Typography.vue
-│       ├── Upgrade.vue
-│       └── UserProfile.vue
-├── tests
-│   ├── e2e
-│   │   ├── plugins
-│   │   │   └── index.js
-│   │   ├── specs
-│   │   │   └── test.js
-│   │   └── support
-│   │       ├── commands.js
-│   │       └── index.js
-│   └── unit
-│       └── example.spec.js
-├── vue.config.js
-└── yarn.lock
+1. 克隆项目
+```bash
+git clone <repository-url>
+cd vuetify-clinic-dashboard-
 ```
 
-## Browser Support
+2. 安装依赖
+```bash
+npm install
+```
 
-At present, we officially aim to support the last two versions of the following browsers:
+3. 配置环境变量
+```bash
+cp .env.example .env
+```
 
-<img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/chrome.png" width="64" height="64"> <img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/firefox.png" width="64" height="64"> <img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/edge.png" width="64" height="64"> <img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/safari.png" width="64" height="64"> <img src="https://s3.amazonaws.com/creativetim_bucket/github/browser/opera.png" width="64" height="64">
+编辑 `.env` 文件，配置数据库连接信息：
+```
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=your_password
+MYSQL_DATABASE=myDbs
+```
 
+4. 初始化数据库
+```bash
+mysql -u root -p < clinicdb.sql
+```
 
-## Resources
-- [Live Preview](https://demos.creative-tim.com/vuetify-material-dashboard)
-- Download Page: https://www.creative-tim.com/product/vuetify-material-dashboard
-- Documentation is [here](https://demos.creative-tim.com/vuetify-material-dashboard/documentation)
-- License Agreement: https://www.creative-tim.com/license
-- Support: https://www.creative-tim.com/contact-us
-- Issues: [Github Issues Page](https://github.com/creativetimofficial/vuetify-material-dashboard/issues)
-- Vue Material Dashboard - [demo](https://www.creative-tim.com/product/vue-material-dashboard?ref=github-md-pro)
-- For Front End Development - [Material Kit Pro ](https://www.creative-tim.com/product/material-kit-pro?ref=github-md-pro)
+5. 启动后端服务
+```bash
+node server/main.js
+```
 
-## Reporting Issues
-We use GitHub Issues as the official bug tracker for the Vuetify Material Dashboard. Here are some advices for our users that want to report an issue:
+6. 启动前端开发服务器
+```bash
+npm run serve
+```
 
-1. Make sure that you are using the latest version of the Vuetify Material Dashboard. Check the CHANGELOG from your dashboard on our [website](https://www.creative-tim.com/).
-2. Providing us reproducible steps for the issue will shorten the time it takes for it to be fixed.
-3. Some issues may be browser specific, so specifying in what browser you encountered the issue might help.
+7. 打开浏览器访问 `http://localhost:8080`
 
-## Technical Support or Questions
+## 项目结构
 
-If you have questions or need help integrating the product please [contact us](https://www.creative-tim.com/contact-us) instead of opening an issue.
+```
+vuetify-clinic-dashboard-
+├── public/                 # 静态资源
+├── server/                 # 后端服务
+│   ├── api.js            # API接口
+│   ├── db.js             # 数据库配置
+│   ├── main.js           # 服务器入口
+│   ├── router.js         # 路由配置
+│   └── sqlMap.js         # SQL映射
+├── src/                   # 前端源码
+│   ├── assets/           # 资源文件
+│   ├── components/       # 组件
+│   ├── plugins/          # 插件配置
+│   ├── router/           # 路由配置
+│   ├── store/            # Vuex状态管理
+│   ├── utils/            # 工具函数
+│   ├── views/            # 页面组件
+│   ├── App.vue           # 根组件
+│   └── main.js           # 入口文件
+├── .env.example          # 环境变量模板
+├── package.json          # 项目配置
+└── README.md             # 项目文档
+```
 
-## Licensing
+## 主要页面
 
-- Copyright 2018 Creative Tim (https://www.creative-tim.com)
-- Creative Tim [license](https://www.creative-tim.com/license)
+- **Dashboard** - 数据仪表盘，展示收入和病人统计
+- **CreateOrd** - 生成处方
+- **MedList** - 药品管理
+- **PatientList** - 病人管理
+- **OrderList** - 处方管理
+- **Gaofang** - 定制药膏
+- **Setting** - 系统设置
 
-## Useful Links
+## 开发命令
 
-- [More products](https://www.creative-tim.com/bootstrap-themes) from Creative Tim
+```bash
+# 启动开发服务器
+npm run serve
 
-- [Vue products](https://www.creative-tim.com/bootstrap-themes/vuejs-themes) from Creative Tim
+# 构建生产版本
+npm run build
 
-- [Tutorials](https://www.youtube.com/channel/UCVyTG4sCw-rOvB9oHkzZD1w)
+# 代码检查
+npm run lint
+```
 
-- [Freebies](https://www.creative-tim.com/bootstrap-themes/free) from Creative Tim
+## 部署
 
-- [Affiliate Program](https://www.creative-tim.com/affiliates/new) (earn money)
+### 生产环境部署
 
-##### Social Media
+1. 构建前端
+```bash
+npm run build
+```
 
-Twitter: <https://twitter.com/CreativeTim>
+2. 配置生产环境变量
+```bash
+NODE_ENV=production
+```
 
-Facebook: <https://www.facebook.com/CreativeTim>
+3. 使用PM2启动后端服务
+```bash
+npm install -g pm2
+pm2 start server/main.js --name clinic-server
+```
 
-Dribbble: <https://dribbble.com/creativetim>
+4. 配置Nginx反向代理
 
-Google+: <https://plus.google.com/+CreativetimPage>
+## 数据库说明
 
-Instagram: <https://instagram.com/creativetimofficial>
+系统使用MySQL数据库，主要数据表：
+- `qcui_user` - 用户表
+- `qcui_userconfig` - 用户配置表
+- `qcui_patient` - 病人信息表
+- `qcui_medlist` - 药品列表表
+- `qcui_ordlist` - 处方列表表
+- `qcui_gaofang` - 膏方记录表
+- `test_gaofang` - 测试膏方记录表
+- `qcui_registerPatient` - 今日病人表
+
+膏方功能使用诊所前缀命名表，例如测试账号使用 `test_gaofang`。
+
+## 安全说明
+
+- 所有敏感信息（如数据库密码）都通过环境变量配置
+- 不要将 `.env` 文件提交到版本控制系统
+- 生产环境建议使用HTTPS
+- 定期备份数据库
+
+## 许可证
+
+MIT License
+
+## 联系方式
+
+如有问题或建议，请提交Issue或Pull Request。

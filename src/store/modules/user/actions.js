@@ -43,32 +43,22 @@ export default {
 		});
 	},
 
-	// 第三方验证登录
+	// 第三方验证登录 (暂时未使用)
 	LoginByThirdparty({ commit, state }, code) {
 		return new Promise((resolve, reject) => {
 			commit('SET_CODE', code);
-			loginByThirdparty(state.status, state.email, state.code, state.auth_type).then(response => {
-				commit('SET_TOKEN', response.data.token);
-				Cookies.set('Admin-Token', response.data.token);
-				resolve();
-			}).catch(error => {
-				reject(error);
-			});
+			resolve();
 		});
 	},
 
 
-	// 登出
+	// 登出 (暂时未使用)
 	LogOut({ commit, state }) {
 		return new Promise((resolve, reject) => {
-			logout(state.token).then(() => {
-				commit('SET_TOKEN', '');
-				commit('SET_ROLES', []);
-				Cookies.remove('Admin-Token');
-				resolve();
-			}).catch(error => {
-				reject(error);
-			});
+			commit('SET_TOKEN', '');
+			commit('SET_ROLES', []);
+			Cookies.remove('Admin-Token');
+			resolve();
 		});
 	},
 
