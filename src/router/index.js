@@ -13,7 +13,6 @@ import Router from 'vue-router'
 import Meta from 'vue-meta'
 import Homepage from '../views/HomePage'
 import Login from '../views/Login'
-import LoadDataPage from '../views/LoadDataPage'
 import RegisterP from '../views/PatientRegister'
 import DisplayP from '../views/DisplayTodayPatient'
 import Formula from '../views/NutritionFormula'
@@ -31,7 +30,6 @@ Vue.use(Router)
 export const constantRouterMap = [
   { path: '', component: Homepage, hidden: true},
   { path: '/login', component: Login, hidden: true },
-  { path: '/loading', component: LoadDataPage, hidden: true },
   { path: '/registerp', component: RegisterP, hidden: true },
   { path: '/displayp', component: DisplayP, hidden: true },
   { path: '/formula', component: Formula, hidden: true }
@@ -59,14 +57,15 @@ export const asyncRouterMap = [
     children: [
       {path: '/dashboard', component: () => import('../views/Dashboard.vue')},
       {path: '/patient-profile', name: 'Patient Profile', component: () => import('../views/PatientProfile.vue')},
-      {path: '/med-list', name: '药品管理', component: () => import('../views/MedList.vue')},
       {path: '/ord-list', name: '处方管理', component: () => import('../views/OrderList.vue')},
-      {path: '/create-ord', name: '生成处方', component: () => import('../views/CreateOrd.vue')},
+      {path: '/yaogao',name: '定制药膏',component: () => import('@/views/Gaofang')},
       {path: '/patient-list', name: '病人管理', component: () => import('../views/PatientList.vue'), meta: {roles: ['admin']}},
+      {path: '/patient-merge', name: '患者合并', component: () => import('../views/PatientMerge.vue'), meta: {roles: ['admin']}},
+      {path: '/med-list', name: '药品管理', component: () => import('../views/MedList.vue')},
       {path: '/detail-info', name: '详细账单', component: () => import('../views/DetailInfo.vue')},
+      {path: '/create-ord', name: '生成处方', component: () => import('../views/CreateOrd.vue')},
       {path: '/settings', component: () => import('../views/Setting.vue')},
       {path: '/today-patient', name: '今日病人', component: () => import('../views/CheckTodayPatient.vue'), meta: {roles: ['admin']}},
-      {path: '/yaogao',name: '定制药膏',component: () => import('@/views/Gaofang'),meta: {roles: ['admin']}},
       { path: '*', redirect: '/' }
     ]
   }

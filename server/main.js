@@ -8,10 +8,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.all("*",(req,res,next) => {
-    res.header("Access-Control-Allow-Credentials", "ture");
-    res.header("Access-Control-Allow-Origin", req.header.origin);
-    res.header("Access-Control-Allow-Methods", "PUT,GET,POST,DELETE,Option");
-    res.header("Access-Control-Allow-Headers", "Content-Type,username");
+    const origin = req.get('Origin');
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Origin", origin || "*");
+    res.header("Access-Control-Allow-Methods", "PUT,GET,POST,DELETE,OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, username");
+    if (req.method === 'OPTIONS') return res.sendStatus(204);
     next();
 });
 
@@ -74,7 +76,7 @@ schedule.scheduleJob('0 30 23 * * *',()=>{
 	
 }); */
 
-const serverPort = Number(process.env.SERVER_PORT) || 3000;
+const serverPort = Number(process.env.PORT || process.env.SERVER_PORT) || 3000;
 app.listen(serverPort,() => {
     console.log(`app listening on port ${serverPort}.`)
 })

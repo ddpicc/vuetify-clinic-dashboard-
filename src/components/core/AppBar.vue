@@ -7,12 +7,12 @@
     flat
     height="88"
   >
-    <v-toolbar-title class="tertiary--text font-weight-light align-self-center">
+    <v-toolbar-title class="secondary--text font-weight-light align-self-center">
       <v-btn
         icon
         @click.stop="onClick"
       >
-        <v-icon>fa-list-ul</v-icon>
+        <v-icon>mdi-menu</v-icon>
       </v-btn>
       {{ title }}
     </v-toolbar-title>
@@ -28,69 +28,20 @@
         <v-btn
           icon
           to="/settings"
+          title="设置"
         >
-          <v-icon color="tertiary">
-            fa-user-o
+          <v-icon color="secondary">
+            mdi-cog
           </v-icon>
         </v-btn>
 
         <v-btn
-          icon
-          @click="reloadData"
-        >
-          <v-icon color="tertiary">
-            fa-refresh
-          </v-icon>
-        </v-btn>
-
-<!--         <v-menu
-          bottom
-          left
-          offset-y
-          transition="slide-y-transition"
-        >
-          <template v-slot:activator="{ attrs, on }">
-            <v-btn
-              class="toolbar-items"
-              icon
-              to="/notifications"
-              v-bind="attrs"
-              v-on="on"
-            >
-              <v-badge
-                color="error"
-                overlap
-              >
-                <template slot="badge">
-                  {{ notifications.length }}
-                </template>
-                <v-icon color="tertiary">
-                  mdi-bell
-                </v-icon>
-              </v-badge>
-            </v-btn>
-          </template>
-
-          <v-card>
-            <v-list dense>
-              <v-list-item
-                v-for="notification in notifications"
-                :key="notification"
-                @click="onClick"
-              >
-                <v-list-item-title v-text="notification" />
-              </v-list-item>
-            </v-list>
-            <v-btn block color="blue-grey" dark class="mb-3">全部删除</v-btn>
-          </v-card>
-        </v-menu> -->
-
-        <v-btn
+          title="退出登录"
           @click="logout"
           icon
         >
-          <v-icon color="tertiary">
-            fa-sign-out
+          <v-icon color="secondary">
+            mdi-logout
           </v-icon>
         </v-btn>
       </v-row>
@@ -104,17 +55,8 @@
     mapMutations
   } from 'vuex'
 
-  import { saveToLocal, clearCache} from '../../utils/handleLocalStorage';
-  import { dateToString} from '../../utils/handleDate';
   export default {
     data: () => ({
-      notifications: [
-        'Mike, John responded to your email',
-        'You have 5 new tasks',
-        'You\'re now a friend with Andrew',
-        'Another Notification',
-        'Another One'
-      ],
       title: null,
       responsive: false
     }),
@@ -144,96 +86,6 @@
         } else {
           this.responsive = false
         }
-      },
-
-      reloadData: function(){
-        clearCache(this.$store.state.user.user_id);
-        saveToLocal(this.$store.state.user.user_id,'updated_date', new Date().toDateString());
-        this.loadData();
-        this.loadUserConfig();
-      },
-
-      //读取最近90天的订单数据存在本地
-			loadData: function(){
-        var currentDate = new Date();
-        var end = dateToString(new Date(currentDate.getTime() - 1 * 24 * 60 * 60 * 1000));
-        var start = dateToString(new Date(currentDate.getTime() - 45 * 24 * 60 * 60 * 1000));
-        this.$http.get('/api/getOrdBetweenDates', {
-          params: {
-						dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
-						dbs_b : this.$store.state.user.dbs_prefix+'patient',
-            startDate: start,
-            endDate: end
-          }
-        }).then(response => {
-            console.log(response.data)
-            saveToLocal(this.$store.state.user.user_id,'cacheOrder',response.data);
-            location.reload();
-
-        })
-			},
-			
-      //读取每月数据，用户配置存在本地
-      //生成column，如果数据库读到的是0,本地读取上个月的数据，把它替换掉，如果不是0,直接存到本地
-			loadUserConfig: function(){
-        let currentDate = new Date();
-        let lastMonth = currentDate.getMonth();
-        if (lastMonth >= 1 && lastMonth <= 9) {
-          lastMonth = "0" + lastMonth;
-        }
-        let thisMonth = currentDate.getMonth()+1;
-        if (thisMonth >= 1 && thisMonth <= 9) {
-          thisMonth = "0" + thisMonth;
-        }
-        let columnTotal = 'total' + currentDate.getFullYear() + lastMonth;
-        let columnProfit = 'profit' + currentDate.getFullYear() + lastMonth;
-
-        this.$http.get('/api/getUserSetting', {
-          params: {
-						userid : this.$store.state.user.user_id
-          }
-        }).then(response => {
-          //看上个月是否有数据
-          if (response.data[0][columnTotal] == 0){
-            this.saveLastMonthTotalToDb(response.data[0], columnTotal, columnProfit, lastMonth, thisMonth);
-          }else{
-            saveToLocal(this.$store.state.user.user_id,'userSetting',response.data);
-          }
-        })
-      },
-
-      saveLastMonthTotalToDb: function(UserSettingAry, columnTotal, columnProfit, lastMonth, thisMonth){
-        let _lastMonthIncome = 0;
-        let _lastMonthProfit = 0;
-        let start = new Date().getFullYear() + '-' + lastMonth + '-01';
-        let end = new Date().getFullYear() + '-' + thisMonth + '-01';
-        
-        this.$http.get('/api/getChartInfoFromOrder',{
-          params: {
-            dbs : this.$store.state.user.dbs_prefix+'ordlist',
-            startDate: start,
-            endDate: end
-          }
-        }).then( (res) => {
-          for(let item of res.data){
-            _lastMonthIncome = parseFloat((_lastMonthIncome + item.total).toFixed(2));
-            _lastMonthProfit = parseFloat((_lastMonthProfit + item.totalprofit).toFixed(2));
-          }
-          if (_lastMonthIncome == 0)
-            return;
-          this.$http.post('/api/saveMonthTotalToUserSetting',{
-            userid : this.$store.state.user.user_id,
-            colTotal : columnTotal,
-            lastMonthTotal: _lastMonthIncome,
-            colProfit : columnProfit,
-            lastMonthProfit : _lastMonthProfit
-          }).then( (res) => {
-            UserSettingAry[columnTotal] = _lastMonthIncome;
-            UserSettingAry[columnProfit] = _lastMonthProfit;
-            saveToLocal(this.$store.state.user.user_id,'userSetting',UserSettingAry);
-          })
-        })
-        
       },
 
       logout: function(e){

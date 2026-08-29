@@ -9,7 +9,7 @@
     >
       <v-col cols="12">
         <material-card 
-        color="green"
+        color="primary"
         :title=clinicName
         >
           <v-list
@@ -20,7 +20,7 @@
 
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>更改名称 <v-icon small @click.stop="canEdit = !canEdit">fa-pencil</v-icon> </v-list-item-title>                
+                <v-list-item-title>更改名称 <v-icon small @click.stop="canEdit = !canEdit">mdi-pencil</v-icon> </v-list-item-title>                
               </v-list-item-content>
               <v-list-item-action>
                 <v-text-field
@@ -33,16 +33,16 @@
 
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>更改密码<v-icon small @click.stop="canEditPass = !canEditPass">fa-pencil</v-icon> </v-list-item-title>
+                <v-list-item-title>更改密码<v-icon small @click.stop="canEditPass = !canEditPass">mdi-pencil</v-icon> </v-list-item-title>
               </v-list-item-content>
               <v-list-item-action>
                 <v-text-field
                   v-model="password"
                   :readonly="canEditPass"
-                  :append-icon="show ? 'fa-eye' : 'fa-eye-slashf'"
+                  :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
                   :rules="[rules.required, rules.min]"
                   :type="show ? 'text' : 'password'"
-                  hint="At least 8 characters"
+                  hint="至少 8 个字符"
                   counter
                   @click:append="show = !show"
                 ></v-text-field>
@@ -59,7 +59,7 @@
                   dense
                   accept="image/png, image/jpeg, image/bmp"
                   placeholder="上传logo"
-                  prepend-icon="fa-camera"
+                  prepend-icon="mdi-camera"
                   full-width
                 ></v-file-input>
               </v-list-item-action>
@@ -73,7 +73,7 @@
             subheader
             three-line
           >
-            <v-subheader>General</v-subheader>
+            <v-subheader>常规设置</v-subheader>
 
             <v-list-item-group
               v-model="settings"
@@ -149,7 +149,7 @@
 
             </v-list-item-group>
           </v-list>
-          <v-btn color="blue" @click="submit">
+          <v-btn color="primary" @click="submit">
               保存
           </v-btn>
           <v-snackbar
@@ -163,7 +163,7 @@
               color="white"
               class="mr-3"
             >
-              fa-bell
+              mdi-bell
             </v-icon>
             {{notification}}
             <v-btn
@@ -171,7 +171,7 @@
               @click="snackbar = false"
             >
               <v-icon>
-                fa-close
+                mdi-close
               </v-icon>
             </v-btn>
           </v-snackbar>
@@ -182,7 +182,6 @@
 </template>
 
 <script>
-import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
   export default {
     inject: ['reload'],
     data () {
@@ -199,12 +198,12 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
         displayTime: true,
         displayLessMenu: true,
         clinicName: "云杰诊所",
-        password: 'Password',
+        password: '',
         rules: {
-          required: value => !!value || 'Required.',
-          min: v => v.length >= 8 || 'Min 8 characters',
-          emailMatch: () => ('The email and password you entered don\'t match'),
-          fileSize: value => !value || value.size < 2000000 || 'Avatar size should be less than 2 MB!',
+          required: value => !!value || '必填',
+          min: v => v.length >= 8 || '至少 8 个字符',
+          emailMatch: () => ('两次输入的密码不一致'),
+          fileSize: value => !value || value.size < 2000000 || '图片不能超过 2MB！',
         },
         doctor: '崔云杰',
         doctorList: ['崔云杰','田东霞'],
@@ -221,12 +220,7 @@ import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
           defaultDoctor: this.doctor,
           userid: this.$store.state.user.user_id           
         }).then( (res) => {
-          let userSetting = loadFromLocal(this.$store.state.user.user_id,'userSetting', []);
-          userSetting[0]['displayYaowan'] = this.displayYaowan? 1:0;
-          userSetting[0]['displayProfit'] = this.displayProfit? 1:0;
-          userSetting[0]['displayLessMenu'] = this.displayLessMenu? 1:0;
-          userSetting[0]['defaultDoctor'] = this.doctor;
-          saveToLocal(this.$store.state.user.user_id,'userSetting',userSetting);
+          this.$store.dispatch('userconfig/loadUserSetting');
           this.snackbar = true;
           this.notification = '修改成功';
           this.snackbarColor = 'green';

@@ -10,7 +10,7 @@
             <v-col cols="12">
               <material-card 
                 flat
-                color="#4CAF50"
+                color="primary"
                 title="临床能量消耗计算"
               >
                 <v-form
@@ -86,9 +86,9 @@
                     <v-icon
                       size="50"
                       class="ml-2"
-                      color="#4CAF50"
+                      color="primary"
                     >
-                    fa-exclamation
+                    mdi-alert
                     </v-icon>
                     <div class="title ml-5">
                       {{ result }}
@@ -112,7 +112,7 @@
       weight: '',
       age: '',
       nameRules: [
-        v => !!v || 'Required',
+        v => !!v || '必填',
       ],
       sex: 'male',
       formula: 'formulaH',

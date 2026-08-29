@@ -52,9 +52,9 @@ insert into `test_medlist`(`medname`,`alias`,`medtype`,`spec`,`inventoryNm`,`bas
 DROP TABLE IF EXISTS `qcui_ordlist`;
 
 CREATE TABLE `qcui_ordlist` (
-  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `patient` varchar(50) NOT NULL,
-  `patient_id` smallint(5) unsigned,
+  `patient_id` int unsigned,
   `medtype` varchar(20) NOT NULL,
   `symptom` varchar(255),
   `order_comment` varchar(255),
@@ -63,7 +63,9 @@ CREATE TABLE `qcui_ordlist` (
   `total` float(10) NOT NULL DEFAULT 0,
   `totalprofit` float(10) NOT NULL DEFAULT 0,
   `date` date,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_qcui_ordlist_patient_id` (`patient_id`),
+  KEY `idx_qcui_ordlist_date_id` (`date`,`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 
@@ -71,9 +73,9 @@ CREATE TABLE `qcui_ordlist` (
 DROP TABLE IF EXISTS `test_ordlist`;
 
 CREATE TABLE `test_ordlist` (
-  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `patient` varchar(50) NOT NULL,
-  `patient_id` smallint(5) unsigned,
+  `patient_id` int unsigned,
   `medtype` varchar(20) NOT NULL,
   `symptom` varchar(255),
   `order_comment` varchar(255),
@@ -82,14 +84,16 @@ CREATE TABLE `test_ordlist` (
   `total` float(10) NOT NULL DEFAULT 0,
   `totalprofit` float(10) NOT NULL DEFAULT 0,
   `date` date,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_test_ordlist_patient_id` (`patient_id`),
+  KEY `idx_test_ordlist_date_id` (`date`,`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 /* 创建qcui_patient表 */
 DROP TABLE IF EXISTS `qcui_patient`;
 
 CREATE TABLE `qcui_patient` (
-  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `name_pinyin` varchar(50) NOT NULL,
   `sex` varchar(5) NOT NULL DEFAULT '男',
@@ -99,14 +103,16 @@ CREATE TABLE `qcui_patient` (
   `wechat` varchar(20),
   `visitTimes` smallint(5) NOT NULL DEFAULT 1,
   `comment` varchar(255),
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_qcui_patient_name` (`name`),
+  KEY `idx_qcui_patient_phone` (`phone`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 /* 创建test_patient表 */
 DROP TABLE IF EXISTS `test_patient`;
 
 CREATE TABLE `test_patient` (
-  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `name_pinyin` varchar(50) NOT NULL,
   `sex` varchar(5) NOT NULL DEFAULT '男',
@@ -116,7 +122,9 @@ CREATE TABLE `test_patient` (
   `wechat` varchar(20),
   `visitTimes` smallint(5) NOT NULL DEFAULT 1,
   `comment` varchar(255),
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_test_patient_name` (`name`),
+  KEY `idx_test_patient_phone` (`phone`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 /* 创建qcui_gaofang表 */

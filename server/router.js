@@ -74,8 +74,32 @@ router.get('/getChartInfoFromOrder', (req, res, next) => {
   api.getChartInfoFromOrder(req, res, next);
 });
 
+router.get('/getMonthlyTotals', (req, res, next) => {
+  api.getMonthlyTotals(req, res, next);
+});
+
 router.get('/getOrdByDate', (req, res, next) => {
   api.getOrdByDate(req, res, next);
+});
+
+router.get('/searchOrders', (req, res, next) => {
+  api.searchOrders(req, res, next);
+});
+
+router.get('/searchPatients', (req, res, next) => {
+  api.searchPatients(req, res, next);
+});
+
+router.get('/patientMergeGroups', (req, res, next) => {
+  api.listPatientMergeGroups(req, res, next);
+});
+
+router.get('/patientMergeGroup', (req, res, next) => {
+  api.getPatientMergeGroup(req, res, next);
+});
+
+router.post('/mergePatients', (req, res, next) => {
+  api.mergePatients(req, res, next);
 });
 
 router.get('/getAllOrd', (req, res, next) => {

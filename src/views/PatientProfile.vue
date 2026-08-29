@@ -8,7 +8,7 @@
         cols="12"
         md="5"
       >
-        <material-card flat color="green">
+        <material-card flat color="primary">
           <template v-slot:header>
             <div class="px-3">
               <div class="title font-weight-light mb-2">
@@ -26,7 +26,7 @@
               color="amber"
               @click="returnPtList"
             >
-              <v-icon>fa-long-arrow-left</v-icon>
+              <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
           </template>
           <v-form>
@@ -34,7 +34,6 @@
               <v-row>
                 <v-col cols="12" md="4">
                   <v-text-field
-                    class="purple-input"
                     label="姓名"
                     v-model="patientName"
                     :readonly="isReadonly"
@@ -49,7 +48,6 @@
                 </v-col>
                 <v-col cols="12" md="4">
                   <v-text-field v-model="patientAge"
-                    class="purple-input"
                     label="年龄"
                     :readonly="isReadonly"
                   />
@@ -57,33 +55,29 @@
                 <v-col cols="12" md="6">
                   <v-text-field v-model="patientPhone"
                     label="电  话"
-                    class="purple-input"
                     :readonly="isReadonly"
                   />
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-text-field v-model="patientWechat"
                     label="微  信"
-                    class="purple-input"
                     :readonly="isReadonly"
                   />
                 </v-col>
                 <v-col cols="12">
                   <v-text-field v-model="patienAddress"
                     label="城  市"
-                    class="purple-input"
                     :readonly="isReadonly"
                   />
                 </v-col>
                 <v-col cols="12">
                   <v-text-field v-model="patientComment"
-                    class="purple-input"
                     label="备  注"
                     :readonly="isReadonly"
                   />
                 </v-col>
                 <v-col cols="12" class="text-right">
-                  <v-btn color="blue" @click.stop="onClick">
+                  <v-btn color="primary" @click.stop="onClick">
                     {{btnName}}
                   </v-btn>
                 </v-col>
@@ -96,7 +90,7 @@
         cols="12"
         md="7"
       >
-        <material-card class="v-card-profile">
+        <material-card >
           <v-data-table
             :headers="headers"
             :items="items"
@@ -105,14 +99,14 @@
             single-expand
             :expanded.sync="expanded"
             :items-per-page="15"
-            loading="loading"
+            :loading="loading"
           >
           <template v-slot:item.action="{ item }">
-            <v-btn small @click.stop="reuse(item)" text color="green">重用</v-btn>
+            <v-btn small @click.stop="reuse(item)" text color="primary">重用</v-btn>
           </template>
           <template v-slot:expanded-item="{ item }">
             <td :colspan="8">
-              <v-btn text small color="green">打印</v-btn>
+              <v-btn text small color="primary">打印</v-btn>
               <div>
                 <h4 style="text-align:center;">处  方</h4>
                 <br>
@@ -130,7 +124,7 @@
                         <td  :colspan="6" style="border-bottom:1px solid"><p>症状： {{item.symptom}}</p></td>
                         <td  :colspan="2" style="border-bottom:1px solid"><p>备注： {{item.order_comment}}</p></td>
                       </tr>
-                      <tr v-for="element in item.medarray" :key="element.name">
+                      <tr v-for="(element, index) in item.medarray" :key="index">
                         <td>{{ JSON.parse(element).name1 }}</td>
                         <td>{{ JSON.parse(element).count1 }}</td>
                         <td>{{ JSON.parse(element).name2 }}</td>
@@ -208,7 +202,8 @@
         }
       ],
       items: [],
-      expanded: []
+      expanded: [],
+      loading: false
     }),
 
     methods: {
@@ -233,31 +228,39 @@
       },      
 
       getAll: function() {
+        if (!this.patientId) return;
+        this.loading = true;
         this.$http.get('/api/getPatientInfo',{
           params: {
             dbs : this.$store.state.user.dbs_prefix+'patient',
-						patient_id : this.patientId
-					}
+							patient_id : this.patientId
+						}
         }).then( (res) => {
-          this.patientName = res.data[0].name;
-          this.patientAge = res.data[0].age;
-          this.patientSex = res.data[0].sex;
-          this.patientPhone = res.data[0].phone;
-          this.patientWechat = res.data[0].wechat;
-          this.patienAddress = res.data[0].address;
-          this.patientComment = res.data[0].comment;
-          this.$http.get('/api/selectOrdByPatientId',{
+          const patient = Array.isArray(res.data) ? res.data[0] : null;
+          if (!patient) return;
+          this.patientName = patient.name;
+          this.patientAge = patient.age;
+          this.patientSex = patient.sex;
+          this.patientPhone = patient.phone;
+          this.patientWechat = patient.wechat;
+          this.patienAddress = patient.address;
+          this.patientComment = patient.comment;
+          return this.$http.get('/api/selectOrdByPatientId',{
           params: {
             dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
             dbs_b : this.$store.state.user.dbs_prefix+'patient',
             patient_id: this.patientId
             }
-          }).then( (respond) => {            
-            for(let element of respond.data) {
-              element.medarray = element.medarray.split(";");
-            }
-            this.items = respond.data;
-          })
+          });
+        }).then( (respond) => {
+          if (!respond) return;
+          const orders = Array.isArray(respond.data) ? respond.data : [];
+          for(let element of orders) {
+            element.medarray = element.medarray ? element.medarray.split(";") : [];
+          }
+          this.items = orders;
+        }).finally(() => {
+          this.loading = false;
         })
       },
 

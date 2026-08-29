@@ -32,7 +32,7 @@
 				<v-row justify="center">
 					<v-col cols="12" md="6">
 						<material-card
-							color="green"
+							color="primary"
 							title="排号"
 							text="云杰诊所"
 						>
@@ -41,7 +41,6 @@
 									<v-row>
 										<v-col cols="12" md="4">
 											<v-text-field
-												class="purple-input"
 												label="姓名"
 												v-model="patientName"
 											/>
@@ -54,18 +53,16 @@
 										</v-col>
 										<v-col cols="12" md="4">
 											<v-text-field v-model="patientAge"
-												class="purple-input"
 												label="年龄"
 											/>
 										</v-col>
 										<v-col cols="12" md="12">
 											<v-text-field v-model="patientPhone"
 												label="电  话"
-												class="purple-input"
 											/>
 										</v-col>
 										<v-col cols="12" class="text-right">
-											<v-btn color="blue" @click.stop="registerP">
+											<v-btn color="primary" @click.stop="registerP">
 												提交
 											</v-btn>
 										</v-col>
@@ -83,7 +80,7 @@
 									color="white"
 									class="mr-3"
 								>
-									fa-bell
+									mdi-bell
 								</v-icon>
 								{{notification}}
 								<v-btn
@@ -91,7 +88,7 @@
 									@click="snackbar = false"
 								>
 									<v-icon>
-										fa-close
+										mdi-close
 									</v-icon>
 								</v-btn>
 							</v-snackbar>

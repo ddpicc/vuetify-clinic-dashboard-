@@ -6,7 +6,7 @@
   >
     <v-row justify="center">
       <v-col cols="12">
-        <material-card flat color="green">
+        <material-card flat color="primary">
           <template v-slot:header>
             <div class="px-3">
               <div class="title font-weight-light mb-2">
@@ -24,7 +24,7 @@
               color="amber"
               @click="openAddDialog()"
             >
-              <v-icon>fa-plus</v-icon>
+              <v-icon>mdi-plus</v-icon>
             </v-btn>
           </template>
           <!--  need a key of id -->
@@ -70,7 +70,7 @@
           </template>
           <template v-slot:expanded-item="{ item }">
             <td :colspan="8">
-              <v-btn text small color="green" @click="startPrint">打印</v-btn>
+              <v-btn text small color="primary" @click="startPrint">打印</v-btn>
               <div ref="print" class="smallHeight">
                 <h4 style="text-align:center;">宛&nbsp;城&nbsp;云&nbsp;杰&nbsp;诊&nbsp;所</h4>
                 <h5 style="text-align:center;">处&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;方</h5>
@@ -116,7 +116,7 @@
             </v-chip>
           </template>
           </v-data-table>
-          <v-btn block color="green" dark class="mt-5" @click="loadMore">读取更多</v-btn>
+          <v-btn block color="primary" dark class="mt-5" @click="loadMore">读取更多</v-btn>
 
           <v-dialog v-model="addialog" max-width="800px">
             <v-card>
@@ -127,8 +127,11 @@
                 <v-container>
                   <v-row>
                     <v-col sm="4" md="6">
-                      <v-text-field v-model="patientName" @blur="nameLostFoucs()"
+                      <v-text-field v-model="patientName"
                         label="姓名"
+                        append-outer-icon="mdi-magnify"
+                        title="按姓名或电话查找患者"
+                        @click:append-outer="searchPatient"
                       ></v-text-field>
                     </v-col>
                     <v-col sm="4" md="3">
@@ -159,30 +162,51 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="cancelDialog">取消</v-btn>
-                <v-btn color="blue darken-1" text :loading="isSavingIntake" :disabled="isSavingIntake" @click="saveDialog">保存</v-btn>
+                <v-btn color="primary" text @click="cancelDialog">取消</v-btn>
+                <v-btn color="primary" text :loading="isSavingIntake" :disabled="isSavingIntake" @click="saveDialog">保存</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <v-dialog v-model="selectPatientDialog" scrollable max-width="800px">
+          <v-dialog v-model="patientSearchDialog" max-width="700px">
             <v-card>
-              <v-card-title>
-                <span class="headline"></span>
-              </v-card-title>
+              <v-card-title>选择患者</v-card-title>
               <v-card-text>
-                <v-container>
-                  <v-data-table
-                    :headers="findPatientHeader"
-                    :items="cacheFindedPatient"
-                    hide-default-footer
-                  >
-                    <template v-slot:item.action="{ item }">
-                      <v-btn color="blue darken-1" text @click="choosePatient(item)">选择</v-btn>
-                      <v-btn color="blue darken-1" text @click="jumpToPDetail(item.id)">详情</v-btn>
-                    </template>
-                  </v-data-table>
-                </v-container>
+                <div class="mb-2" v-if="patientSearchResults.length == 0">未找到患者，可继续手动填写，保存时将新建病人档案。</div>
+                <div class="mb-2" v-else>点击患者，回填档案信息。</div>
+                <v-data-table
+                  class="patient-match-table"
+                  :headers="patientMatchHeaders"
+                  :items="patientSearchResults"
+                  hide-default-footer
+                  disable-pagination
+                  @click:row="chooseSearchedPatient"
+                />
               </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn text @click="patientSearchDialog = false">取消</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="patientMatchDialog" max-width="700px">
+            <v-card>
+              <v-card-title>发现同名患者</v-card-title>
+              <v-card-text>
+                <div class="mb-2">点击患者，把膏方记录保存到他/她名下；或选择新建病人档案。</div>
+                <v-data-table
+                  class="patient-match-table"
+                  :headers="patientMatchHeaders"
+                  :items="patientMatchResults"
+                  hide-default-footer
+                  disable-pagination
+                  @click:row="chooseMatchedPatient"
+                />
+              </v-card-text>
+              <v-card-actions>
+                <v-btn color="primary" dark @click="createNewMatchedPatient">新建病人档案</v-btn>
+                <v-spacer></v-spacer>
+                <v-btn text @click="patientMatchDialog = false">取消</v-btn>
+              </v-card-actions>
             </v-card>
           </v-dialog>
           <v-dialog v-model="orderDialog" scrollable @click:outside="clearInfo()">
@@ -287,7 +311,7 @@
               color="white"
               class="mr-3"
             >
-              fa-bell
+              mdi-bell
             </v-icon>
             {{notification}}
             <v-btn
@@ -295,7 +319,7 @@
               @click="snackbar = false"
             >
               <v-icon>
-                fa-close
+                mdi-close
               </v-icon>
             </v-btn>
           </v-snackbar>
@@ -306,8 +330,7 @@
 </template>
 
 <script>
-  var pinyin = require("pinyin");
-  import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate';
+  import { getNowFormatDate} from '../utils/handleDate';
   import { mapState } from 'vuex'
   export default {
     data: () => ({
@@ -357,26 +380,11 @@
       patientPhone: '',
       patientSymptom: '',
       orderComment: '',
-      cacheFindedPatient: [],
-      selectPatientDialog: false,
       orderDialog: false,
-      findPatientHeader: [
-        {
-          text: '姓名',
-          align: 'left',
-          sortable: false,
-          value: 'name',
-        },
-        { text: '性别', value: 'sex' },
-        { text: '年龄', value: 'age' },
-        { text: '电话', value: 'phone' },
-        { text: '最近一次', value: 'lastVisit' },
-        { text: '操作', value: 'action' },
-      ],
       orderHeaders: [{sortable: false, text: '名称', value: 'name1', width: '15%'}, {sortable: false,text: '数量', value: 'count1', width: '10%'}, {sortable: false,text: '名称', value: 'name2', width: '15%'}, {sortable: false,text: '数量', value: 'count2', width: '10%'}, 
                  {sortable: false,text: '名称', value: 'name3', width: '15%'}, {sortable: false,text: '数量', value: 'count3', width: '10%'}, {sortable: false,text: '名称', value: 'name4', width: '15%'}, {sortable: false,text: '数量', value: 'count4', width: '10%'}],
       medRadio: '草药',
-      cardColor: 'green',
+      cardColor: 'primary',
       medItems: [],
       components: [],
       cacheMedData: [],
@@ -389,20 +397,25 @@
       printOrderDialog: false,
       gaofangRecordId: null,
       isSavingIntake: false,
+      patientMatchDialog: false,
+      patientMatchResults: [],
+      patientSearchDialog: false,
+      patientSearchResults: [],
+      patientMatchHeaders: [
+        { text: '姓名', value: 'name', sortable: false },
+        { text: '性别', value: 'sex', sortable: false },
+        { text: '年龄', value: 'age', sortable: false },
+        { text: '电话', value: 'phone', sortable: false },
+        { text: '就医次数', value: 'visitTimes', sortable: false },
+      ],
     }),
     computed: {
       ...mapState('page', ['offset']),
     },
     methods: {
       //搜索
-      filterText (value, search, item) {
-        if(value !=null && search !=null && typeof value === 'string'){
-          if(value.toString().indexOf(search) !== -1 || pinyin(value.toString(),{style: pinyin.STYLE_FIRST_LETTER}).join("").indexOf(search) !== -1){
-            return true;
-          }
-        }else{
-          return false;
-        }
+      filterText (value, search) {
+        return value != null && search != null && typeof value === 'string' && value.indexOf(search) !== -1;
       },
       //得到焦点的时候高亮文字
       focus(event) {
@@ -429,44 +442,6 @@
         this.patient_id = null;
       },
 
-      nameLostFoucs: function(){
-        console.log('lost focus')
-        if(this.patientName == '' || this.patientName.length < 2)
-          return;
-        let p_name_pinyin = pinyin(this.patientName,{style: pinyin.STYLE_NORMAL}).join("");
-        this.$http.get('/api/findPatientByPinyin',{
-          params: {
-            dbs : this.$store.state.user.dbs_prefix+'patient',
-            name_pinyin : '%' + p_name_pinyin + '%',
-					}
-        }).then( (res) => {
-          this.cacheFindedPatient = [];
-          let serverFindP = res.data;
-          for(let item of serverFindP){
-            for(var i=0; i<this.patientName.length; i++){
-              let index = item.name.indexOf(this.patientName[i]);
-              if(index == i){
-                this.cacheFindedPatient.push(item);
-                break;
-              }
-            }
-          }
-          if(this.cacheFindedPatient.length != 0 && !this.patient_id){
-            this.selectPatientDialog = true;
-          }
-        })
-      },
-      choosePatient: function(item){
-        this.patient_id = item.id;
-        this.patientName = item.name;
-        this.patientSex = item.sex;
-        this.patientAge = item.age;
-        this.patientPhone = item.phone;
-        this.selectPatientDialog = false;   
-      },
-      jumpToPDetail: function(id){
-        this.$router.push({name: 'Patient Profile', params: {pt_id: id}});
-      },
       cancelDialog: function(){
         this.addialog = false
         this.patientName = '';
@@ -474,19 +449,90 @@
         this.patientAge = '';
         this.patientPhone = '';
         this.patientSymptom = '';
+        this.patient_id = null;
       },
 
       saveDialog: function(){
         if (!this.patientName || this.isSavingIntake) return;
+        if (this.patient_id) {
+          this.doSaveIntake();
+          return;
+        }
+        this.$http.get('/api/searchPatients', {
+          params: {
+            dbPrefix: this.$store.state.user.dbs_prefix,
+            name: this.patientName,
+            page: 1,
+            pageSize: 20,
+          }
+        }).then((res) => {
+          const patients = (res.data && res.data.items) || [];
+          const sameName = patients.filter((p) => p.name === this.patientName);
+          if(sameName.length == 0){
+            this.doSaveIntake();
+          }else{
+            this.patientMatchResults = sameName;
+            this.patientMatchDialog = true;
+          }
+        }).catch(() => {
+          this.doSaveIntake();
+        });
+      },
+
+      chooseMatchedPatient: function(patient) {
+        this.patientMatchDialog = false;
+        this.patient_id = patient.id;
+        this.patientSex = patient.sex;
+        this.patientAge = patient.age;
+        this.patientPhone = patient.phone;
+        this.doSaveIntake();
+      },
+
+      createNewMatchedPatient: function() {
+        this.patientMatchDialog = false;
+        this.doSaveIntake();
+      },
+
+      searchPatient: function() {
+        const keyword = (this.patientName || this.patientPhone || '').trim();
+        if(!keyword){
+          alert('请先输入姓名或电话');
+          return;
+        }
+        this.$http.get('/api/searchPatients', {
+          params: {
+            dbPrefix: this.$store.state.user.dbs_prefix,
+            name: keyword,
+            page: 1,
+            pageSize: 20,
+          }
+        }).then((res) => {
+          this.patientSearchResults = (res.data && res.data.items) || [];
+          this.patientSearchDialog = true;
+        }).catch(() => {
+          alert('查找失败，请重试');
+        });
+      },
+
+      chooseSearchedPatient: function(patient) {
+        this.patientSearchDialog = false;
+        this.patientName = patient.name;
+        this.patientSex = patient.sex;
+        this.patientAge = patient.age;
+        this.patientPhone = patient.phone;
+        this.patient_id = patient.id;
+      },
+
+      doSaveIntake: function(){
         this.isSavingIntake = true;
         const intakeSnapshot = {
           patient: {
             id: this.patient_id || null,
             name: this.patientName,
-            namePinyin: pinyin(this.patientName, {style: pinyin.STYLE_NORMAL}).join(''),
+            namePinyin: '',
             sex: this.patientSex,
             age: !this.patientAge ? 0 : parseFloat(this.patientAge),
-            phone: !this.patientPhone ? 0 : this.patientPhone,
+            phone: this.patientPhone ? String(this.patientPhone).trim() : null,
           },
           record: {
             symptom: this.patientSymptom,
@@ -635,17 +681,17 @@
       radioChanged: function(){
         this.getAllMed()
         if(this.medRadio == "免煎")
-          this.cardColor = 'lime darken-2';
+          this.cardColor = 'teal';
         else
-          this.cardColor = 'green';
+          this.cardColor = 'primary';
       },
       getColor (count) {
-        if (typeof count === 'string' && count.substr(-1) == "克") return 'green';
-        else return 'lime darken-2';
+        if (typeof count === 'string' && count.substr(-1) == "克") return 'primary';
+        else return 'teal';
       },
       getStatusColor: function(status){
-        if(status == '已录入') return 'deep-purple lighten-2';
-        if(status == '已开方') return 'green';
+        if(status == '已录入') return 'deep-purple';
+        if(status == '已开方') return 'success';
       },
       searchChanged: function(queryText){
         if(!queryText){
@@ -773,7 +819,7 @@
           medarray : this.medString,
           gaofang_total: this.perOrdTotal,
           status : '已开方',
-        }).then( res => {
+        }).then(() => {
           this.clearInfo()
           this.orderDialog = false
           this.getAll()
@@ -904,6 +950,15 @@
       },
     },
     mounted: function() {
+      const patientItem = this.$route.params && this.$route.params.gaofang_item;
+      if (patientItem && patientItem.name) {
+        this.openAddDialog();
+        this.patientName = patientItem.name;
+        this.patientSex = patientItem.sex;
+        this.patientAge = patientItem.age;
+        this.patientPhone = patientItem.phone;
+        this.patient_id = patientItem.patient_id || null;
+      }
       this.getAll();
     }
 
@@ -915,5 +970,9 @@
   .smallHeight .v-data-table td{
     height: 20px;
     font-size: 14px;
+  }
+
+  .patient-match-table tbody tr {
+    cursor: pointer;
   }
 </style>

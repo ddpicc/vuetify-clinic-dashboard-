@@ -29,7 +29,7 @@
 					<v-row justify="center">
 						<v-col cols="12" md="6">
 							<material-card
-								color="green"
+								color="primary"
 								title="当前候诊"
 								:text="getText()"
 							> 

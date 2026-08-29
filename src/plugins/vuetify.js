@@ -1,4 +1,4 @@
-import 'font-awesome/css/font-awesome.min.css'
+import '@mdi/font/css/materialdesignicons.css'
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
 
@@ -8,18 +8,17 @@ export default new Vuetify({
   theme: {
     themes: {
       light: {
-        primary: '#4caf50',
-        secondary: '#4caf50',
-        tertiary: '#495057',
-        accent: '#82B1FF',
-        error: '#f55a4e',
-        info: '#00d3ee',
-        success: '#5cb860',
-        warning: '#ffa21a'
+        primary: '#2E7D32',
+        secondary: '#37474F',
+        accent: '#FFB677',
+        error: '#F44336',
+        info: '#0288D1',
+        success: '#2E7D32',
+        warning: '#F57C00'
       }
     }
   },
   icons: {
-    iconfont: 'fa4'
+    iconfont: 'mdi'
   }
 })

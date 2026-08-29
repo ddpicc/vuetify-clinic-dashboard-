@@ -53,12 +53,12 @@
         lg="3"
       >
         <material-stats-card
-          color="green"
-          icon="fa-window-restore"
+          color="primary"
+          icon="mdi-currency-cny"
           title="当天收入"
           :value="todayIncome"
           small-value="元"
-          sub-icon="fa-calendar"
+          sub-icon="mdi-calendar"
           :sub-text="todayDate()"
         />
       </v-col>
@@ -69,13 +69,12 @@
         lg="3"
       >
         <material-stats-card
-          color="orange"
-          icon="fa-copy"
+          color="teal"
+          icon="mdi-account-group"
           title="当天病人"
           :value="todayNum"
           small-value="人"
-          sub-icon="fa-calendar"
-          sub-icon-color="error"
+          sub-icon="mdi-calendar"
           :sub-text="todayDate()"
         />
       </v-col>
@@ -86,12 +85,12 @@
         lg="3"
       >
         <material-stats-card
-          color="red"
-          icon="fa-instagram"
+          color="warning"
+          icon="mdi-chart-bar"
           title="月收入"
           :value="monthIncome"
           small-value="元"
-          sub-icon="fa-tag"
+          sub-icon="mdi-tag"
           :sub-text="todayMonth()"
         />
       </v-col>
@@ -103,11 +102,11 @@
       >
         <material-stats-card
           color="info"
-          icon="fa-twitter"
+          icon="mdi-account-multiple"
           title="月病人"
           :value="monthNum"
           small-value="人"
-          sub-icon="fa-tag"
+          sub-icon="mdi-tag"
           :sub-text="todayMonth()"
         />
       </v-col>
@@ -117,11 +116,11 @@
         lg="6"
       >
         <material-stats-card
-          color="green"
-          icon="fa-window-restore"
+          color="primary"
+          icon="mdi-finance"
           title="全年收入"
           :value="yearIncome"
-          sub-icon="fa-calendar"
+          sub-icon="mdi-calendar"
           :sub-text="todayYear()"
         />
       </v-col>
@@ -130,56 +129,20 @@
         lg="6"
       >
         <material-stats-card
-          color="green"
-          icon="fa-window-restore"
+          color="secondary"
+          icon="mdi-sigma"
           title="总收入"
           :value="overallIncome"
-          sub-icon="fa-calendar"
+          sub-icon="mdi-calendar"
           sub-text="从19年6月至今"
         />
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12" sm="12" lg="4" md="4">
-        <v-date-picker
-          v-model="dates"
-          range
-        ></v-date-picker>
-        </v-col>
-            <v-col cols="12" sm="12" lg="8" md="8">
-              <v-chip
-                class="ma-2"
-                color="green"
-                text-color="white"
-                @click="last30days"
-              >
-                最近30天
-              </v-chip>
-              
-              <v-chip
-                class="ma-2"
-                color="green"
-                text-color="white"
-                @click="last45days"
-              >
-                最近45天
-              </v-chip>
-
-              <v-card
-                class="mx-auto"
-              >
-                <v-card-text>
-                  <v-text-field v-model="dateRangeText" label="时间范围" readonly append-icon='fa-check' color="blue darken-2" @click:append="actionGenerate"></v-text-field>
-                </v-card-text>
-              </v-card>
-            </v-col>
-        </v-row>
   </v-container>
 </template>
 
 <script>
-import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate';
-import { saveToLocal, loadFromLocal, clearCache} from '../utils/handleLocalStorage';
+import { dateToString, stringToDate } from '../utils/handleDate';
   export default {
 
     data () {
@@ -201,8 +164,6 @@ import { saveToLocal, loadFromLocal, clearCache} from '../utils/handleLocalStora
         dailyNmPeopleChart: {
           data: [],
         },
-
-        dates: [],
       }
     },
     methods: {
@@ -232,40 +193,29 @@ import { saveToLocal, loadFromLocal, clearCache} from '../utils/handleLocalStora
       },
 
       loadDataAndSetupChart: function(){
-        let fromlocal = loadFromLocal(this.$store.state.user.user_id,'cacheOrder',[]);
-        let monthTotalFromLocal = loadFromLocal(1,'userSetting', []);
-        let data30Days = [];
-
-        if(fromlocal.length == 0){
-          var end = dateToString(new Date());
-          var start = dateToString(new Date(new Date().setDate(new Date().getDate()-30)));
-          //directly get last 30 days
-          this.$http.get('/api/getChartInfoFromOrder',{
+        const end = dateToString(new Date());
+        const start = dateToString(new Date(new Date().setDate(new Date().getDate()-30)));
+        const requests = [
+          this.$http.get('/api/getOrdBetweenDates', {
             params: {
-              dbs : this.$store.state.user.dbs_prefix+'ordlist',
+              dbs_a: this.$store.state.user.dbs_prefix+'ordlist',
+              dbs_b: this.$store.state.user.dbs_prefix+'patient',
               startDate: start,
               endDate: end
             }
-          }).then( (res) => {            
-            this.calculateData(res.data, monthTotalFromLocal);
-          })
-        }else{
-          //get today
-          this.$http.get('/api/getChartInfoFromOrder',{
+          }),
+          this.$http.get('/api/getMonthlyTotals', {
             params: {
-              dbs : this.$store.state.user.dbs_prefix+'ordlist',
-              startDate: dateToString(new Date()),
-              endDate: dateToString(new Date())
+              dbPrefix: this.$store.state.user.dbs_prefix
             }
-          }).then( (res) => {
-            data30Days = res.data;
-            data30Days = data30Days.concat(fromlocal);
-            this.calculateData(data30Days, monthTotalFromLocal);
           })
-        }
+        ];
+        Promise.all(requests).then(([ordersRes, monthlyRes]) => {
+          this.calculateData(ordersRes.data, monthlyRes.data);
+        });
       },
 
-      calculateData: function(data30Days, monthTotalFromLocal){
+      calculateData: function(data30Days, monthlyTotals){
         let index = 0;
         let curDate = '';
         var last30daysIncome = [];
@@ -317,131 +267,56 @@ import { saveToLocal, loadFromLocal, clearCache} from '../utils/handleLocalStora
         this.dailySalesChart.data.push({name: '收入', data: incomeData});
         if(this.displayProfit)
           this.dailySalesChart.data.push({name: '利润', data: profitData});
-        this.setMonthChart(monthTotalFromLocal, _monthIncome, _monthProfit);
+        this.setMonthChart(monthlyTotals, _monthIncome, _monthProfit);
       },
 
-      setMonthChart: function(monthTotalArry, _monthIncome, _monthProfit){
-        //alert(JSON.stringify(monthTotalArry));
+      // monthlyTotals: [{ym: '2026-08', total: x, profit: y}, ...] 按月升序
+      setMonthChart: function(monthlyTotals, _monthIncome, _monthProfit){
+        const totalsByYm = {};
+        for(let item of (Array.isArray(monthlyTotals) ? monthlyTotals : [])){
+          totalsByYm[item.ym] = {
+            total: parseFloat(item.total) || 0,
+            profit: parseFloat(item.profit) || 0,
+          };
+        }
+
+        const now = new Date();
+        const currentYm = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2);
+        // 当月的实时数覆盖聚合值（聚合值与实时值相同，兜底防聚合缺失）
+        totalsByYm[currentYm] = {
+          total: _monthIncome,
+          profit: _monthProfit,
+        };
+
         var incomeMonth = [];
         var profitMonth = [];
-        for (var key in monthTotalArry[0]){
-          if(key.indexOf('total') != -1){
-            this.overallIncome = parseFloat(parseFloat(this.overallIncome + parseFloat(monthTotalArry[0][key])).toFixed(2));
-          }
+        this.overallIncome = 0;
+        for(const ym in totalsByYm){
+          this.overallIncome = parseFloat((this.overallIncome + totalsByYm[ym].total).toFixed(2));
         }
-        this.overallIncome = parseFloat(this.overallIncome + parseFloat(_monthIncome)).toFixed(2);
-        
-        //start from 0, 也就是当前月
+
+        const thisYear = now.getFullYear();
         for(let monthOffset=0; monthOffset<12; monthOffset++){
-          let date = new Date();
-          let month = date.getMonth()+1;
-          let year = date.getFullYear();
-          month = month - monthOffset;
-          
-          if(month <= 0){
-            month = month + 12;
-            year = year-1;
-            if (month >= 1 && month <= 9) {
-              month = "0" + month;
-            }
-          }else if(month > 0 && monthOffset != 0){
-            if (month >= 1 && month <= 9) {
-              month = "0" + month;
-            }
-            
-            let columnTotal = 'total' + year + month;
-            if(!monthTotalArry[0][columnTotal])
-              monthTotalArry[0][columnTotal] = 0;
-            this.yearIncome = parseFloat(parseFloat(this.yearIncome + parseFloat(monthTotalArry[0][columnTotal])).toFixed(2));
+          const date = new Date(thisYear, now.getMonth() - monthOffset, 1);
+          const ym = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2);
+          const monthTotal = totalsByYm[ym] ? totalsByYm[ym].total : 0;
+          const monthProfit = totalsByYm[ym] ? totalsByYm[ym].profit : 0;
+          incomeMonth.push([ym, monthTotal]);
+          profitMonth.push([ym, monthProfit]);
+          if(date.getFullYear() === thisYear){
+            this.yearIncome = parseFloat((parseFloat(this.yearIncome) + monthTotal).toFixed(2));
           }
-
-          if(monthOffset ==0){
-            incomeMonth.push([year + '-' + month, _monthIncome]);
-            profitMonth.push([year + '-' + month, _monthProfit]);
-            continue;
-          }          
-          let columnTotal = 'total' + year + month;
-          let columnProfit = 'profit' + year + month;
-
-          if(!monthTotalArry[0][columnTotal])
-            monthTotalArry[0][columnTotal] = 0;
-          if(!monthTotalArry[0][columnProfit])
-            monthTotalArry[0][columnProfit] = 0;
-          incomeMonth.push([year + '-' + month, monthTotalArry[0][columnTotal]]);
-          profitMonth.push([year + '-' + month, monthTotalArry[0][columnProfit]]);
         }
         this.monthSalesChart.data.push({name: '收入', data: incomeMonth});
           if(this.displayProfit)
             this.monthSalesChart.data.push({name: '利润', data: profitMonth});
-        this.yearIncome = parseFloat(this.yearIncome + _monthIncome).toFixed(2);
       },
 
-
-      today: function(){
-        let todayDate = getNowFormatDate();
-        this.dates = [];
-        this.dates.push(todayDate);
-        this.dates.push(todayDate);
-      },
-
-      last45days: function(){
-        var end = dateToString(new Date());
-        var start = dateToString(new Date(new Date().setDate(new Date().getDate()-44)));
-        this.dates = [];
-        this.dates.push(start);
-        this.dates.push(end);
-      },
-
-      last30days: function(){
-        var end = dateToString(new Date());
-        var start = dateToString(new Date(new Date().setDate(new Date().getDate()-29)));
-        this.dates = [];
-        this.dates.push(start);
-        this.dates.push(end);
-      },
-      loadUserConfig: function(){
-        this.$http.get('/api/getUserSetting', {
-          params: {
-						userid : this.$store.state.user.user_id
-          }
-        }).then(response => {
-          saveToLocal(this.$store.state.user.user_id,'userSetting',response.data);
-          location.reload();
-        })
-      },
-
-      actionGenerate: function(){
-        clearCache(this.$store.state.user.user_id);
-        saveToLocal(this.$store.state.user.user_id,'updated_date', new Date().toDateString());
-        var start = this.dates[0];
-        var end = this.dates[1];
-        this.$http.get('/api/getOrdBetweenDates', {
-          params: {
-            dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
-            dbs_b : this.$store.state.user.dbs_prefix+'patient',
-            startDate: start,
-            endDate: end
-          }
-        }).then(response => {
-            console.log(response.data)
-            saveToLocal(this.$store.state.user.user_id,'cacheOrder',response.data);
-            this.loadUserConfig();
-          }
-        );
-      },
-
-    },
-
-    computed: {
-      dateRangeText () {
-        return this.dates.join(' ~ ')
-      },
     },
 
     mounted: function() {
-      let userSetting = loadFromLocal(this.$store.state.user.user_id,'userSetting', []);
-      this.displayProfit = userSetting[0]['displayProfit'];
-      this.loadDataAndSetupChart();      
+      this.displayProfit = this.$store.getters['userconfig/displayProfit'];
+      this.loadDataAndSetupChart();
 		}
   }
 </script>

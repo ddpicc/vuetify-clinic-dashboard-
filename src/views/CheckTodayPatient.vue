@@ -8,7 +8,7 @@
       <v-col cols="12">
         <material-card 
         	flat
-					color="green"
+					color="primary"
           title="今日病人"
         >
           <v-data-table
@@ -19,15 +19,15 @@
             :loading="loading"
           >
           <template v-slot:item.action="{ item }">
-						<v-btn @click.stop="selectPatient(item)" text color="green">选择</v-btn>
-            <v-btn v-if="canFinish(item.isFinished)" @click.stop="finishPatient(item.id)" text color="green">完成</v-btn>
+						<v-btn @click.stop="selectPatient(item)" text color="primary">选择</v-btn>
+            <v-btn v-if="canFinish(item.isFinished)" @click.stop="finishPatient(item.id)" text color="primary">完成</v-btn>
           </template>
 					<template v-slot:item.name="{ item }">
             <v-chip :color="getColor(item.isFinished)" dark>{{ item.name }}</v-chip>
           </template>
           </v-data-table>
           <div class="text-center pt-2">
-            <v-btn block color="green" dark class="mr-2" @click="displayAll()">{{displayBtnText}}</v-btn>
+            <v-btn block color="primary" dark class="mr-2" @click="displayAll()">{{displayBtnText}}</v-btn>
           </div>
         </material-card>
 				<v-dialog
@@ -45,7 +45,7 @@
 								dark
 								@click="selectPatientDialog = false"
 							>
-								<v-icon>fa-close</v-icon>
+								<v-icon>mdi-close</v-icon>
 							</v-btn>
 							<v-spacer></v-spacer>
 							<v-toolbar-items>
@@ -254,7 +254,7 @@
 			},
 
 			getColor: function(isFinished){
-				if (isFinished == '1') return 'lime darken-2'
+				if (isFinished == '1') return 'teal'
 				else return 'green'
 			},
 

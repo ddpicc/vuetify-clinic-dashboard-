@@ -30,7 +30,7 @@
               color="amber"
               @click="addMedShow"
             >
-              <v-icon>fa-plus</v-icon>
+              <v-icon>mdi-plus</v-icon>
             </v-btn>
           </template>
           <v-data-table
@@ -51,13 +51,13 @@
               class="mr-2"
               @click="editItem(item)"
             >
-              fa-pencil
+              mdi-pencil
             </v-icon>
             <v-icon
               small
               @click="deleteItem(item.id)"
             >
-              fa-close
+              mdi-close
             </v-icon>
           </template>
           </v-data-table>
@@ -100,7 +100,7 @@
                       <v-text-field label="零售价" v-model="dialogSellprice"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="4" md="4">
-                      <v-switch v-model="dialogChecked" color="blue" label="库存监测"></v-switch>
+                      <v-switch v-model="dialogChecked" color="primary" label="库存监测"></v-switch>
                     </v-col>                    
                   </v-row>
                 </v-container>
@@ -108,8 +108,8 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="cancelDialog">取消</v-btn>
-                <v-btn color="blue darken-1" text @click="saveDialog">保存</v-btn>
+                <v-btn color="primary" text @click="cancelDialog">取消</v-btn>
+                <v-btn color="primary" text @click="saveDialog">保存</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -124,7 +124,7 @@
               color="white"
               class="mr-3"
             >
-              fa-bell
+              mdi-bell
             </v-icon>
             {{notification}}
             <v-btn
@@ -132,7 +132,7 @@
               @click="snackbar = false"
             >
               <v-icon>
-                fa-close
+                mdi-close
               </v-icon>
             </v-btn>
           </v-snackbar>
@@ -150,7 +150,7 @@
       medTypeItems: ['草药','免煎','西药','药丸'],
       adddialog: false,
       loading: false,
-      cardColor: 'green',
+      cardColor: 'primary',
       dialogTitle: '',
       snackbar: false,
       snackbarColor: '',
@@ -242,13 +242,13 @@
       radioChanged: function(){
         this.getAll();
         if(this.medRadio == "西药"){
-          this.cardColor = 'blue lighten-2';
+          this.cardColor = 'blue';
 				}else if(this.medRadio == "免煎"){
-          this.cardColor = 'lime darken-2';
+          this.cardColor = 'teal';
 				}else if(this.medRadio == "药丸"){
-          this.cardColor = 'deep-purple lighten-2';
+          this.cardColor = 'deep-purple';
 				}else{
-          this.cardColor = 'green';
+          this.cardColor = 'primary';
         }					
       },
 

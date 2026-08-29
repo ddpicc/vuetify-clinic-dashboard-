@@ -40,7 +40,8 @@
         <v-row no-gutters>
           <v-img
             :min-height="'calc(100vh - ' + $vuetify.application.top + 'px)'"
-            src="https://images.unsplash.com/photo-1487017159836-4e23ece2e4cf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1951&q=80"
+            src="@/assets/hero-clinic.svg"
+            gradient="to bottom, rgba(27, 94, 32, .82), rgba(38, 50, 56, .9)"
           >
             <v-theme-provider dark>
               <v-container fill-height>
@@ -58,7 +59,7 @@
                       class="font-weight-light"
                       :class="[$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-2']"
                     >
-                      WELCOME TO
+                      欢迎来到
                     </span>
 
                     <br>
@@ -67,7 +68,7 @@
                       :class="[$vuetify.breakpoint.smAndDown ? 'display-3': 'display-4']"
                       class="font-weight-black"
                     >
-                      VUETIFY
+                      云杰诊所
                     </span>
 
                   </v-col>
@@ -130,7 +131,7 @@
             </bm-marker>
           </baidu-map>
           <v-col cols="12">
-            <v-btn x-large color="blue">查看更多信息</v-btn>
+            <v-btn x-large color="primary">查看更多信息</v-btn>
           </v-col>
         </v-container>
 

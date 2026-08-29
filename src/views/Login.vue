@@ -48,7 +48,7 @@
               <v-tabs
                 v-model="tab"
                 fixed-tabs
-                color="indigo"
+                color="primary"
               >
                 <v-tab>
                   登录
@@ -72,38 +72,12 @@
                       />
                       <v-card-actions>
                         <v-spacer />
-                        <v-btn color="blue" @click.stop="loginClick">登录</v-btn>
+                        <v-btn color="primary" @click.stop="loginClick">登录</v-btn>
                       </v-card-actions>
                     </v-form>
                   </v-card-text>
                 </v-tab-item>
-                  <v-tab-item>
-                  <v-card-text>
-                    <v-form>
-                      <v-text-field
-                        label="用户名"
-                        type="text"
-                        v-model="loginName"
-                      />
-                      <v-text-field
-                        label="手机号"
-                        type="text"
-                        v-model="phoneNumber"
-                      />
-                      <v-text-field
-                        id="password"
-                        label="密码"
-                        type="password"
-                        v-model="password"
-                      />
-                      <v-card-actions>
-                        <v-spacer />
-                        <v-btn color="blue" @click="registerClick">注册</v-btn>
-                      </v-card-actions>
-                    </v-form>
-                  </v-card-text>
-                </v-tab-item>
-              </v-tabs-items>              
+              </v-tabs-items>
             </v-card>
           </v-col>
         </v-row>
@@ -118,7 +92,7 @@
             color="white"
             class="mr-3"
           >
-            fa-bell
+            mdi-bell
           </v-icon>
           {{notification}}
           <v-btn
@@ -126,7 +100,7 @@
             @click="snackbar = false"
           >
             <v-icon>
-              fa-close
+              mdi-close
             </v-icon>
           </v-btn>
         </v-snackbar>
@@ -142,9 +116,7 @@
       return {
         loginName: '',
         password: '',
-        phoneNumber: '',
         tab: null,
-        loginBtnName: "登录",
         snackbar: false,
         snackbarColor: '',
         notification: '',
@@ -161,21 +133,15 @@
           this.$store.dispatch('user/LoginByEmail', userInfo).then(() => {
             this.snackbar = true;
             this.notification = '登录成功';
-            this.snackbarColor = 'green';
-            
-            this.$router.push({ path: '/loading' });
+            this.snackbarColor = 'success';
+
+            this.$router.push({ path: '/ord-list' });
           }).catch(err => {
             this.snackbar = true;
             this.notification = '连接错误，请重试';
             console.log(err);
           });
-        }         
-      },
-
-      registerClick: function(){
-        this.snackbar = true;
-        this.notification = '注册功能暂不能用，请联系管理员分配账号。可用的使试用账号为test，密码test';
-        this.snackbarTimeout = 5000;
+        }
       },
 
       jumpHome: function(){

@@ -18,14 +18,16 @@ const whiteList = ['/login','/','/registerp','/displayp','/formula']// 不重定
 router.beforeEach((to, from, next) => {
 	if (store.state.user.token) { // 判断是否有token
 	  if (to.path === '/login') {
-			next({ path: '/create-ord' })
+			next({ path: '/ord-list' })
 	  } else {
 			if (store.state.user.role.length === 0) { // 判断当前用户是否已拉取完user_info信息
 				store.dispatch('user/GetInfo').then(res => { // 拉取user_info
-				const role = res.data[0].role;
-				store.dispatch('permission/GenerateRoutes', { role }).then(() => { // 生成可访问的路由表
-					router.addRoutes(store.state.permission.addRouters); // 动态添加可访问路由表
-					next({ ...to, replace: true }); // hack方法 确保addRoutes已完成
+					const role = res.data[0].role;
+					store.dispatch('permission/GenerateRoutes', { role }).then(() => { // 生成可访问的路由表
+						router.addRoutes(store.state.permission.addRouters); // 动态添加可访问路由表
+						store.dispatch('userconfig/loadUserSetting').catch(() => {}).then(() => {
+							next({ ...to, replace: true }); // hack方法 确保addRoutes已完成
+						})
 					})
 				}).catch(err => {
 					console.log('error');

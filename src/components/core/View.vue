@@ -14,7 +14,7 @@
 
     metaInfo () {
       return {
-        title: 'Vue Material Dashboard by CreativeTim'
+        title: '云杰诊所管理系统'
       }
     }
   }

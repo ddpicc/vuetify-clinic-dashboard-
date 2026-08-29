@@ -8,7 +8,7 @@
       <v-col cols="12">
         <material-card 
           flat
-					color="green"
+					color="primary"
         >
           <template v-slot:header>
             <h3 class="title ml-5 flex-grow-1">详细统计</h3>
@@ -16,7 +16,7 @@
               class="mr-5"
               v-model="yaowanActive"
               label="分析药丸"
-              color="indigo darken-3"
+              color="primary"
             ></v-switch>
           </template>
 
@@ -51,7 +51,7 @@
             <v-col cols="12" sm="12" lg="8" md="8">
               <v-chip
                 class="ma-2"
-                color="green"
+                color="primary"
                 text-color="white"
                 @click="today"
               >
@@ -59,7 +59,7 @@
               </v-chip>
               <v-chip
                 class="ma-2"
-                color="green"
+                color="primary"
                 text-color="white"
                 @click="last7days"
               >
@@ -67,7 +67,7 @@
               </v-chip>
               <v-chip
                 class="ma-2"
-                color="green"
+                color="primary"
                 text-color="white"
                 @click="last30days"
               >
@@ -262,7 +262,7 @@ export default {
     data: () => ({
       dates: [],
       reportDisplay: false,
-      iconChange: 'fa-check',
+      iconChange: 'mdi-check',
       monthSalesChart: {
         data: [],
       },
@@ -322,7 +322,7 @@ export default {
         this.monthProfitChart.data = [];
         if(this.reportDisplay != true){
           this.reportDisplay = true;
-          this.iconChange = 'fa-close';
+          this.iconChange = 'mdi-close';
           var start = this.dates[0];
           var end = this.dates[1];
           let days = (stringToDate(end) - stringToDate(start)) / (1000*3600*24) + 1;
@@ -339,7 +339,7 @@ export default {
           );
         }else{
           this.reportDisplay = false;
-          this.iconChange = 'fa-check';
+          this.iconChange = 'mdi-check';
           this.dates = [];
         }
       },

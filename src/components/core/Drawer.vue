@@ -2,26 +2,19 @@
   <v-navigation-drawer
     id="app-drawer"
     v-model="inputValue"
-    :src="image"
     app
-    color="grey darken-2"
     dark
     floating
     mobile-break-point="991"
     persistent
     width="180"
   >
-    <template v-slot:img="attrs">
-      <v-img
-        v-bind="attrs"
-        gradient="to top, rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)"
-      />
-    </template>
+    <div class="drawer-background fill-height" />
 
-    <v-list-item two-line>
+    <v-list-item two-line class="drawer-content">
       <v-list-item-avatar color="white">
         <v-img
-          src="https://cdn.vuetifyjs.com/images/logos/v.png"
+          :src="require('@/assets/logo1.png')"
           height="34"
           contain
         />
@@ -31,9 +24,9 @@
       </v-list-item-title>
     </v-list-item>
 
-    <v-divider class="mx-3 mb-3" />
+    <v-divider class="mx-3 mb-3 drawer-content" />
 
-    <v-list nav>
+    <v-list nav class="drawer-content">
       <!-- Bug in Vuetify for first child of v-list not receiving proper border-radius -->
       <div />
 
@@ -41,7 +34,8 @@
         v-for="(link, i) in links"
         :key="i"
         :to="link.to"
-        active-class="primary white--text"
+        active-class="white--text"
+        class="drawer-item"
       >
         <v-list-item-action>
           <v-icon>{{ link.icon }}</v-icon>
@@ -50,37 +44,18 @@
         <v-list-item-title v-text="link.text" />
       </v-list-item>
     </v-list>
-
-    <!--<template v-slot:append>
-      <v-list nav>
-        <v-list-item
-          to="/upgrade"
-        >
-          <v-list-item-action>
-            <v-icon>mdi-package-up</v-icon>
-          </v-list-item-action>
-
-          <v-list-item-title class="font-weight-light">
-            Upgrade To PRO
-          </v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </template> -->
   </v-navigation-drawer>
 </template>
 
 <script>
-  import { saveToLocal, loadFromLocal} from '../../utils/handleLocalStorage';
-// Utilities
   import {
-    mapMutations,
-    mapState
+    mapMutations
   } from 'vuex'
 
   var moreLinks = [
     {
       to: '/dashboard',
-      icon: 'fa-dashboard',
+      icon: 'mdi-view-dashboard',
       text: '首页'
     },
     /* {
@@ -89,48 +64,48 @@
       text: '今日病人'
     }, */
     {
-      to: '/create-ord',
-      icon: 'fa-font',
-      text: '生成处方'
-    },        
-    {
       to: '/ord-list',
-      icon: 'fa-clipboard',
-      text: '处方管理'
-    },              
-    {
-      to: '/med-list',
-      icon: 'fa-medkit',
-      text: '药品管理'
-    },
-    {
-      to: '/patient-list',
-      icon: 'fa-male',
-      text: '病人管理'
-    },
-    {
-      to: '/detail-info',
-      icon: 'fa-file-o',
-      text: '详细账单'
+      icon: 'mdi-stethoscope',
+      text: '接诊开方'
     },
     {
       to: '/yaogao',
-      icon: 'fa-font',
+      icon: 'mdi-mortar-pestle',
       text: '定制药膏'
+    },
+    {
+      to: '/patient-list',
+      icon: 'mdi-account',
+      text: '病人管理'
+    },
+    {
+      to: '/patient-merge',
+      icon: 'mdi-account-switch',
+      text: '患者合并'
+    },
+    {
+      to: '/med-list',
+      icon: 'mdi-medical-bag',
+      text: '药品管理'
+    },
+    {
+      to: '/detail-info',
+      icon: 'mdi-file-document-outline',
+      text: '详细账单'
     },
   ];
 
   var lessLinks = [
     {
-      to: '/create-ord',
-      icon: 'fa-font',
-      text: '生成处方'
-    },        
-    {
       to: '/ord-list',
-      icon: 'fa-clipboard',
-      text: '处方管理'
-    }, 
+      icon: 'mdi-stethoscope',
+      text: '接诊开方'
+    },
+    {
+      to: '/yaogao',
+      icon: 'mdi-mortar-pestle',
+      text: '定制药膏'
+    },
   ]
   export default {
     props: {
@@ -145,7 +120,6 @@
     }),
 
     computed: {
-      ...mapState('app', ['image', 'color']),
       inputValue: {
         get () {
           return this.$store.state.app.drawer
@@ -167,8 +141,7 @@
       }else if(this.$store.state.user.user_id == 2){
         this.name = 'yunjie'
       }
-      let userSetting = loadFromLocal(this.$store.state.user.user_id,'userSetting', []);
-      let displayLessMenu = userSetting[0]['displayLessMenu'];
+      let displayLessMenu = this.$store.getters['userconfig/displayLessMenu'];
       let childrenPath = this.$store.state.permission.addRouters[0].children;
       if(displayLessMenu){
         childrenPath.forEach(element => {
@@ -203,3 +176,26 @@
 		}
   }
 </script>
+<style scoped>
+  #app-drawer {
+    background: linear-gradient(180deg, #1B5E20 0%, #263238 100%);
+  }
+
+  #app-drawer >>> .drawer-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  #app-drawer >>> .drawer-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .drawer-item.v-list-item--active {
+    background: rgba(255, 255, 255, 0.12);
+  }
+</style>

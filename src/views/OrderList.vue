@@ -6,7 +6,7 @@
   >
     <v-row justify="center">
       <v-col cols="12">
-        <material-card flat color="green">
+        <material-card flat color="primary">
           <template v-slot:header>
             <div class="px-3">
               <div class="title font-weight-light mb-2">
@@ -24,8 +24,8 @@
               color="amber"
               @click="deleteEnabled = !deleteEnabled"
             >
-              <v-icon v-if="deleteEnabled">fa-trash-o</v-icon>
-              <v-icon v-if="!deleteEnabled">fa-trash</v-icon>
+              <v-icon v-if="deleteEnabled">mdi-trash-can-outline</v-icon>
+              <v-icon v-if="!deleteEnabled">mdi-trash-can</v-icon>
             </v-btn>
           </template>
           <!--  need a key of id -->
@@ -36,27 +36,38 @@
             show-expand
             single-expand
             :expanded.sync="expanded"
-            :items-per-page="15"
-            :search="searchStr"
-            :custom-filter="filterText"
+            :items-per-page="-1"
             :loading="loading"
+            hide-default-footer
           >
           <template v-slot:top>
-            <v-text-field v-model="searchStr" label="搜索..." class="mx-4"></v-text-field>
+            <v-row class="mx-2" align="center">
+              <v-text-field v-model="searchStr" label="按姓名或电话搜索..." @input="onSearchInput"></v-text-field>
+              <v-btn class="ml-4" color="primary" dark small @click="startNewOrder">开处方</v-btn>
+            </v-row>
           </template>
           <template v-slot:item.action="{ item }">
             <v-icon
               small
               class="mr-2"
+              title="复用处方"
               @click="reuse(item)"
             >
-              fa-angle-double-left
+              mdi-content-copy
+            </v-icon>
+            <v-icon
+              small
+              class="mr-2"
+              title="只复用病人信息"
+              @click="reusePatientInfo(item)"
+            >
+              mdi-account-outline
             </v-icon>
             <v-icon v-if="canDelete(item)"
               small
               @click="deleteItem(item)"
             >
-              fa-close
+              mdi-close
             </v-icon>
           </template>
           <template v-slot:item.medtype="{ item }">
@@ -64,7 +75,7 @@
           </template>
           <template v-slot:expanded-item="{ item }">
             <td :colspan="8">
-              <v-btn text small color="green" @click="startPrint">打印</v-btn>
+              <v-btn text small color="primary" @click="startPrint">打印</v-btn>
               <div ref="print" class="smallHeight">
                 <h4 style="text-align:center;">宛&nbsp;城&nbsp;云&nbsp;杰&nbsp;诊&nbsp;所</h4>
                 <h5 style="text-align:center;">处&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;方</h5>
@@ -114,8 +125,15 @@
             </td>              
           </template>
           </v-data-table>
-          <div class="text-center pt-2">
-            <v-btn block color=green dark class="mr-2" @click="loadAll">读取全部</v-btn>
+          <div class="text-center pt-2" v-if="total > 0">
+            <v-pagination
+              v-model="page"
+              :length="pageCount"
+              :total-visible="7"
+              :disabled="loading"
+              @input="onPageChange"
+            />
+            <div class="caption mt-2">第 {{ page }} / {{ pageCount }} 页，共 {{ total }} 条处方</div>
           </div>
           <v-snackbar
             v-model="snackbar"
@@ -128,7 +146,7 @@
               color="white"
               class="mr-3"
             >
-              fa-bell
+              mdi-bell
             </v-icon>
             {{notification}}
             <v-btn
@@ -136,7 +154,7 @@
               @click="snackbar = false"
             >
               <v-icon>
-                fa-close
+                mdi-close
               </v-icon>
             </v-btn>
           </v-snackbar>
@@ -147,9 +165,7 @@
 </template>
 
 <script>
-  import { dateToString, stringToDate, getNowFormatDate} from '../utils/handleDate';
-  import { saveToLocal, loadFromLocal} from '../utils/handleLocalStorage';
-  var pinyin = require("pinyin");
+  import { getNowFormatDate} from '../utils/handleDate';
   export default {
     data: () => ({
       searchStr: '',
@@ -157,6 +173,11 @@
       displayYaowan: false,
       loading: false,
       expanded: [],
+      page: 1,
+      pageSize: 30,
+      total: 0,
+      searchTimer: null,
+      requestId: 0,
       snackbar: false,
       snackbarColor: '',
       notification: '',
@@ -197,103 +218,79 @@
       items: []
     }),
 
+    computed: {
+      pageCount: function() {
+        return Math.max(1, Math.ceil(this.total / this.pageSize));
+      }
+    },
+
     methods: {
-      //搜索
-      filterText (value, search, item) {
-        if(value !=null && search !=null && typeof value === 'string'){
-          if(value.toString().indexOf(search) !== -1 || pinyin(value.toString(),{style: pinyin.STYLE_FIRST_LETTER}).join("").indexOf(search) !== -1){
-            return true;
-          }
-        }else{
-          return false;
-        }
+      normalizeItems: function(items, page = this.page) {
+        return (Array.isArray(items) ? items : []).map((element, index) => {
+          element.medarray = element.medarray ? element.medarray.split(";") : [];
+          element.pid = (page - 1) * this.pageSize + index + 1;
+          return element;
+        });
       },
 
-      // 获取全部数据
-      getAll: function() {
+      loadOrders: function(requestedPage = 1) {
         this.loading = true;
-        let idStartFrom = 0;
-        let fromlocal = loadFromLocal(this.$store.state.user.user_id,'cacheOrder',[]);
-        let userSetting = loadFromLocal(this.$store.state.user.user_id,'userSetting', []);
-        this.displayYaowan = userSetting[0]['displayYaowan'];
-
-        if(fromlocal.length == 0){
-          this.$http.get('/api/getAllOrd',{
-            params: {
-              dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
-              dbs_b : this.$store.state.user.dbs_prefix+'patient',
-            }
-          }).then( (res) => {
-            if(!this.displayYaowan){
-              res.data = res.data.filter(function (e) { return e.medtype != '药丸'; });
-            }
-            for(let element of res.data) {
-              element.medarray = element.medarray.split(";");
-              idStartFrom = idStartFrom + 1;
-              element.pid = idStartFrom;
-            }
-            this.items = res.data;
-            this.loading = false;
-          })
-        }else{
-          this.$http.get('/api/getOrdByDate',{
-            params: {
-              dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
-              dbs_b : this.$store.state.user.dbs_prefix+'patient',
-              dateBy: dateToString(new Date())
-            }
-          }).then( (res) => {
-            if(!this.displayYaowan){
-              res.data = res.data.filter(function (e) { return e.medtype != '药丸'; });
-              fromlocal = fromlocal.filter(function (e) { return e.medtype != '药丸'; });
-            }
-            for(let element of res.data) {
-              element.medarray = element.medarray.split(";");
-              idStartFrom = idStartFrom + 1;
-              element.pid = idStartFrom;              
-            }
-            for(let ele of fromlocal){
-              ele.medarray = ele.medarray.split(";");
-              idStartFrom = idStartFrom + 1;
-              ele.pid = idStartFrom;
-            }
-            this.items = res.data;
-            this.items = this.items.concat(fromlocal);
-            this.loading = false;
-          })
-        }
-      },
-
-      loadAll: function(){
-        //load all
-        this.loading = true;
-        let idStartFrom = 0;
-        let userSetting = loadFromLocal(this.$store.state.user.user_id,'userSetting', []);
-        this.displayYaowan = userSetting[0]['displayYaowan'];
-        this.$http.get('/api/getAllOrd',{
+        const currentPage = Number(requestedPage) || 1;
+        const currentSearch = this.searchStr;
+        const currentRequestId = ++this.requestId;
+        this.$http.get('/api/searchOrders', {
           params: {
-            dbs_a : this.$store.state.user.dbs_prefix+'ordlist',
-            dbs_b : this.$store.state.user.dbs_prefix+'patient',
+            dbPrefix: this.$store.state.user.dbs_prefix,
+            name: currentSearch,
+            page: currentPage,
+            pageSize: this.pageSize,
+            hideYaowan: !this.displayYaowan,
           }
-        }).then( (res) => {
-          if(!this.displayYaowan){
-            res.data = res.data.filter(function (e) { return e.medtype != '药丸'; });
+        }).then((res) => {
+          if (currentRequestId !== this.requestId) return;
+          const data = res.data || {};
+          this.total = Number(data.total) || 0;
+          this.page = currentPage;
+          this.items = this.normalizeItems(data.items, currentPage);
+        }).finally(() => {
+          if (currentRequestId === this.requestId) this.loading = false;
+        });
+      },
+
+      onPageChange: function(page) {
+        this.loadOrders(page);
+      },
+
+      onSearchInput: function() {
+        clearTimeout(this.searchTimer);
+        this.searchTimer = setTimeout(() => this.loadOrders(1), 300);
+      },
+
+      startNewOrder: function() {
+        this.$router.push({ name: '生成处方' });
+      },
+
+      reusePatientInfo: function(item) {
+        this.$router.push({
+          name: '生成处方',
+          params: {
+            ord_item: {
+              patient: item.patient,
+              patient_name: item.patient,
+              patient_id: item.patient_id,
+              sex: item.sex,
+              age: item.age,
+              phone: item.phone,
+            }
           }
-          for(let element of res.data) {
-            element.medarray = element.medarray.split(";");
-            idStartFrom = idStartFrom + 1;
-            element.pid = idStartFrom;
-          }
-          this.items = res.data;
-          this.loading = false;
-        })
+        });
       },
 
       getColor (medtype) {
-        if (medtype == '免煎') return 'lime darken-2'
-        else if (medtype == '西药') return 'blue lighten-2'
-        else if(medtype == "药丸") return 'deep-purple lighten-2'
-        else return 'green'
+        if (medtype == '免煎') return 'teal'
+        else if (medtype == '西药') return 'blue'
+        else if(medtype == "药丸") return 'deep-purple'
+        else return 'primary'
       },
 
       reuse: function(selectedItem){
@@ -304,76 +301,6 @@
       },
 
       deleteItem(oneOrder){
-        //update med inventory
-        var sqlStatement = '';
-        if(oneOrder.medtype == '免煎' || oneOrder.medtype == '西药'){
-          this.$http.get('/api/getAllMedbyType',{
-            params: {
-              dbs : this.$store.state.user.dbs_prefix+'medlist',
-              medtype : oneOrder.medtype
-            }
-          }).then( (res) => {
-            let cacheMedData = res.data;
-            let existInDb;
-            for(let oneMed of oneOrder.medarray) {
-              oneMed = JSON.parse(oneMed);
-              if(typeof(oneMed.name1) == 'undefined')
-                break;
-              else{
-                existInDb = cacheMedData.find(function(p){
-                return p.medname === oneMed.name1;
-                })
-                if(typeof(existInDb) != 'undefined'){
-                  let countCost = parseInt(oneMed.count1) * oneOrder.dose;
-                  let oneSqlString = 'UPDATE ' + this.$store.state.user.dbs_prefix+'medlist' +  ' SET inventoryNm = inventoryNm + ' + countCost + " WHERE medname = '" + oneMed.name1 + "';";
-                  sqlStatement = sqlStatement + oneSqlString;
-                }
-              }
-              if(typeof(oneMed.name2) == 'undefined')
-                break;
-              else{
-                existInDb = cacheMedData.find(function(p){
-                return p.medname === oneMed.name2;
-                })
-                if(typeof(existInDb) != 'undefined'){
-                  let countCost = parseInt(oneMed.count2) * oneOrder.dose;
-                  let oneSqlString = 'UPDATE ' + this.$store.state.user.dbs_prefix+'medlist' +  ' SET inventoryNm = inventoryNm + ' + countCost + " WHERE medname = '" + oneMed.name2 + "';";
-                  sqlStatement = sqlStatement + oneSqlString;
-                }
-              }
-              if(typeof(oneMed.name3) == 'undefined')
-                break;
-              else{
-                existInDb = cacheMedData.find(function(p){
-                return p.medname === oneMed.name3;
-                })
-                if(typeof(existInDb) != 'undefined'){
-                  let countCost = parseInt(oneMed.count3) * oneOrder.dose;
-                  let oneSqlString = 'UPDATE ' + this.$store.state.user.dbs_prefix+'medlist' +  ' SET inventoryNm = inventoryNm + ' + countCost + " WHERE medname = '" + oneMed.name3 + "';";
-                  sqlStatement = sqlStatement + oneSqlString;
-                }
-              }
-              if(typeof(oneMed.name4) == 'undefined')
-                break;
-              else{
-                existInDb = cacheMedData.find(function(p){
-                return p.medname === oneMed.name4;
-                })
-                if(typeof(existInDb) != 'undefined'){
-                  let countCost = parseInt(oneMed.count4) * oneOrder.dose;
-                  let oneSqlString = 'UPDATE ' + this.$store.state.user.dbs_prefix+'medlist' +  ' SET inventoryNm = inventoryNm + ' + countCost + " WHERE medname = '" + oneMed.name4 + "';";
-                  sqlStatement = sqlStatement + oneSqlString;
-                }
-              }
-            }
-            this.$http.post('/api/updateMedInventory',{
-              sqlStatement : sqlStatement,
-            }).then( (res) => {
-              console.log('update med success');
-            })
-          })
-        }
-        
         this.$http.post('/api/updatePatientTimes',{
           dbs : this.$store.state.user.dbs_prefix+'patient',
           patient_id: oneOrder.patient_id,
@@ -388,7 +315,7 @@
             this.snackbar = true;
             this.notification = '删除成功';
             this.snackbarColor = 'green';
-            this.getAll();
+            this.loadOrders(1);
           })
         })
       },
@@ -411,8 +338,13 @@
 
 
     mounted: function() {
-      this.getAll();      
-		}
+      this.displayYaowan = this.$store.getters['userconfig/displayYaowan'];
+      this.loadOrders(1);
+		},
+
+    beforeDestroy: function() {
+      clearTimeout(this.searchTimer);
+    }
   }
 </script>
 <style scoped>
