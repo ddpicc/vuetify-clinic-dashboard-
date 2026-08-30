@@ -23,7 +23,7 @@ var sqlMap = {
     updateUserSetting: 'UPDATE myDbs_userconfig SET displayYaowan = ?, displayProfit = ?, displayLessMenu = ?, defaultDoctor = ? WHERE userid = ?',
     saveMonthTotalToUserSetting: 'UPDATE myDbs_userconfig SET ?? = ?, ?? = ? WHERE userid = ?',
     getChartInfoFromOrder: 'SELECT total,totalprofit,date from ?? where date between ? and ?',
-    getDashboardDailyTotals: 'SELECT date, SUM(total) AS total, SUM(totalprofit) AS profit, COUNT(*) AS patientCount FROM ?? WHERE date BETWEEN ? AND ? GROUP BY date ORDER BY date DESC',
+    getDashboardDailyTotals: 'SELECT date, ROUND(SUM(total), 2) AS total, ROUND(SUM(totalprofit), 2) AS profit, COUNT(*) AS patientCount FROM ?? WHERE date BETWEEN ? AND ? GROUP BY date ORDER BY date DESC',
     getMonthlyTotals: 'SELECT DATE_FORMAT(date, "%Y-%m") AS ym, ROUND(SUM(total), 2) AS total, ROUND(SUM(totalprofit), 2) AS profit FROM ?? GROUP BY ym ORDER BY ym',
     getOrdByDate: 'SELECT a.id,a.patient,a.patient_id,b.name AS patient_name,a.medtype,a.symptom,a.order_comment,a.dose,a.medarray,a.total,a.totalprofit,a.date,b.sex,b.age,b.phone FROM ?? a INNER JOIN ?? b ON a.patient_id = b.id where date = ? order by id desc',
     getAllOrd: 'SELECT a.id,a.patient,a.patient_id,b.name AS patient_name,a.medtype,a.symptom,a.order_comment,a.dose,a.medarray,a.total,a.totalprofit,a.date,b.sex,b.age,b.phone FROM ?? a INNER JOIN ?? b ON a.patient_id = b.id order by id desc',
