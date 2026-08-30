@@ -78,6 +78,10 @@ router.get('/getMonthlyTotals', (req, res, next) => {
   api.getMonthlyTotals(req, res, next);
 });
 
+router.get('/getDashboardSummary', (req, res, next) => {
+  api.getDashboardSummary(req, res, next);
+});
+
 router.get('/getOrdByDate', (req, res, next) => {
   api.getOrdByDate(req, res, next);
 });

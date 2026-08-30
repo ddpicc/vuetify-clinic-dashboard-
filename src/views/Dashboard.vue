@@ -194,30 +194,20 @@ import { dateToString, stringToDate } from '../utils/handleDate';
 
       loadDataAndSetupChart: function(){
         const end = dateToString(new Date());
+        // 额外取一天，保证每月 31 日时当月首日也参与月度卡片统计。
         const start = dateToString(new Date(new Date().setDate(new Date().getDate()-30)));
-        const requests = [
-          this.$http.get('/api/getOrdBetweenDates', {
-            params: {
-              dbs_a: this.$store.state.user.dbs_prefix+'ordlist',
-              dbs_b: this.$store.state.user.dbs_prefix+'patient',
-              startDate: start,
-              endDate: end
-            }
-          }),
-          this.$http.get('/api/getMonthlyTotals', {
-            params: {
-              dbPrefix: this.$store.state.user.dbs_prefix
-            }
-          })
-        ];
-        Promise.all(requests).then(([ordersRes, monthlyRes]) => {
-          this.calculateData(ordersRes.data, monthlyRes.data);
+        this.$http.get('/api/getDashboardSummary', {
+          params: {
+            dbPrefix: this.$store.state.user.dbs_prefix,
+            startDate: start,
+            endDate: end,
+          }
+        }).then((res) => {
+          this.calculateData(res.data.dailyTotals, res.data.monthlyTotals);
         });
       },
 
-      calculateData: function(data30Days, monthlyTotals){
-        let index = 0;
-        let curDate = '';
+      calculateData: function(dailyTotals, monthlyTotals){
         var last30daysIncome = [];
         var last30daysProfit = [];
         var incomeData = [];
@@ -228,31 +218,27 @@ import { dateToString, stringToDate } from '../utils/handleDate';
         let _monthIncome = 0;
         let _monthProfit = 0;
         let _monthNum = 0;
+        const today = dateToString(new Date());
+        const thisMonth = today.substring(0, 7);
         
-        for(let item of data30Days){
-          if(item.date == dateToString(new Date())){
-            _todayIncome = parseFloat((_todayIncome + item.total).toFixed(2));
-            _todayNum = _todayNum + 1;
+        for(let item of (Array.isArray(dailyTotals) ? dailyTotals : [])){
+          const income = parseFloat(item.total) || 0;
+          const profit = parseFloat(item.profit) || 0;
+          const patientCount = parseInt(item.patientCount, 10) || 0;
+          const index = parseInt((new Date() - stringToDate(item.date)) / (1000 * 60 * 60 * 24));
+          if(index >= 0 && index < 30){
+            last30daysIncome[index] = income;
+            last30daysProfit[index] = profit;
+            last30daysNum[index] = patientCount;
           }
-          if(item.date.substring(0,7) == dateToString(new Date()).substring(0,7)){
-            _monthIncome = parseFloat((_monthIncome + item.total).toFixed(2));
-            _monthProfit = parseFloat((_monthProfit + item.totalprofit).toFixed(2));
-            _monthNum = _monthNum + 1;
+          if(item.date == today){
+            _todayIncome = income;
+            _todayNum = patientCount;
           }
-          if(item.date != curDate){
-            index = parseInt((new Date() - stringToDate(item.date)) / (1000 * 60 * 60 * 24));
-            if(index > 30){
-              continue;
-            }
-            curDate = item.date;
-            last30daysIncome[index] = item.total;
-            last30daysProfit[index] = item.totalprofit;
-            last30daysNum[index] = 1;
-          }
-          else{
-            last30daysIncome[index] = parseFloat((last30daysIncome[index] + item.total).toFixed(2));
-            last30daysProfit[index] = parseFloat((last30daysProfit[index] + item.totalprofit).toFixed(2));
-            last30daysNum[index] = last30daysNum[index] + 1;
+          if(item.date.substring(0, 7) == thisMonth){
+            _monthIncome = parseFloat((_monthIncome + income).toFixed(2));
+            _monthProfit = parseFloat((_monthProfit + profit).toFixed(2));
+            _monthNum += patientCount;
           }
         }
         this.todayIncome = _todayIncome.toString();
@@ -291,6 +277,7 @@ import { dateToString, stringToDate } from '../utils/handleDate';
         var incomeMonth = [];
         var profitMonth = [];
         this.overallIncome = 0;
+        this.yearIncome = 0;
         for(const ym in totalsByYm){
           this.overallIncome = parseFloat((this.overallIncome + totalsByYm[ym].total).toFixed(2));
         }

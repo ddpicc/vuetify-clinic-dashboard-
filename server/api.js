@@ -14,6 +14,8 @@ const pool = mysql.createPool({
 });
 
 const clinicPrefixPattern = /^[A-Za-z0-9_]+$/;
+const dashboardSummaryCache = new Map();
+const DASHBOARD_SUMMARY_CACHE_TTL_MS = 60 * 1000;
 
 function clinicTables(prefix) {
   if (!clinicPrefixPattern.test(prefix || '')) {
@@ -34,7 +36,24 @@ function query(connection, sql, values) {
   });
 }
 
-function inTransaction(work, res) {
+function dashboardCacheKey(orderTable, startDate, endDate) {
+  return [orderTable, startDate, endDate].join('|');
+}
+
+function invalidateDashboardSummary(orderTable) {
+  const keyPrefix = orderTable + '|';
+  for (const key of dashboardSummaryCache.keys()) {
+    if (key.indexOf(keyPrefix) === 0) dashboardSummaryCache.delete(key);
+  }
+}
+
+function parseDashboardDate(value, fieldName) {
+  const date = String(value || '');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error(fieldName + '无效');
+  return date;
+}
+
+function inTransaction(work, res, afterCommit) {
   pool.getConnection((connectionError, connection) => {
     if (connectionError) return res.status(500).json({ error: '数据库连接失败' });
     connection.beginTransaction(async beginError => {
@@ -47,6 +66,7 @@ function inTransaction(work, res) {
         connection.commit(commitError => {
           connection.release();
           if (commitError) return res.status(500).json({ error: '提交数据库事务失败' });
+          if (afterCommit) afterCommit(result);
           res.json(result);
         });
       } catch (error) {
@@ -223,7 +243,7 @@ module.exports = {
         'INSERT INTO ?? (patient, patient_id, symptom, order_comment, medtype, dose, medarray, total, totalprofit, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
         [tables.order, patient.name, patientId, order.symptom, order.comment, order.medtype, order.dose, order.medarray, order.total, order.totalprofit, order.date]);
       return { patientId, orderId: orderResult.insertId };
-    }, res);
+    }, res, () => invalidateDashboardSummary(tables.order));
   },
 
   saveGaofangIntake(req, res, next) {
@@ -339,6 +359,7 @@ module.exports = {
       connection.query(sql, [dbs,patient,patient_id,symptom,order_comment,medtype,dose,medarray,total,totalprofit,date], (err, result) => {
         if(err)
           console.log(err);  
+        if (!err) invalidateDashboardSummary(dbs);
         res.json(result);
           connection.release();
       })
@@ -352,6 +373,7 @@ module.exports = {
     pool.getConnection((err, connection) => {
       var sql = sqlMap.deleteOrdbyId;
       connection.query(sql, [dbs,id], (err, result) => {
+          if (!err) invalidateDashboardSummary(dbs);
           res.json(result);
           connection.release();
       })
@@ -685,6 +707,47 @@ module.exports = {
         res.json(result);
       })
     })
+  },
+
+  getDashboardSummary(req, res, next) {
+    let tables;
+    let startDate;
+    let endDate;
+    try {
+      tables = clinicTables(req.query.dbPrefix);
+      startDate = parseDashboardDate(req.query.startDate, '开始日期');
+      endDate = parseDashboardDate(req.query.endDate, '结束日期');
+      if (startDate > endDate) throw new Error('日期范围无效');
+    } catch (error) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    const cacheKey = dashboardCacheKey(tables.order, startDate, endDate);
+    const now = Date.now();
+    for (const [key, value] of dashboardSummaryCache.entries()) {
+      if (now - value.createdAt >= DASHBOARD_SUMMARY_CACHE_TTL_MS) dashboardSummaryCache.delete(key);
+    }
+    const cached = dashboardSummaryCache.get(cacheKey);
+    if (cached) {
+      return res.json(cached.data);
+    }
+
+    pool.getConnection((connectionError, connection) => {
+      if (connectionError) return res.status(500).json({ error: '数据库连接失败' });
+      connection.query(sqlMap.getDashboardDailyTotals, [tables.order, startDate, endDate], (dailyError, dailyTotals) => {
+        if (dailyError) {
+          connection.release();
+          return res.status(500).json({ error: '查询每日统计失败' });
+        }
+        connection.query(sqlMap.getMonthlyTotals, [tables.order], (monthlyError, monthlyTotals) => {
+          connection.release();
+          if (monthlyError) return res.status(500).json({ error: '查询月度统计失败' });
+          const data = { dailyTotals, monthlyTotals };
+          dashboardSummaryCache.set(cacheKey, { createdAt: Date.now(), data });
+          res.json(data);
+        });
+      });
+    });
   },
 
   saveMonthTotalToUserSetting(req, res, next) {
