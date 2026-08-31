@@ -53,11 +53,6 @@
   } from 'vuex'
 
   var moreLinks = [
-    {
-      to: '/dashboard',
-      icon: 'mdi-view-dashboard',
-      text: '首页'
-    },
     /* {
       to: '/today-patient',
       icon: 'mdi-clipboard-outline',

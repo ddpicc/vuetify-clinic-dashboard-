@@ -12,6 +12,13 @@
         >
           <template v-slot:header>
             <h3 class="title ml-5 flex-grow-1">详细统计</h3>
+            <v-btn
+              text
+              class="mr-2"
+              to="/dashboard"
+            >
+              首页统计
+            </v-btn>
             <v-switch
               class="mr-5"
               v-model="yaowanActive"
