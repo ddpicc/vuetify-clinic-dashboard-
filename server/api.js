@@ -98,6 +98,14 @@ function getSearchKeyword(value) {
   return keyword;
 }
 
+function getPhoneSearchKeyword(value) {
+  let phone = String(value == null ? '' : value).trim();
+  phone = phone.replace(/[\s\-()]/g, '');
+  phone = phone.replace(/^\+86/, '').replace(/^0086/, '');
+  if (phone.startsWith('86') && phone.length === 13) phone = phone.slice(2);
+  return /^\d{5,20}$/.test(phone) ? phone : String(value == null ? '' : value).trim();
+}
+
 function authorizePatientMerge(req) {
   const token = String((req.body && req.body.token) || req.query.token || '');
   const prefix = (req.body && req.body.dbPrefix) || req.query.dbPrefix;
@@ -583,10 +591,11 @@ module.exports = {
     }
 
     const likeKeyword = '%' + escapeLike(keyword) + '%';
+    const phoneLikeKeyword = '%' + escapeLike(getPhoneSearchKeyword(keyword)) + '%';
     const hideYaowan = req.query.hideYaowan === 'true' || req.query.hideYaowan === '1';
     const countSql = hideYaowan ? sqlMap.countSearchOrders : sqlMap.countSearchOrdersAll;
     const listSql = hideYaowan ? sqlMap.searchOrders : sqlMap.searchOrdersAll;
-    const commonValues = [tables.order, tables.patient, likeKeyword, likeKeyword, likeKeyword];
+    const commonValues = [tables.order, tables.patient, likeKeyword, likeKeyword, phoneLikeKeyword];
     const countValues = hideYaowan ? commonValues.concat('药丸') : commonValues;
     const listValues = hideYaowan
       ? commonValues.concat(['药丸', pagination.pageSize, pagination.offset])

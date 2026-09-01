@@ -174,7 +174,7 @@
       loading: false,
       expanded: [],
       page: 1,
-      pageSize: 30,
+      pageSize: 15,
       total: 0,
       searchTimer: null,
       requestId: 0,
@@ -245,13 +245,23 @@
             page: currentPage,
             pageSize: this.pageSize,
             hideYaowan: !this.displayYaowan,
-          }
+          },
+          timeout: 15000,
         }).then((res) => {
           if (currentRequestId !== this.requestId) return;
           const data = res.data || {};
           this.total = Number(data.total) || 0;
           this.page = currentPage;
           this.items = this.normalizeItems(data.items, currentPage);
+        }).catch((error) => {
+          if (currentRequestId !== this.requestId) return;
+          this.items = [];
+          this.total = 0;
+          this.snackbar = true;
+          this.snackbarColor = 'error';
+          this.notification = error.code === 'ECONNABORTED'
+            ? '加载超时，请检查网络后重试'
+            : ((error.response && error.response.data && error.response.data.error) || '处方加载失败，请重试');
         }).finally(() => {
           if (currentRequestId === this.requestId) this.loading = false;
         });
